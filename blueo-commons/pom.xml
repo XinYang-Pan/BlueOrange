@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.blueo</groupId>
 	<artifactId>blueo-commons</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<!-- <version>1.3.1-SNAPSHOT</version> -->
 	<name>blue orange commons</name>
 	<description>blue orange commons utilities</description>
