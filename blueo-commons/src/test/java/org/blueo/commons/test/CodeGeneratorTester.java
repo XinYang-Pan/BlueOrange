@@ -1,7 +1,7 @@
 package org.blueo.commons.test;
 
-import org.blueo.commons.CodeGenerator;
-import org.blueo.commons.Person;
+import org.blueo.codegen.CodeGenerator;
+import org.blueo.commons.test.object.Person;
 
 public class CodeGeneratorTester {
 

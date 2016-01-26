@@ -1,4 +1,4 @@
-package org.blueo.commons;
+package org.blueo.codegen;
 
 import java.beans.PropertyDescriptor;
 
