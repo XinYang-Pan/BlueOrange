@@ -1,10 +1,10 @@
-package com.blueo.csv.test;
+package org.blueo.csv.test;
 
 import java.io.IOException;
 import java.util.List;
 
-import com.blueo.common.Person;
-import com.blueo.csv.Parser;
+import org.blueo.commons.Person;
+import org.blueo.csv.Parser;
 
 public class Tester {
 	

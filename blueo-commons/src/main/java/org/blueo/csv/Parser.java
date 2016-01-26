@@ -1,4 +1,4 @@
-package com.blueo.csv;
+package org.blueo.csv;
 
 import java.io.File;
 import java.io.IOException;

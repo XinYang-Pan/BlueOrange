@@ -1,4 +1,4 @@
-package com.blueo.common;
+package org.blueo.commons;
 
 import java.beans.PropertyDescriptor;
 
@@ -21,12 +21,17 @@ public abstract class CodeGenerator {
 		PropertyDescriptor[] pds = instance.getPropertyDescriptors();
 		paramName = ObjectUtils.firstNonNull(paramName, clazz.getSimpleName().toLowerCase());
 		String clazzName = clazz.getSimpleName();
-		System.out.println(String.format("%s %s = new %s();", clazzName, paramName, clazzName));
+		System.out.println(String.format("public %s build%s() {", clazzName, clazzName));
+		// 
+		System.out.println(String.format("\t%s %s = new %s();", clazzName, paramName, clazzName));
 		for (PropertyDescriptor pd : pds) {
 			if (pd.getWriteMethod() != null) {
-				System.out.println(String.format("%s.set%s(%s);", paramName, StringUtils.capitalize(pd.getName()), Defaults.defaultValue(pd.getPropertyType())));
+				System.out.println(String.format("\t%s.set%s(%s);", paramName, StringUtils.capitalize(pd.getName()), Defaults.defaultValue(pd.getPropertyType())));
 			}
 		}
+		System.out.println(String.format("\treturn %s;", paramName));
+		// 
+		System.out.println(String.format("}"));
 	}
 
 	public static void generateSetting(Class<?> set, Class<?> get) {
@@ -43,7 +48,11 @@ public abstract class CodeGenerator {
 			getParamName = getParamName + "1";
 		}
 		String setClazzName = set.getSimpleName();
-		System.out.println(String.format("%s %s = new %s();", setClazzName, setParamName, setClazzName));
+		String getClazzName = get.getSimpleName();
+		// 
+		System.out.println(String.format("public %s build%s(%s %s) {", setClazzName, setClazzName, getClazzName, getParamName));
+		
+		System.out.println(String.format("\t%s %s = new %s();", setClazzName, setParamName, setClazzName));
 		for (PropertyDescriptor pd : pds) {
 			if (pd.getWriteMethod() != null) {
 				String propertyName = pd.getName();
@@ -54,8 +63,11 @@ public abstract class CodeGenerator {
 				} else {
 					value = String.format("%s.get%s()", getParamName, StringUtils.capitalize(getPd.getName()));
 				}
-				System.out.println(String.format("%s.set%s(%s);", setParamName, StringUtils.capitalize(propertyName), value));
+				System.out.println(String.format("\t%s.set%s(%s);", setParamName, StringUtils.capitalize(propertyName), value));
 			}
 		}
+		System.out.println(String.format("\treturn %s;", setParamName));
+		// 
+		System.out.println(String.format("}"));
 	}
 }

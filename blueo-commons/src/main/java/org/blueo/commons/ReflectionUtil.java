@@ -1,4 +1,4 @@
-package com.blueo.common;
+package org.blueo.commons;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

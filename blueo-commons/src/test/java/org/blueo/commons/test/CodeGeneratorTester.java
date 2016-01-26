@@ -1,13 +1,15 @@
-package com.blueo.common.test;
+package org.blueo.commons.test;
 
-import com.blueo.common.CodeGenerator;
-import com.blueo.common.Person;
+import org.blueo.commons.CodeGenerator;
+import org.blueo.commons.Person;
 
 public class CodeGeneratorTester {
 
 	public static void main(String[] args) {
 		CodeGenerator.generateSetting(Person.class);
+		System.out.println("**********************************************");
 		CodeGenerator.generateSetting(Person.class, Person.class);
+		System.out.println("**********************************************");
 		CodeGenerator.generateSetting(Person.class, Person.class, "p1", "p2");
 	}
 	
