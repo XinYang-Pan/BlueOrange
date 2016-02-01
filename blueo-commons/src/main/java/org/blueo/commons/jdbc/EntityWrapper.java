@@ -7,10 +7,13 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
+import org.blueo.commons.BlueoUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.jdbc.core.ArgumentTypePreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,20 +24,20 @@ import org.springframework.util.ReflectionUtils;
 
 import com.google.common.collect.Lists;
 
-public class EntityForJdbc<T> {
+public class EntityWrapper<T> {
 	private static final int BATCH_SIZE = 1000;
 	private static final String SEPARATOR = ", ";
-	// 
+	//
 	private final Class<T> clazz;
-	// 
+	//
 	private String insertSql;
 	private ParameterizedPreparedStatementSetter<T> pss;
-	
-	public EntityForJdbc(Class<T> clazz) {
+
+	public EntityWrapper(Class<T> clazz) {
 		this.clazz = clazz;
 		this.init();
 	}
-	
+
 	private void init() {
 		// Is a entity
 		Assert.notNull(AnnotationUtils.findAnnotation(clazz, Entity.class));
@@ -53,7 +56,7 @@ public class EntityForJdbc<T> {
 			if (column != null && generatedValue == null) {
 				String name = column.name();
 				if (columnNames.contains(name)) {
-					System.out.println("contain same name. ignore. ref="+name);
+					System.out.println("contain same name. ignore. ref=" + name);
 				} else {
 					columnNames.add(name);
 					columMethods.add(method);
@@ -72,6 +75,21 @@ public class EntityForJdbc<T> {
 		return String.format("INSERT INTO %s(%s) VALUES(%s)", tableName, columnPart, valuePart);
 	}
 
+	private Object getValue(Object value, Method method) {
+		Enumerated enumerated = AnnotationUtils.findAnnotation(method, Enumerated.class);
+		if (!(value instanceof Enum<?>)) {
+			return value;
+		}
+		Enum<?> enumValue = (Enum<?>) value;
+		if (enumerated == null || enumerated.value() == null || enumerated.value() == EnumType.STRING) {
+			return enumValue.toString();
+		} else if (enumerated.value() == EnumType.ORDINAL) {
+			return enumValue.ordinal();
+		} else {
+			throw BlueoUtils.illegalArgument("never go here.");
+		}
+	}
+
 	private ParameterizedPreparedStatementSetter<T> buildPss(final List<Method> columMethods) {
 		return new ParameterizedPreparedStatementSetter<T>() {
 
@@ -79,27 +97,28 @@ public class EntityForJdbc<T> {
 			public void setValues(PreparedStatement ps, T t) throws SQLException {
 				Object[] args = new Object[columMethods.size()];
 				int[] argTypes = new int[columMethods.size()];
-				
+
 				for (int i = 0; i < columMethods.size(); i++) {
 					// ArgumentTypePreparedStatementSetter
 					Method method = columMethods.get(i);
 					int sqlType = StatementCreatorUtils.javaTypeToSqlParameterType(method.getReturnType());
 					Object value = ReflectionUtils.invokeMethod(method, t);
-					args[i] = value;
+					args[i] = getValue(value, method);
 					argTypes[i] = sqlType;
 				}
-				// 
+				//
 				ArgumentTypePreparedStatementSetter stmtSetter = new ArgumentTypePreparedStatementSetter(args, argTypes);
-				stmtSetter.setValues(ps);;
+				stmtSetter.setValues(ps);
+				;
 			}
-			
+
 			@Override
 			public String toString() {
 				return String.valueOf(columMethods);
 			}
 		};
 	}
-	
+
 	public void insert(JdbcTemplate jdbcTemplate, List<T> entities) {
 		jdbcTemplate.batchUpdate(insertSql, entities, BATCH_SIZE, pss);
 	}
@@ -116,5 +135,5 @@ public class EntityForJdbc<T> {
 		builder.append("]");
 		return builder.toString();
 	}
-	
+
 }

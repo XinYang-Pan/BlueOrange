@@ -4,6 +4,25 @@ public class Person {
 	private String name;
 	private String sex;
 	private int age;
+	private boolean staff;
+	
+	public Person() {
+	}
+	
+	public Person(String name, String sex, int age) {
+		super();
+		this.name = name;
+		this.sex = sex;
+		this.age = age;
+	}
+
+	public Person(String name, String sex, int age, boolean staff) {
+		super();
+		this.name = name;
+		this.sex = sex;
+		this.age = age;
+		this.staff = staff;
+	}
 
 	@Override
 	public String toString() {
@@ -14,6 +33,8 @@ public class Person {
 		builder.append(sex);
 		builder.append(", age=");
 		builder.append(age);
+		builder.append(", staff=");
+		builder.append(staff);
 		builder.append("]");
 		return builder.toString();
 	}
@@ -40,6 +61,14 @@ public class Person {
 
 	public void setAge(int age) {
 		this.age = age;
+	}
+
+	public boolean isStaff() {
+		return staff;
+	}
+
+	public void setStaff(boolean staff) {
+		this.staff = staff;
 	}
 
 }
