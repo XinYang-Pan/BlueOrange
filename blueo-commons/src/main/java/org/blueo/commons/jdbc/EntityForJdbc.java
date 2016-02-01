@@ -77,7 +77,7 @@ public class EntityForJdbc<T> {
 
 			@Override
 			public void setValues(PreparedStatement ps, T t) throws SQLException {
-				Object[] args = new String[columMethods.size()];
+				Object[] args = new Object[columMethods.size()];
 				int[] argTypes = new int[columMethods.size()];
 				
 				for (int i = 0; i < columMethods.size(); i++) {
