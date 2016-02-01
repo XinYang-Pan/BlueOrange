@@ -1,4 +1,4 @@
-package org.blueo.commons;
+package org.blueo.commons.tostring;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -21,6 +21,7 @@ public class IterableMultilineToString<T> {
 
 	@Override
 	public String toString() {
+		// 
 		StringBuilder sb = new StringBuilder();
 		Iterator<T> iterator = iterable.iterator();
 		while (iterator.hasNext()) {

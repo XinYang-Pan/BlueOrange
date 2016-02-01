@@ -24,21 +24,6 @@ public class Person {
 		this.staff = staff;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Person [name=");
-		builder.append(name);
-		builder.append(", sex=");
-		builder.append(sex);
-		builder.append(", age=");
-		builder.append(age);
-		builder.append(", staff=");
-		builder.append(staff);
-		builder.append("]");
-		return builder.toString();
-	}
-
 	public String getName() {
 		return name;
 	}
