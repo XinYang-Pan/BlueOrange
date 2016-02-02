@@ -53,6 +53,7 @@ public class Loader {
 				// 
 				if (dbcolumn.isPk()) {
 					pk = dbcolumn;
+					continue;
 				}
 				// 
 				dbColumns.add(dbcolumn);
