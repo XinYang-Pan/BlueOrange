@@ -43,8 +43,22 @@ public class ToStringUtils {
 			return "null";
 		}
 		try {
+			if (obj instanceof Iterable<?>) {
+				Iterable<?> iterable = (Iterable<?>)obj;
+				Iterator<?> iterator = iterable.iterator();
+				StringBuilder sb = new StringBuilder();
+				while (iterator.hasNext()) {
+					sb.append(wellFormat(iterator.next(), 1));
+					if (iterator.hasNext()) {
+						sb.append(System.lineSeparator());
+					}
+				}
+				return sb.toString();
+			}
+			// None Iterable
 			return wellFormat(obj, 1);
 		} catch (Throwable e) {
+			e.printStackTrace();
 			return String.format("Unable to well format this object. %s - %s", e.getClass().getName(), e.getMessage());
 		}
 	}
@@ -109,7 +123,14 @@ public class ToStringUtils {
 		if(ClassUtils.isPrimitiveOrWrapper(objectClass)) {
 			return false;
 		}
-		String packageName = objectClass.getPackage().getName();
+		if(objectClass.isArray()) {
+			return false;
+		}
+		Package package1 = objectClass.getPackage();
+		if (package1 == null) {
+			System.err.println("None package for "+objectClass);
+		}
+		String packageName = package1.getName();
 		return !packageName.startsWith("java");
 	}
 	

@@ -5,7 +5,7 @@ import java.util.List;
 
 import jxl.read.biff.BiffException;
 
-import org.blueo.commons.tostring.IterableMultilineToString;
+import org.blueo.commons.tostring.ToStringUtils;
 import org.blueo.db.load.Loader;
 import org.blueo.db.load.SqlUtils;
 import org.blueo.db.vo.DbTable;
@@ -17,7 +17,7 @@ public class Test {
 		for (DbTable dbTable : dbTables) {
 			System.out.println(SqlUtils.generateCreateSql(dbTable));
 		}
-		System.out.println(IterableMultilineToString.toString(dbTables));
+		System.out.println(ToStringUtils.wellFormat(dbTables));
 		System.out.println(Number.class.isAssignableFrom(Integer.class));
 	}
 }
