@@ -29,11 +29,24 @@ public class ToStringUtils {
 		}
 	};
 
+	public static ToStringWrapper wellFormatWrapper(Object obj) {
+		return new ToStringWrapper(obj) {
+			@Override
+			public String notNulltoString(Object target) {
+				return wellFormat(target);
+			}
+		};
+	}
+	
 	public static String wellFormat(Object obj) {
 		if (obj == null) {
 			return "null";
 		}
-		return wellFormat(obj, 1);
+		try {
+			return wellFormat(obj, 1);
+		} catch (Throwable e) {
+			return String.format("Unable to well format this object. %s - %s", e.getClass().getName(), e.getMessage());
+		}
 	}
 	
 	private static String wellFormat(Object obj, int level) {

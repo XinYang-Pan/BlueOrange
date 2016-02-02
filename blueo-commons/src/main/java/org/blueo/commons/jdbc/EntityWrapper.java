@@ -32,7 +32,11 @@ public class EntityWrapper<T> {
 	//
 	private String insertSql;
 	private ParameterizedPreparedStatementSetter<T> pss;
-
+	
+	public static <T> EntityWrapper<T> with(Class<T> clazz) {
+		return new EntityWrapper<>(clazz);
+	}
+	
 	public EntityWrapper(Class<T> clazz) {
 		this.clazz = clazz;
 		this.init();
