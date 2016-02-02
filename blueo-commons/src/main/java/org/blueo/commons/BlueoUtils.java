@@ -1,7 +1,6 @@
 package org.blueo.commons;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.Iterator;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -11,7 +10,7 @@ public abstract class BlueoUtils {
 
 	public static boolean isSetMethod(Method method) {
 		String methodName = method.getName();
-		Parameter[] parameters = method.getParameters();
+		Class<?>[] parameters = method.getParameterTypes();
 		return methodName.startsWith("set") 
 				&& ArrayUtils.getLength(parameters) == 1 
 				&& (void.class == method.getReturnType()||Void.class == method.getReturnType());
@@ -19,7 +18,7 @@ public abstract class BlueoUtils {
 
 	public static boolean isGetMethod(Method method) {
 		String methodName = method.getName();
-		Parameter[] parameters = method.getParameters();
+		Class<?>[] parameters = method.getParameterTypes();
 		if (ArrayUtils.getLength(parameters) != 0) {
 			return false;
 		}

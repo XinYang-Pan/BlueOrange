@@ -1,7 +1,6 @@
 package org.blueo.codegen;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.blueo.commons.BlueoUtils;
@@ -26,9 +25,9 @@ public abstract class CodeGenerator {
 		Method[] methods = clazz.getMethods();
 		for (Method method : methods) {
 			String methodName = method.getName();
-			Parameter[] parameters = method.getParameters();
+			Class<?>[] parameters = method.getParameterTypes();
 			if (BlueoUtils.isSetMethod(method)) {
-				System.out.println(String.format("\t%s.%s(%s);", paramName, methodName, Defaults.defaultValue(parameters[0].getType())));
+				System.out.println(String.format("\t%s.%s(%s);", paramName, methodName, Defaults.defaultValue(parameters[0])));
 			}
 		}
 		System.out.println(String.format("\treturn %s;", paramName));
@@ -54,12 +53,12 @@ public abstract class CodeGenerator {
 		
 		System.out.println(String.format("\t%s %s = new %s();", setClazzName, setParamName, setClazzName));
 		for (Method method : methods) {
-			Parameter[] parameters = method.getParameters();
+			Class<?>[] parameters = method.getParameterTypes();
 			if (BlueoUtils.isSetMethod(method)) {
 				Method getOrIsMethod = setToGet(method, get);
 				Object value;
 				if (getOrIsMethod == null) {
-					value = Defaults.defaultValue(parameters[0].getType());
+					value = Defaults.defaultValue(parameters[0]);
 				} else {
 					value = String.format("%s.%s()", getParamName, getOrIsMethod.getName());
 				}
