@@ -6,7 +6,7 @@ public class DbColumn {
 	private String size;
 	private boolean pk;
 	private boolean nullable;
-	private String comments;
+	private String comment;
 
 	public String getName() {
 		return name;
@@ -48,12 +48,12 @@ public class DbColumn {
 		this.nullable = nullable;
 	}
 
-	public String getComments() {
-		return comments;
+	public String getComment() {
+		return comment;
 	}
 
-	public void setComments(String comments) {
-		this.comments = comments;
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	@Override
@@ -69,8 +69,8 @@ public class DbColumn {
 		builder.append(pk);
 		builder.append(", nullable=");
 		builder.append(nullable);
-		builder.append(", comments=");
-		builder.append(comments);
+		builder.append(", comment=");
+		builder.append(comment);
 		builder.append("]");
 		return builder.toString();
 	}

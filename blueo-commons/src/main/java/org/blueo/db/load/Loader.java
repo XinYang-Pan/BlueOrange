@@ -49,7 +49,7 @@ public class Loader {
 				dbcolumn.setSize(getContent(sheet.getCell(3, i)));
 				dbcolumn.setPk("y".equalsIgnoreCase(getContent(sheet.getCell(4, i))));
 				dbcolumn.setNullable("y".equalsIgnoreCase(ObjectUtils.firstNonNull(getContent(sheet.getCell(5, i)), "y")));
-				dbcolumn.setComments(getContent(sheet.getCell(6, i)));
+				dbcolumn.setComment(getContent(sheet.getCell(6, i)));
 				// 
 				if (dbcolumn.isPk()) {
 					pk = dbcolumn;

@@ -1,10 +1,28 @@
 package org.blueo.db.load;
 
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
+import org.springframework.util.Assert;
+
+import com.google.common.collect.Maps;
 
 public class SqlUtils {
+	
+	private static Map<String, Class<?>> sqlTypeToJavaType = Maps.newHashMap();
+	
+	static {
+		sqlTypeToJavaType.put("bigint", Long.class);
+		sqlTypeToJavaType.put("varchar", String.class);
+		sqlTypeToJavaType.put("int", Integer.class);
+	}
+	
+	public static Class<?> getJavaType(String sqlType) {
+		Assert.notNull(sqlType);
+		return sqlTypeToJavaType.get(sqlType.toLowerCase());
+	}
 	
 	private static String oneLineOfCreateSql(DbColumn dbColumn) {
 		String columnName = dbColumn.getName();
@@ -16,7 +34,13 @@ public class SqlUtils {
 		} else {
 			nullable = dbColumn.isNullable()? "NULL":"NOT NULL";
 		}
-		return String.format("%s%s %s%s %s,%s", "\t", columnName, dataType, size, nullable, System.lineSeparator());
+		String comment;
+		if (dbColumn.getComment() == null) {
+			comment = "";
+		} else {
+			comment = String.format(" -- %s", dbColumn.getComment());
+		}
+		return String.format("%s%s %s%s %s,%s%s", "\t", columnName, dataType, size, nullable, comment, System.lineSeparator());
 	}
 	
 	private static String getColumnTypeSize(DbColumn dbColumn) {
