@@ -22,8 +22,8 @@ public class EntityClass {
 		formatterNb.formatln(this.generateImportCode());
 		formatterNb.formatln(this.generateClassDeclareCode());
 		formatterNb.formatln(this.generateFieldCode());
-		formatterNb.formatln();
-		formatterNb.formatln(this.generateGetSetCode());
+		formatterNb.format(this.generateGetSetCode());
+		formatterNb.formatln(this.generateToStringCode());
 		formatterNb.formatln();
 		formatterNb.formatln(this.generateEndCode());
 		return formatterNb.toString();
@@ -61,7 +61,7 @@ public class EntityClass {
 	private String generateFieldCode() {
 		FormatterNb formatterNb = new FormatterNb();
 		for (EntityField entityField : entityFields) {
-			formatterNb.format(entityField.generateFieldCode());
+			formatterNb.formatln(entityField.generateFieldCode());
 		}
 		return formatterNb.toString();
 	}
@@ -71,8 +71,31 @@ public class EntityClass {
 		for (EntityField entityField : entityFields) {
 			formatterNb.formatln(entityField.generateGetCode());
 			formatterNb.formatln();
-			formatterNb.format(entityField.generateSetCode());
+			formatterNb.formatln(entityField.generateSetCode());
+			formatterNb.formatln();
 		}
+		return formatterNb.toString();
+	}
+
+	private String generateToStringCode() {
+		FormatterNb formatterNb = new FormatterNb();
+		formatterNb.formatln(1, "@Override");
+		formatterNb.formatln(1, "public String toString() {");
+		formatterNb.formatln(2, "StringBuilder builder = new StringBuilder();");
+		boolean first = true;
+		for (EntityField entityField : entityFields) {
+			if (first) {
+				first = false;
+				formatterNb.formatln(2, "builder.append(\"%s [%s=\");", name, entityField.getName());
+				formatterNb.formatln(2, "builder.append(%s);", entityField.getName());
+			} else {
+				formatterNb.formatln(2, "builder.append(\", %s=\");", entityField.getName());
+				formatterNb.formatln(2, "builder.append(%s);", entityField.getName());
+			}
+		}
+		formatterNb.formatln(2, "builder.append(\"]\");");
+		formatterNb.formatln(2, "return builder.toString();");
+		formatterNb.format(1, "}");
 		return formatterNb.toString();
 	}
 	

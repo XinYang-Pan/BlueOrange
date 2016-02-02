@@ -51,6 +51,10 @@ public abstract class CodeGenerator {
 		// 
 		System.out.println(String.format("public %s build%s(%s %s) {", setClazzName, setClazzName, getClazzName, getParamName));
 		
+		System.out.println(String.format("\tif (%s == null) {", getParamName));
+		System.out.println(String.format("\t\treturn null;"));
+		System.out.println(String.format("\t}"));
+		
 		System.out.println(String.format("\t%s %s = new %s();", setClazzName, setParamName, setClazzName));
 		for (Method method : methods) {
 			Class<?>[] parameters = method.getParameterTypes();

@@ -44,7 +44,7 @@ public class Loader {
 					break;
 				}
 				DbColumn dbcolumn = new DbColumn();
-				dbcolumn.setName(name);
+				dbcolumn.setName(name.toUpperCase());
 				dbcolumn.setType(getContent(sheet.getCell(2, i)));
 				dbcolumn.setSize(getContent(sheet.getCell(3, i)));
 				dbcolumn.setPk("y".equalsIgnoreCase(getContent(sheet.getCell(4, i))));
