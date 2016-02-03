@@ -7,8 +7,8 @@ public abstract class AnnotationWrapperUtils {
 	public static final ColumnWrapper COLUMN_WRAPPER = new ColumnWrapper();
 	public static final TableWrapper TABLE_WRAPPER = new TableWrapper();
 	
-	public static <A extends Annotation, T> AnnotationWrapper<A, T> simpleWrapper(Class<A> annotationClass) {
-		return new AnnotationWrapper<A, T>(annotationClass);
+	public static AnnotationWrapper simpleWrapper(Class<? extends Annotation> annotationClass) {
+		return new AnnotationWrapper(annotationClass);
 	}
 	
 	public static ColumnWrapper ColumnWrapper() {

@@ -2,21 +2,24 @@ package org.blueo.pojogen.vo;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.blueo.pojogen.vo.wrapper.AnnotationWrapper;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class EntityClass {
+
+public class PojoClass {
 	private String packageName;
 	private Class<?> superClass;
 	private LinkedHashSet<Class<?>> interfaces;
-	private List<AnnotationWrapper<?, EntityClass>> annotationWrappers;
+	private List<AnnotationWrapper> annotationWrappers;
 	private String name;
-	private String tableName;
-	private EntityField id;
-	private List<EntityField> entityFields;
+	private PojoField id;
+	private List<PojoField> pojoFields;
+	private final Map<String, Object> valueMap = Maps.newHashMap();
 	
 	public Set<Class<?>> getClasses() {
 		Set<Class<?>> classes = Sets.newHashSet();
@@ -26,13 +29,13 @@ public class EntityClass {
 			}
 		}
 		if (annotationWrappers != null) {
-			for (AnnotationWrapper<?, EntityClass> wrapper : annotationWrappers) {
+			for (AnnotationWrapper wrapper : annotationWrappers) {
 				classes.add(wrapper.getAnnotationClass());
 			}
 		}
-		if (entityFields != null) {
-			for (EntityField entityField : entityFields) {
-				classes.addAll(entityField.getClasses());
+		if (pojoFields != null) {
+			for (PojoField pojoField : pojoFields) {
+				classes.addAll(pojoField.getClasses());
 			}
 		}
 		if (superClass != null) {
@@ -68,11 +71,11 @@ public class EntityClass {
 		this.interfaces = interfaces;
 	}
 
-	public List<AnnotationWrapper<?, EntityClass>> getAnnotationWrappers() {
+	public List<AnnotationWrapper> getAnnotationWrappers() {
 		return annotationWrappers;
 	}
 
-	public void setAnnotationWrappers(List<AnnotationWrapper<?, EntityClass>> annotationWrappers) {
+	public void setAnnotationWrappers(List<AnnotationWrapper> annotationWrappers) {
 		this.annotationWrappers = annotationWrappers;
 	}
 
@@ -84,34 +87,30 @@ public class EntityClass {
 		this.name = name;
 	}
 
-	public String getTableName() {
-		return tableName;
-	}
-
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
-
-	public EntityField getId() {
+	public PojoField getId() {
 		return id;
 	}
 
-	public void setId(EntityField id) {
+	public void setId(PojoField id) {
 		this.id = id;
 	}
 
-	public List<EntityField> getEntityFields() {
-		return entityFields;
+	public List<PojoField> getEntityFields() {
+		return pojoFields;
 	}
 
-	public void setEntityFields(List<EntityField> entityFields) {
-		this.entityFields = entityFields;
+	public void setEntityFields(List<PojoField> pojoFields) {
+		this.pojoFields = pojoFields;
+	}
+
+	public Map<String, Object> getValueMap() {
+		return valueMap;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("EntityClass [packageName=");
+		builder.append("PojoClass [packageName=");
 		builder.append(packageName);
 		builder.append(", superClass=");
 		builder.append(superClass);
@@ -121,12 +120,12 @@ public class EntityClass {
 		builder.append(annotationWrappers);
 		builder.append(", name=");
 		builder.append(name);
-		builder.append(", tableName=");
-		builder.append(tableName);
 		builder.append(", id=");
 		builder.append(id);
 		builder.append(", entityFields=");
-		builder.append(entityFields);
+		builder.append(pojoFields);
+		builder.append(", valueMap=");
+		builder.append(valueMap);
 		builder.append("]");
 		return builder.toString();
 	}

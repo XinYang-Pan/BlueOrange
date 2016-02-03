@@ -2,17 +2,18 @@ package org.blueo.pojogen.vo.wrapper;
 
 import javax.persistence.Table;
 
-import org.blueo.pojogen.vo.EntityClass;
+import org.blueo.pojogen.vo.PojoClass;
 
-public class TableWrapper extends AnnotationWrapper<Table, EntityClass>{
+public class TableWrapper extends AnnotationWrapper{
 	
 	public TableWrapper() {
 		super(Table.class);
 	}
-	
+
 	@Override
-	public String getDisplayString(EntityClass entityClass) {
-		return String.format("@%s(name = \"%s\")", annotationClass.getSimpleName(), entityClass.getTableName());
+	public String getDisplayString(Object object) {
+		PojoClass pojoClass = (PojoClass)object;
+		return String.format("@%s(name = \"%s\")", annotationClass.getSimpleName(), pojoClass.getValueMap().get("tableName"));
 	}
 
 }

@@ -11,29 +11,29 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class EntityField {
+public class PojoField {
 	public enum AnnotationType {Field, Get, Set}
 	private Class<?> type;
 	private String name;
-	private String columnName;
-	private Map<AnnotationType, List<AnnotationWrapper<?, EntityField>>> annotationWrapperMap;
+	private Map<AnnotationType, List<AnnotationWrapper>> annotationWrapperMap;
+	private final Map<String, Object> valueMap = Maps.newHashMap();
 	
-	public void addAnnotation(AnnotationType annotationType, AnnotationWrapper<?, EntityField> annotationWrapper) {
+	public void addAnnotation(AnnotationType annotationType, AnnotationWrapper annotationWrapper) {
 		if (annotationWrapperMap == null) {
 			annotationWrapperMap = Maps.newHashMap();
 		}
-		List<AnnotationWrapper<?, EntityField>> list = annotationWrapperMap.get(annotationType);
+		List<AnnotationWrapper> list = annotationWrapperMap.get(annotationType);
 		if (list == null) {
 			annotationWrapperMap.put(annotationType, list = Lists.newArrayList());
 		}
 		list.add(annotationWrapper);
 	}
 	
-	public List<AnnotationWrapper<?, EntityField>> getAnnotationWrappers(AnnotationType annotationType) {
+	public List<AnnotationWrapper> getAnnotationWrappers(AnnotationType annotationType) {
 		if (annotationWrapperMap == null) {
 			return Collections.emptyList();
 		}
-		List<AnnotationWrapper<?, EntityField>> list = annotationWrapperMap.get(annotationType);
+		List<AnnotationWrapper> list = annotationWrapperMap.get(annotationType);
 		if (list == null) {
 			return Collections.emptyList();
 		}
@@ -43,8 +43,8 @@ public class EntityField {
 	public Set<Class<?>> getClasses() {
 		Set<Class<?>> classes = Sets.newHashSet();
 		if (annotationWrapperMap != null) {
-			for (List<AnnotationWrapper<?, EntityField>> wrappers : annotationWrapperMap.values()) {
-				for (AnnotationWrapper<?, EntityField> wrapper : wrappers) {
+			for (List<AnnotationWrapper> wrappers : annotationWrapperMap.values()) {
+				for (AnnotationWrapper wrapper : wrappers) {
 					classes.add(wrapper.getAnnotationClass());
 				}
 			}
@@ -69,18 +69,14 @@ public class EntityField {
 		this.name = name;
 	}
 
-	public String getColumnName() {
-		return columnName;
-	}
-
-	public void setColumnName(String columnName) {
-		this.columnName = columnName;
-	}
-
-	public Map<AnnotationType, List<AnnotationWrapper<?, EntityField>>> getAnnotationWrapperMap() {
+	public Map<AnnotationType, List<AnnotationWrapper>> getAnnotationWrapperMap() {
 		return annotationWrapperMap;
 	}
-	
+
+	public Map<String, Object> getValueMap() {
+		return valueMap;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -88,13 +84,12 @@ public class EntityField {
 		builder.append(type);
 		builder.append(", name=");
 		builder.append(name);
-		builder.append(", columnName=");
-		builder.append(columnName);
 		builder.append(", annotationWrapperMap=");
 		builder.append(annotationWrapperMap);
+		builder.append(", valueMap=");
+		builder.append(valueMap);
 		builder.append("]");
 		return builder.toString();
 	}
 
-	
 }

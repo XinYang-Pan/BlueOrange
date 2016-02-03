@@ -8,25 +8,25 @@ import java.util.Set;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.blueo.commons.FormatterWrapper;
-import org.blueo.pojogen.vo.EntityClass;
-import org.blueo.pojogen.vo.EntityField;
-import org.blueo.pojogen.vo.EntityField.AnnotationType;
+import org.blueo.pojogen.vo.PojoClass;
+import org.blueo.pojogen.vo.PojoField;
+import org.blueo.pojogen.vo.PojoField.AnnotationType;
 import org.blueo.pojogen.vo.wrapper.AnnotationWrapper;
 import org.springframework.util.CollectionUtils;
 
 public class JavaFileGenerator {
-	private EntityClass entityClass;
+	private PojoClass pojoClass;
 	private FormatterWrapper formatterWrapper = new FormatterWrapper(new Formatter(System.out));
 	private boolean autoClose;
 
-	public JavaFileGenerator(EntityClass entityClass) {
-		this(entityClass, new FormatterWrapper(new Formatter(System.out)));
+	public JavaFileGenerator(PojoClass pojoClass) {
+		this(pojoClass, new FormatterWrapper(new Formatter(System.out)));
 		autoClose = true;
 	}
 
-	public JavaFileGenerator(EntityClass entityClass, FormatterWrapper formatterWrapper) {
+	public JavaFileGenerator(PojoClass pojoClass, FormatterWrapper formatterWrapper) {
 		super();
-		this.entityClass = entityClass;
+		this.pojoClass = pojoClass;
 		this.formatterWrapper = formatterWrapper;
 	}
 
@@ -48,11 +48,11 @@ public class JavaFileGenerator {
 	}
 	
 	private void generatePackageCode() {
-		formatterWrapper.formatln("package %s;", entityClass.getPackageName());
+		formatterWrapper.formatln("package %s;", pojoClass.getPackageName());
 	}
 	
 	private void generateImportCode() {
-		Set<Class<?>> importClasses = entityClass.getClasses();
+		Set<Class<?>> importClasses = pojoClass.getClasses();
 		for (Class<?> importClass : importClasses) {
 			if (ClassUtils.isPrimitiveOrWrapper(importClass)) {
 				continue;
@@ -69,21 +69,21 @@ public class JavaFileGenerator {
 	
 	private void generateClassDeclarationCode() {
 		// annotation lines
-		List<AnnotationWrapper<?, EntityClass>> annotationWrappers = entityClass.getAnnotationWrappers();
+		List<AnnotationWrapper> annotationWrappers = pojoClass.getAnnotationWrappers();
 		if (annotationWrappers != null) {
-			for (AnnotationWrapper<?, EntityClass> annotationWrapper : annotationWrappers) {
-				formatterWrapper.formatln(annotationWrapper.getDisplayString(entityClass));
+			for (AnnotationWrapper annotationWrapper : annotationWrappers) {
+				formatterWrapper.formatln(annotationWrapper.getDisplayString(pojoClass));
 			}
 		}
 		// class line
 		String extendsString = "";
-		if (entityClass.getSuperClass() != null) {
-			extendsString = String.format(" extends %s", entityClass.getSuperClass().getSimpleName());
+		if (pojoClass.getSuperClass() != null) {
+			extendsString = String.format(" extends %s", pojoClass.getSuperClass().getSimpleName());
 		}
 		StringBuffer implementsSb = new StringBuffer("");
-		if (!CollectionUtils.isEmpty(entityClass.getInterfaces())) {
+		if (!CollectionUtils.isEmpty(pojoClass.getInterfaces())) {
 			implementsSb.append(" implements ");
-			Iterator<Class<?>> iterator = entityClass.getInterfaces().iterator();
+			Iterator<Class<?>> iterator = pojoClass.getInterfaces().iterator();
 			while (iterator.hasNext()) {
 				Class<?> interface_ = (Class<?>) iterator.next();
 				implementsSb.append(interface_.getSimpleName());
@@ -92,20 +92,20 @@ public class JavaFileGenerator {
 				}
 			}
 		}
-		formatterWrapper.formatln("public class %s%s%s {", entityClass.getName(), extendsString, implementsSb);
+		formatterWrapper.formatln("public class %s%s%s {", pojoClass.getName(), extendsString, implementsSb);
 	}
 	
 	private void generateFieldCode() {
-		for (EntityField entityField : entityClass.getEntityFields()) {
-			this.generateFieldCode(entityField);
+		for (PojoField pojoField : pojoClass.getEntityFields()) {
+			this.generateFieldCode(pojoField);
 		}
 	}
 	
 	private void generateGetSetCode() {
-		for (EntityField entityField : entityClass.getEntityFields()) {
-			this.generateFieldGetCode(entityField);
+		for (PojoField pojoField : pojoClass.getEntityFields()) {
+			this.generateFieldGetCode(pojoField);
 			formatterWrapper.formatln();
-			this.generateFieldSetCode(entityField);
+			this.generateFieldSetCode(pojoField);
 			formatterWrapper.formatln();
 		}
 	}
@@ -115,14 +115,14 @@ public class JavaFileGenerator {
 		formatterWrapper.formatln(1, "public String toString() {");
 		formatterWrapper.formatln(2, "StringBuilder builder = new StringBuilder();");
 		boolean first = true;
-		for (EntityField entityField : entityClass.getEntityFields()) {
+		for (PojoField pojoField : pojoClass.getEntityFields()) {
 			if (first) {
 				first = false;
-				formatterWrapper.formatln(2, "builder.append(\"%s [%s=\");", entityClass.getName(), entityField.getName());
-				formatterWrapper.formatln(2, "builder.append(%s);", entityField.getName());
+				formatterWrapper.formatln(2, "builder.append(\"%s [%s=\");", pojoClass.getName(), pojoField.getName());
+				formatterWrapper.formatln(2, "builder.append(%s);", pojoField.getName());
 			} else {
-				formatterWrapper.formatln(2, "builder.append(\", %s=\");", entityField.getName());
-				formatterWrapper.formatln(2, "builder.append(%s);", entityField.getName());
+				formatterWrapper.formatln(2, "builder.append(\", %s=\");", pojoField.getName());
+				formatterWrapper.formatln(2, "builder.append(%s);", pojoField.getName());
 			}
 		}
 		formatterWrapper.formatln(2, "builder.append(\"]\");");
@@ -138,30 +138,30 @@ public class JavaFileGenerator {
 	// ---- field code generate method
 	// --------------------------------------
 	
-	public void generateFieldCode(EntityField entityField) {
-		generateAnnotation(entityField, AnnotationType.Field);
-		formatterWrapper.formatln(1, "private %s %s;", entityField.getType().getSimpleName(), entityField.getName());
+	public void generateFieldCode(PojoField pojoField) {
+		generateAnnotation(pojoField, AnnotationType.Field);
+		formatterWrapper.formatln(1, "private %s %s;", pojoField.getType().getSimpleName(), pojoField.getName());
 	}
 	
-	public void generateFieldGetCode(EntityField entityField) {
-		generateAnnotation(entityField, AnnotationType.Get);
-		formatterWrapper.formatln(1, "public %s get%s() {", entityField.getType().getSimpleName(), StringUtils.capitalize(entityField.getName()));
-		formatterWrapper.formatln(2, "return %s;", entityField.getName());
+	public void generateFieldGetCode(PojoField pojoField) {
+		generateAnnotation(pojoField, AnnotationType.Get);
+		formatterWrapper.formatln(1, "public %s get%s() {", pojoField.getType().getSimpleName(), StringUtils.capitalize(pojoField.getName()));
+		formatterWrapper.formatln(2, "return %s;", pojoField.getName());
 		formatterWrapper.formatln(1, "}");
 	}
 	
-	public void generateFieldSetCode(EntityField entityField) {
-		String name = entityField.getName();
-		generateAnnotation(entityField, AnnotationType.Set);
-		formatterWrapper.formatln(1, "public void set%s(%s %s) {", StringUtils.capitalize(name), entityField.getType().getSimpleName(), name);
+	public void generateFieldSetCode(PojoField pojoField) {
+		String name = pojoField.getName();
+		generateAnnotation(pojoField, AnnotationType.Set);
+		formatterWrapper.formatln(1, "public void set%s(%s %s) {", StringUtils.capitalize(name), pojoField.getType().getSimpleName(), name);
 		formatterWrapper.formatln(2, "this.%s = %s;", name, name);
 		formatterWrapper.formatln(1, "}");
 	}
 
-	private void generateAnnotation(EntityField entityField, AnnotationType annotationType) {
-		List<AnnotationWrapper<?, EntityField>> annotationWrappers = entityField.getAnnotationWrappers(annotationType);
-		for (AnnotationWrapper<?, EntityField> annotationWrapper : annotationWrappers) {
-			formatterWrapper.formatln(1, annotationWrapper.getDisplayString(entityField));
+	private void generateAnnotation(PojoField pojoField, AnnotationType annotationType) {
+		List<AnnotationWrapper> annotationWrappers = pojoField.getAnnotationWrappers(annotationType);
+		for (AnnotationWrapper annotationWrapper : annotationWrappers) {
+			formatterWrapper.formatln(1, annotationWrapper.getDisplayString(pojoField));
 		}
 	}
 	

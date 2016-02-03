@@ -2,23 +2,23 @@ package org.blueo.pojogen.vo.wrapper;
 
 import java.lang.annotation.Annotation;
 
-public class AnnotationWrapper<A extends Annotation, T> {
-	protected Class<A> annotationClass;
+public class AnnotationWrapper {
+	protected Class<? extends Annotation> annotationClass;
 
-	public AnnotationWrapper(Class<A> annotationClass) {
+	public AnnotationWrapper(Class<? extends Annotation> annotationClass) {
 		super();
 		this.annotationClass = annotationClass;
 	}
 	
-	public String getDisplayString(T t) {
+	public String getDisplayString(Object t) {
 		return String.format("@%s", annotationClass.getSimpleName());
 	}
 	
-	public Class<A> getAnnotationClass() {
+	public Class<? extends Annotation> getAnnotationClass() {
 		return annotationClass;
 	}
 
-	public void setAnnotationClass(Class<A> annotationClass) {
+	public void setAnnotationClass(Class<? extends Annotation> annotationClass) {
 		this.annotationClass = annotationClass;
 	}
 

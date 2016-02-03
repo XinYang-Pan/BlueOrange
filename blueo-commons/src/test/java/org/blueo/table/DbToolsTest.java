@@ -11,8 +11,8 @@ import org.blueo.db.load.SqlUtils;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
 import org.blueo.pojogen.JavaFileGenerator;
-import org.blueo.pojogen.vo.EntityClass;
-import org.blueo.pojogen.vo.EntityField;
+import org.blueo.pojogen.vo.PojoClass;
+import org.blueo.pojogen.vo.PojoField;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
@@ -22,8 +22,8 @@ public class DbToolsTest {
 	private static Converter<String, String> CONVERTER = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_CAMEL);
 	private static String PACKAGE_NAME = "org.blueo.table.po";
 
-	public static List<EntityClass> buildEntityClasses(List<DbTable> dbTables) {
-		List<EntityClass> entityClasses = Lists.newArrayList();
+	public static List<PojoClass> buildEntityClasses(List<DbTable> dbTables) {
+		List<PojoClass> entityClasses = Lists.newArrayList();
 		if (dbTables == null) {
 			return entityClasses;
 		}
@@ -32,33 +32,33 @@ public class DbToolsTest {
 		}
 		return entityClasses;
 	}
-	public static EntityClass buildEntityClass(DbTable dbTable) {
+	public static PojoClass buildEntityClass(DbTable dbTable) {
 		if (dbTable == null) {
 			return null;
 		}
-		List<EntityField> entityFields = Lists.newArrayList();
+		List<PojoField> pojoFields = Lists.newArrayList();
 		for (DbColumn dbColumn : dbTable.getDbColumns()) {
-			entityFields.add(buildEntityField(dbColumn));
+			pojoFields.add(buildEntityField(dbColumn));
 		}
 		// 
-		EntityClass entityClass = new EntityClass();
-		entityClass.setId(buildEntityField(dbTable.getPk()));
-		entityClass.setPackageName(PACKAGE_NAME);
-		entityClass.setEntityFields(entityFields);
-		entityClass.setTableName(dbTable.getName());
-		entityClass.setName(CONVERTER.convert(dbTable.getName()));
-		return entityClass;
+		PojoClass pojoClass = new PojoClass();
+		pojoClass.setId(buildEntityField(dbTable.getPk()));
+		pojoClass.setPackageName(PACKAGE_NAME);
+		pojoClass.setEntityFields(pojoFields);
+		pojoClass.getValueMap().put("tableName", dbTable.getName());
+		pojoClass.setName(CONVERTER.convert(dbTable.getName()));
+		return pojoClass;
 	}
 	
-	public static EntityField buildEntityField(DbColumn dbColumn) {
+	public static PojoField buildEntityField(DbColumn dbColumn) {
 		if (dbColumn == null) {
 			return null;
 		}
-		EntityField entityField = new EntityField();
-		entityField.setName(CONVERTER.convert(dbColumn.getName()));
-		entityField.setColumnName(dbColumn.getName());
-		entityField.setType(SqlUtils.getJavaType(dbColumn.getType()));
-		return entityField;
+		PojoField pojoField = new PojoField();
+		pojoField.setName(CONVERTER.convert(dbColumn.getName()));
+		pojoField.setType(SqlUtils.getJavaType(dbColumn.getType()));
+		pojoField.getValueMap().put("columnName", dbColumn.getName());
+		return pojoField;
 	}
 
 	public static void main(String[] args) throws BiffException, IOException {
