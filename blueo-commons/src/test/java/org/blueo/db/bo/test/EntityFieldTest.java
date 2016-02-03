@@ -1,6 +1,6 @@
 package org.blueo.db.bo.test;
 
-import org.blueo.db.bo.EntityField;
+import org.blueo.pojogen.EntityField;
 import org.junit.Test;
 
 public class EntityFieldTest {

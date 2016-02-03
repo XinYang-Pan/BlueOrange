@@ -6,12 +6,13 @@ import java.util.List;
 import jxl.read.biff.BiffException;
 
 import org.blueo.commons.tostring.ToStringUtils;
-import org.blueo.db.bo.EntityClass;
-import org.blueo.db.bo.EntityField;
 import org.blueo.db.load.Loader;
 import org.blueo.db.load.SqlUtils;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
+import org.blueo.pojogen.EntityClass;
+import org.blueo.pojogen.EntityField;
+import org.blueo.pojogen.JavaFileGenerator;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
@@ -64,8 +65,8 @@ public class DbToolsTest {
 		List<DbTable> dbTables = Loader.loadFromExcel("src/test/java/org/blueo/table/test.xls");
 		System.out.println(ToStringUtils.wellFormat(dbTables));
 		for (DbTable dbTable : dbTables) {
-			System.out.println(buildEntityClass(dbTable).generateClassCode());
-//			System.out.println(SqlUtils.generateCreateSql(dbTable));
+			JavaFileGenerator javaFileGenerator = new JavaFileGenerator(buildEntityClass(dbTable));
+			System.out.println(javaFileGenerator.generateClassCode());
 		}
 	}
 	

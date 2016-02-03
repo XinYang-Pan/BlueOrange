@@ -1,22 +1,22 @@
-package org.blueo.db.bo;
+package org.blueo.pojogen;
 
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.ClassUtils;
-import org.blueo.commons.FormatterNb;
+import org.blueo.commons.FormatterWrapper;
 
 import com.google.common.collect.Sets;
 
-public class EntityClass {
-	private String packageName;
-	private String name;
-	private String tableName;
-	private EntityField id;
-	private List<EntityField> entityFields;
+public class JavaFileGenerator {
+	private EntityClass entityClass;
 	
+	public JavaFileGenerator(EntityClass entityClass) {
+		super();
+		this.entityClass = entityClass;
+	}
+
 	public String generateClassCode() {
-		FormatterNb formatterNb = new FormatterNb();
+		FormatterWrapper formatterNb = new FormatterWrapper();
 		formatterNb.formatln(this.generatePackageCode());
 		formatterNb.formatln();
 		formatterNb.formatln(this.generateImportCode());
@@ -30,15 +30,15 @@ public class EntityClass {
 	}
 	
 	private String generatePackageCode() {
-		return String.format("package %s;", packageName);
+		return String.format("package %s;", entityClass.getPackageName());
 	}
 	
 	private String generateImportCode() {
 		Set<Class<?>> importClasses = Sets.newHashSet();
-		for (EntityField entityField : entityFields) {
+		for (EntityField entityField : entityClass.getEntityFields()) {
 			importClasses.addAll(entityField.getClasses());
 		}
-		FormatterNb formatterNb = new FormatterNb();
+		FormatterWrapper formatterNb = new FormatterWrapper();
 		for (Class<?> importClass : importClasses) {
 			if (ClassUtils.isPrimitiveOrWrapper(importClass)) {
 				continue;
@@ -55,20 +55,20 @@ public class EntityClass {
 	}
 	
 	private String generateClassDeclareCode() {
-		return String.format("public class %s {", name);
+		return String.format("public class %s {", entityClass.getName());
 	}
 	
 	private String generateFieldCode() {
-		FormatterNb formatterNb = new FormatterNb();
-		for (EntityField entityField : entityFields) {
+		FormatterWrapper formatterNb = new FormatterWrapper();
+		for (EntityField entityField : entityClass.getEntityFields()) {
 			formatterNb.formatln(entityField.generateFieldCode());
 		}
 		return formatterNb.toString();
 	}
 	
 	private String generateGetSetCode() {
-		FormatterNb formatterNb = new FormatterNb();
-		for (EntityField entityField : entityFields) {
+		FormatterWrapper formatterNb = new FormatterWrapper();
+		for (EntityField entityField : entityClass.getEntityFields()) {
 			formatterNb.formatln(entityField.generateGetCode());
 			formatterNb.formatln();
 			formatterNb.formatln(entityField.generateSetCode());
@@ -78,15 +78,15 @@ public class EntityClass {
 	}
 
 	private String generateToStringCode() {
-		FormatterNb formatterNb = new FormatterNb();
+		FormatterWrapper formatterNb = new FormatterWrapper();
 		formatterNb.formatln(1, "@Override");
 		formatterNb.formatln(1, "public String toString() {");
 		formatterNb.formatln(2, "StringBuilder builder = new StringBuilder();");
 		boolean first = true;
-		for (EntityField entityField : entityFields) {
+		for (EntityField entityField : entityClass.getEntityFields()) {
 			if (first) {
 				first = false;
-				formatterNb.formatln(2, "builder.append(\"%s [%s=\");", name, entityField.getName());
+				formatterNb.formatln(2, "builder.append(\"%s [%s=\");", entityClass.getName(), entityField.getName());
 				formatterNb.formatln(2, "builder.append(%s);", entityField.getName());
 			} else {
 				formatterNb.formatln(2, "builder.append(\", %s=\");", entityField.getName());
@@ -102,63 +102,4 @@ public class EntityClass {
 	private String generateEndCode() {
 		return String.format("}%s", System.lineSeparator());
 	}
-	
-	// -------------------------------------------------------
-	public String getPackageName() {
-		return packageName;
-	}
-
-	public void setPackageName(String packageName) {
-		this.packageName = packageName;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getTableName() {
-		return tableName;
-	}
-
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
-
-	public EntityField getId() {
-		return id;
-	}
-
-	public void setId(EntityField id) {
-		this.id = id;
-	}
-
-	public List<EntityField> getEntityFields() {
-		return entityFields;
-	}
-
-	public void setEntityFields(List<EntityField> entityFields) {
-		this.entityFields = entityFields;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("EntityClass [packageName=");
-		builder.append(packageName);
-		builder.append(", name=");
-		builder.append(name);
-		builder.append(", tableName=");
-		builder.append(tableName);
-		builder.append(", id=");
-		builder.append(id);
-		builder.append(", entityFields=");
-		builder.append(entityFields);
-		builder.append("]");
-		return builder.toString();
-	}
-
 }

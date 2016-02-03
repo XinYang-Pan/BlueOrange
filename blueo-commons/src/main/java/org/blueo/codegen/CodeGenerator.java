@@ -1,9 +1,11 @@
 package org.blueo.codegen;
 
 import java.lang.reflect.Method;
+import java.util.Formatter;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.blueo.commons.BlueoUtils;
+import org.blueo.commons.FormatterWrapper;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -11,7 +13,7 @@ import com.google.common.base.Defaults;
 import com.google.common.base.Objects;
 
 public abstract class CodeGenerator {
-	
+
 	public static void generateSetting(Class<?> clazz) {
 		generateSetting(clazz, (String)null);
 	}
@@ -19,20 +21,21 @@ public abstract class CodeGenerator {
 	public static void generateSetting(Class<?> clazz, String paramName) {
 		paramName = ObjectUtils.firstNonNull(paramName, StringUtils.uncapitalize(clazz.getSimpleName()));
 		String clazzName = clazz.getSimpleName();
-		System.out.println(String.format("public %s build%s() {", clazzName, clazzName));
-		System.out.println(String.format("\t%s %s = new %s();", clazzName, paramName, clazzName));
+		FormatterWrapper formatterWrapper = new FormatterWrapper(new Formatter(System.out));
+		formatterWrapper.formatln(0, "public %s build%s() {", clazzName, clazzName);
+		formatterWrapper.formatln(1, "%s %s = new %s();", clazzName, paramName, clazzName);
 		// 
 		Method[] methods = clazz.getMethods();
 		for (Method method : methods) {
 			String methodName = method.getName();
 			Class<?>[] parameters = method.getParameterTypes();
 			if (BlueoUtils.isSetMethod(method)) {
-				System.out.println(String.format("\t%s.%s(%s);", paramName, methodName, Defaults.defaultValue(parameters[0])));
+				formatterWrapper.formatln(1, "%s.%s(%s);", paramName, methodName, Defaults.defaultValue(parameters[0]));
 			}
 		}
-		System.out.println(String.format("\treturn %s;", paramName));
+		formatterWrapper.formatln(1, "return %s;", paramName);
 		// 
-		System.out.println(String.format("}"));
+		formatterWrapper.formatln("}");
 	}
 
 	public static void generateSetting(Class<?> set, Class<?> get) {
@@ -49,13 +52,12 @@ public abstract class CodeGenerator {
 		String setClazzName = set.getSimpleName();
 		String getClazzName = get.getSimpleName();
 		// 
-		System.out.println(String.format("public %s build%s(%s %s) {", setClazzName, setClazzName, getClazzName, getParamName));
-		
-		System.out.println(String.format("\tif (%s == null) {", getParamName));
-		System.out.println(String.format("\t\treturn null;"));
-		System.out.println(String.format("\t}"));
-		
-		System.out.println(String.format("\t%s %s = new %s();", setClazzName, setParamName, setClazzName));
+		FormatterWrapper formatterWrapper = new FormatterWrapper(new Formatter(System.out));
+		formatterWrapper.formatln(0, "public %s build%s(%s %s) {", setClazzName, setClazzName, getClazzName, getParamName);
+		formatterWrapper.formatln(1, "if (%s == null) {", getParamName);
+		formatterWrapper.formatln(2, "return null;");
+		formatterWrapper.formatln(1, "}");
+		formatterWrapper.formatln(1, "%s %s = new %s();", setClazzName, setParamName, setClazzName);
 		for (Method method : methods) {
 			Class<?>[] parameters = method.getParameterTypes();
 			if (BlueoUtils.isSetMethod(method)) {
@@ -66,12 +68,12 @@ public abstract class CodeGenerator {
 				} else {
 					value = String.format("%s.%s()", getParamName, getOrIsMethod.getName());
 				}
-				System.out.println(String.format("\t%s.%s(%s);", setParamName, method.getName(), value));
+				formatterWrapper.formatln(1, "%s.%s(%s);", setParamName, method.getName(), value);
 			}
 		}
-		System.out.println(String.format("\treturn %s;", setParamName));
+		formatterWrapper.formatln(1, "return %s;", setParamName);
 		// 
-		System.out.println(String.format("}"));
+		formatterWrapper.formatln("}");
 	}
 	
 	private static Method setToGet(Method setMethod, Class<?> getClass) {
@@ -88,4 +90,5 @@ public abstract class CodeGenerator {
 		}
 		return null;
 	}
+	
 }

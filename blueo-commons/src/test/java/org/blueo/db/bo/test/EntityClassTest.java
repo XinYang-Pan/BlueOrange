@@ -1,7 +1,8 @@
 package org.blueo.db.bo.test;
 
-import org.blueo.db.bo.EntityClass;
-import org.blueo.db.bo.EntityField;
+import org.blueo.pojogen.EntityClass;
+import org.blueo.pojogen.EntityField;
+import org.blueo.pojogen.JavaFileGenerator;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -27,7 +28,8 @@ public class EntityClassTest {
 		entityClass.setTableName(null);
 		entityClass.setName("Person");
 		
-		System.out.println(entityClass.generateClassCode());
+		JavaFileGenerator javaFileGenerator = new JavaFileGenerator(entityClass);
+		System.out.println(javaFileGenerator.generateClassCode());
 
 	}
 	

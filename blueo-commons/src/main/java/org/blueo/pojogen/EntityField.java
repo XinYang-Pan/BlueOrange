@@ -1,11 +1,11 @@
-package org.blueo.db.bo;
+package org.blueo.pojogen;
 
 import java.util.List;
 
 import javax.persistence.Column;
 
 import org.apache.commons.lang3.StringUtils;
-import org.blueo.commons.FormatterNb;
+import org.blueo.commons.FormatterWrapper;
 
 import com.google.common.collect.Lists;
 
@@ -20,7 +20,7 @@ public class EntityField {
 	}
 	
 	public String generateGetCode() {
-		FormatterNb formatterNb = new FormatterNb(PREFIX);
+		FormatterWrapper formatterNb = new FormatterWrapper(PREFIX);
 		formatterNb.formatln(1, "@Column(name = \"%s\")", columnName);
 		formatterNb.formatln(1, "public %s get%s() {", type.getSimpleName(), StringUtils.capitalize(name));
 		formatterNb.formatln(2, "return %s;", name);
@@ -29,7 +29,7 @@ public class EntityField {
 	}
 	
 	public String generateSetCode() {
-		FormatterNb formatterNb = new FormatterNb(PREFIX);
+		FormatterWrapper formatterNb = new FormatterWrapper(PREFIX);
 		formatterNb.formatln(1, "public void set%s(%s %s) {", StringUtils.capitalize(name), type.getSimpleName(), name);
 		formatterNb.formatln(2, "this.%s = %s;", name, name);
 		formatterNb.format(1, "}");
