@@ -1,10 +1,12 @@
 package org.blueo.commons;
 
+import java.io.Closeable;
+import java.io.Flushable;
 import java.util.Formatter;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class FormatterWrapper {
+public class FormatterWrapper  implements Closeable, Flushable {
 	private static final String DEFAULT_PREFIX = "\t";
 	private final Formatter formatter;
 	private final String prefix;
@@ -39,7 +41,8 @@ public class FormatterWrapper {
     public FormatterWrapper format(String format, Object ... args) {
     	return this.format(0, format, args);
     }
-
+    
+    // -------------------------------------
     public FormatterWrapper format(int prefixRepeat, String format, Object ... args) {
     	prefixRepeat = prefixRepeat + defaultPrefixRepeat;
     	if (prefixRepeat > 0) {
@@ -69,6 +72,16 @@ public class FormatterWrapper {
     	return this;
     }
 	
+    @Override
+    public void close() {
+    	formatter.close();
+    }
+    
+    @Override
+    public void flush() {
+    	formatter.flush();
+    }
+    
     @Override
     public String toString() {
     	return formatter.toString();

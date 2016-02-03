@@ -36,6 +36,7 @@ public abstract class CodeGenerator {
 		formatterWrapper.formatln(1, "return %s;", paramName);
 		// 
 		formatterWrapper.formatln("}");
+		formatterWrapper.close();
 	}
 
 	public static void generateSetting(Class<?> set, Class<?> get) {
@@ -74,6 +75,7 @@ public abstract class CodeGenerator {
 		formatterWrapper.formatln(1, "return %s;", setParamName);
 		// 
 		formatterWrapper.formatln("}");
+		formatterWrapper.close();
 	}
 	
 	private static Method setToGet(Method setMethod, Class<?> getClass) {

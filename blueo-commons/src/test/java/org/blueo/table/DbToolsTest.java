@@ -10,9 +10,9 @@ import org.blueo.db.load.Loader;
 import org.blueo.db.load.SqlUtils;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
-import org.blueo.pojogen.EntityClass;
-import org.blueo.pojogen.EntityField;
 import org.blueo.pojogen.JavaFileGenerator;
+import org.blueo.pojogen.vo.EntityClass;
+import org.blueo.pojogen.vo.EntityField;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
@@ -66,7 +66,7 @@ public class DbToolsTest {
 		System.out.println(ToStringUtils.wellFormat(dbTables));
 		for (DbTable dbTable : dbTables) {
 			JavaFileGenerator javaFileGenerator = new JavaFileGenerator(buildEntityClass(dbTable));
-			System.out.println(javaFileGenerator.generateClassCode());
+			javaFileGenerator.generateClassCode();
 		}
 	}
 	

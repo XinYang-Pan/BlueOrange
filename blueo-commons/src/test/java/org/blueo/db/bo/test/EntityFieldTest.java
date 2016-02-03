@@ -1,6 +1,6 @@
 package org.blueo.db.bo.test;
 
-import org.blueo.pojogen.EntityField;
+import org.blueo.pojogen.vo.EntityField;
 import org.junit.Test;
 
 public class EntityFieldTest {
@@ -12,9 +12,9 @@ public class EntityFieldTest {
 		entityField.setColumnName("ID");
 		entityField.setType(Long.class);
 
-		System.out.println(entityField.generateFieldCode());
-		System.out.println(entityField.generateGetCode());
-		System.out.println(entityField.generateSetCode());
+//		System.out.println(entityField.generateFieldCode());
+//		System.out.println(entityField.generateGetCode());
+//		System.out.println(entityField.generateSetCode());
 	}
 	
 }
