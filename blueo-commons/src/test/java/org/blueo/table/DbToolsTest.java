@@ -13,13 +13,16 @@ import org.blueo.db.vo.DbTable;
 import org.blueo.pojogen.JavaFileGenerator;
 import org.blueo.pojogen.vo.PojoClass;
 import org.blueo.pojogen.vo.PojoField;
+import org.blueo.pojogen.vo.PojoField.AnnotationType;
+import org.blueo.pojogen.vo.wrapper.AnnotationWrapperUtils;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
 import com.google.common.collect.Lists;
 
 public class DbToolsTest {
-	private static Converter<String, String> CONVERTER = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_CAMEL);
+	private static Converter<String, String> COLUMN_NAME_TO_FIELD_NAME = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_CAMEL);
+	private static Converter<String, String> TABLE_NAME_TO_CLASS_NAME = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL);
 	private static String PACKAGE_NAME = "org.blueo.table.po";
 
 	public static List<PojoClass> buildEntityClasses(List<DbTable> dbTables) {
@@ -46,7 +49,8 @@ public class DbToolsTest {
 		pojoClass.setPackageName(PACKAGE_NAME);
 		pojoClass.setEntityFields(pojoFields);
 		pojoClass.getValueMap().put("tableName", dbTable.getName());
-		pojoClass.setName(CONVERTER.convert(dbTable.getName()));
+		pojoClass.setName(TABLE_NAME_TO_CLASS_NAME.convert(dbTable.getName()));
+		pojoClass.addAnnotationWrapper(AnnotationWrapperUtils.TABLE_WRAPPER);
 		return pojoClass;
 	}
 	
@@ -55,9 +59,10 @@ public class DbToolsTest {
 			return null;
 		}
 		PojoField pojoField = new PojoField();
-		pojoField.setName(CONVERTER.convert(dbColumn.getName()));
+		pojoField.setName(COLUMN_NAME_TO_FIELD_NAME.convert(dbColumn.getName()));
 		pojoField.setType(SqlUtils.getJavaType(dbColumn.getType()));
 		pojoField.getValueMap().put("columnName", dbColumn.getName());
+		pojoField.addAnnotation(AnnotationType.Get, AnnotationWrapperUtils.COLUMN_WRAPPER);
 		return pojoField;
 	}
 

@@ -46,11 +46,11 @@ public class JavaFileGenerator {
 			formatterWrapper.close();
 		}
 	}
-	
+
 	private void generatePackageCode() {
 		formatterWrapper.formatln("package %s;", pojoClass.getPackageName());
 	}
-	
+
 	private void generateImportCode() {
 		Set<Class<?>> importClasses = pojoClass.getClasses();
 		for (Class<?> importClass : importClasses) {
@@ -66,12 +66,12 @@ public class JavaFileGenerator {
 			formatterWrapper.formatln("import %s;", importClass.getName());
 		}
 	}
-	
+
 	private void generateClassDeclarationCode() {
 		// annotation lines
-		List<AnnotationWrapper> annotationWrappers = pojoClass.getAnnotationWrappers();
+		List<AnnotationWrapper<PojoClass>> annotationWrappers = pojoClass.getAnnotationWrappers();
 		if (annotationWrappers != null) {
-			for (AnnotationWrapper annotationWrapper : annotationWrappers) {
+			for (AnnotationWrapper<PojoClass> annotationWrapper : annotationWrappers) {
 				formatterWrapper.formatln(annotationWrapper.getDisplayString(pojoClass));
 			}
 		}
@@ -94,13 +94,13 @@ public class JavaFileGenerator {
 		}
 		formatterWrapper.formatln("public class %s%s%s {", pojoClass.getName(), extendsString, implementsSb);
 	}
-	
+
 	private void generateFieldCode() {
 		for (PojoField pojoField : pojoClass.getEntityFields()) {
 			this.generateFieldCode(pojoField);
 		}
 	}
-	
+
 	private void generateGetSetCode() {
 		for (PojoField pojoField : pojoClass.getEntityFields()) {
 			this.generateFieldGetCode(pojoField);
@@ -129,27 +129,27 @@ public class JavaFileGenerator {
 		formatterWrapper.formatln(2, "return builder.toString();");
 		formatterWrapper.formatln(1, "}");
 	}
-	
+
 	private void generateEndCode() {
 		formatterWrapper.formatln("}");
 	}
-	
+
 	// --------------------------------------
 	// ---- field code generate method
 	// --------------------------------------
-	
+
 	public void generateFieldCode(PojoField pojoField) {
 		generateAnnotation(pojoField, AnnotationType.Field);
 		formatterWrapper.formatln(1, "private %s %s;", pojoField.getType().getSimpleName(), pojoField.getName());
 	}
-	
+
 	public void generateFieldGetCode(PojoField pojoField) {
 		generateAnnotation(pojoField, AnnotationType.Get);
 		formatterWrapper.formatln(1, "public %s get%s() {", pojoField.getType().getSimpleName(), StringUtils.capitalize(pojoField.getName()));
 		formatterWrapper.formatln(2, "return %s;", pojoField.getName());
 		formatterWrapper.formatln(1, "}");
 	}
-	
+
 	public void generateFieldSetCode(PojoField pojoField) {
 		String name = pojoField.getName();
 		generateAnnotation(pojoField, AnnotationType.Set);
@@ -159,10 +159,10 @@ public class JavaFileGenerator {
 	}
 
 	private void generateAnnotation(PojoField pojoField, AnnotationType annotationType) {
-		List<AnnotationWrapper> annotationWrappers = pojoField.getAnnotationWrappers(annotationType);
-		for (AnnotationWrapper annotationWrapper : annotationWrappers) {
+		List<AnnotationWrapper<PojoField>> annotationWrappers = pojoField.getAnnotationWrappers(annotationType);
+		for (AnnotationWrapper<PojoField> annotationWrapper : annotationWrappers) {
 			formatterWrapper.formatln(1, annotationWrapper.getDisplayString(pojoField));
 		}
 	}
-	
+
 }

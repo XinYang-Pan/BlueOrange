@@ -7,20 +7,20 @@ import java.util.Set;
 
 import org.blueo.pojogen.vo.wrapper.AnnotationWrapper;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 
 public class PojoClass {
 	private String packageName;
 	private Class<?> superClass;
 	private LinkedHashSet<Class<?>> interfaces;
-	private List<AnnotationWrapper> annotationWrappers;
+	private List<AnnotationWrapper<PojoClass>> annotationWrappers;
 	private String name;
 	private PojoField id;
 	private List<PojoField> pojoFields;
 	private final Map<String, Object> valueMap = Maps.newHashMap();
-	
+
 	public Set<Class<?>> getClasses() {
 		Set<Class<?>> classes = Sets.newHashSet();
 		if (interfaces != null) {
@@ -29,7 +29,7 @@ public class PojoClass {
 			}
 		}
 		if (annotationWrappers != null) {
-			for (AnnotationWrapper wrapper : annotationWrappers) {
+			for (AnnotationWrapper<PojoClass> wrapper : annotationWrappers) {
 				classes.add(wrapper.getAnnotationClass());
 			}
 		}
@@ -46,7 +46,43 @@ public class PojoClass {
 		}
 		return classes;
 	}
-	
+
+	public void addInterfaces(Class<?>... interfaces) {
+		if (interfaces == null) {
+			return;
+		}
+		if (this.interfaces == null) {
+			this.interfaces = Sets.newLinkedHashSet();
+		}
+		for (Class<?> class1 : interfaces) {
+			this.interfaces.add(class1);
+		}
+	}
+
+	public PojoClass addAnnotationWrapper(AnnotationWrapper<PojoClass> annotationWrapper) {
+		if (annotationWrapper == null) {
+			return this;
+		}
+		if (this.annotationWrappers == null) {
+			this.annotationWrappers = Lists.newArrayList();
+		}
+		this.annotationWrappers.add(annotationWrapper);
+		return this;
+	}
+
+	public void addAnnotationWrappers(AnnotationWrapper<PojoClass>[] annotationWrappers) {
+		if (annotationWrappers == null) {
+			return;
+		}
+		for (AnnotationWrapper<PojoClass> wrapper : annotationWrappers) {
+			this.addAnnotationWrapper(wrapper);
+		}
+	}
+
+	// --------------------------------------
+	// ---- Getter Setter ToString
+	// --------------------------------------
+
 	public String getPackageName() {
 		return packageName;
 	}
@@ -71,11 +107,11 @@ public class PojoClass {
 		this.interfaces = interfaces;
 	}
 
-	public List<AnnotationWrapper> getAnnotationWrappers() {
+	public List<AnnotationWrapper<PojoClass>> getAnnotationWrappers() {
 		return annotationWrappers;
 	}
 
-	public void setAnnotationWrappers(List<AnnotationWrapper> annotationWrappers) {
+	public void setAnnotationWrappers(List<AnnotationWrapper<PojoClass>> annotationWrappers) {
 		this.annotationWrappers = annotationWrappers;
 	}
 

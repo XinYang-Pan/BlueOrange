@@ -12,39 +12,42 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class PojoField {
-	public enum AnnotationType {Field, Get, Set}
+	public enum AnnotationType {
+		Field, Get, Set
+	}
+
 	private Class<?> type;
 	private String name;
-	private Map<AnnotationType, List<AnnotationWrapper>> annotationWrapperMap;
+	private Map<AnnotationType, List<AnnotationWrapper<PojoField>>> annotationWrapperMap;
 	private final Map<String, Object> valueMap = Maps.newHashMap();
-	
-	public void addAnnotation(AnnotationType annotationType, AnnotationWrapper annotationWrapper) {
+
+	public void addAnnotation(AnnotationType annotationType, AnnotationWrapper<PojoField> annotationWrapper) {
 		if (annotationWrapperMap == null) {
 			annotationWrapperMap = Maps.newHashMap();
 		}
-		List<AnnotationWrapper> list = annotationWrapperMap.get(annotationType);
+		List<AnnotationWrapper<PojoField>> list = annotationWrapperMap.get(annotationType);
 		if (list == null) {
 			annotationWrapperMap.put(annotationType, list = Lists.newArrayList());
 		}
 		list.add(annotationWrapper);
 	}
-	
-	public List<AnnotationWrapper> getAnnotationWrappers(AnnotationType annotationType) {
+
+	public List<AnnotationWrapper<PojoField>> getAnnotationWrappers(AnnotationType annotationType) {
 		if (annotationWrapperMap == null) {
 			return Collections.emptyList();
 		}
-		List<AnnotationWrapper> list = annotationWrapperMap.get(annotationType);
+		List<AnnotationWrapper<PojoField>> list = annotationWrapperMap.get(annotationType);
 		if (list == null) {
 			return Collections.emptyList();
 		}
 		return list;
 	}
-	
+
 	public Set<Class<?>> getClasses() {
 		Set<Class<?>> classes = Sets.newHashSet();
 		if (annotationWrapperMap != null) {
-			for (List<AnnotationWrapper> wrappers : annotationWrapperMap.values()) {
-				for (AnnotationWrapper wrapper : wrappers) {
+			for (List<AnnotationWrapper<PojoField>> wrappers : annotationWrapperMap.values()) {
+				for (AnnotationWrapper<PojoField> wrapper : wrappers) {
 					classes.add(wrapper.getAnnotationClass());
 				}
 			}
@@ -52,7 +55,7 @@ public class PojoField {
 		classes.add(this.getType());
 		return classes;
 	}
-	
+
 	public Class<?> getType() {
 		return type;
 	}
@@ -69,7 +72,7 @@ public class PojoField {
 		this.name = name;
 	}
 
-	public Map<AnnotationType, List<AnnotationWrapper>> getAnnotationWrapperMap() {
+	public Map<AnnotationType, List<AnnotationWrapper<PojoField>>> getAnnotationWrapperMap() {
 		return annotationWrapperMap;
 	}
 
