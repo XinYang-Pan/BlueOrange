@@ -1,17 +1,17 @@
-package org.blueo.pojogen.vo;
+package org.blueo.pojogen.bo;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.blueo.pojogen.vo.wrapper.AnnotationWrapper;
+import org.blueo.pojogen.bo.wrapper.AnnotationWrapper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class PojoField {
+public class PojoField extends ValueMapObject {
 	public enum AnnotationType {
 		Field, Get, Set
 	}
@@ -19,7 +19,6 @@ public class PojoField {
 	private Class<?> type;
 	private String name;
 	private Map<AnnotationType, List<AnnotationWrapper<PojoField>>> annotationWrapperMap;
-	private final Map<String, Object> valueMap = Maps.newHashMap();
 
 	public void addAnnotation(AnnotationType annotationType, AnnotationWrapper<PojoField> annotationWrapper) {
 		if (annotationWrapperMap == null) {
@@ -56,6 +55,10 @@ public class PojoField {
 		return classes;
 	}
 
+	// --------------------------------------
+	// ---- Getter Setter toString
+	// --------------------------------------
+
 	public Class<?> getType() {
 		return type;
 	}
@@ -74,10 +77,6 @@ public class PojoField {
 
 	public Map<AnnotationType, List<AnnotationWrapper<PojoField>>> getAnnotationWrapperMap() {
 		return annotationWrapperMap;
-	}
-
-	public Map<String, Object> getValueMap() {
-		return valueMap;
 	}
 
 	@Override

@@ -1,17 +1,15 @@
-package org.blueo.pojogen.vo;
+package org.blueo.pojogen.bo;
 
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.blueo.pojogen.vo.wrapper.AnnotationWrapper;
+import org.blueo.pojogen.bo.wrapper.AnnotationWrapper;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class PojoClass {
+public class PojoClass extends ValueMapObject {
 	private String packageName;
 	private Class<?> superClass;
 	private LinkedHashSet<Class<?>> interfaces;
@@ -19,8 +17,7 @@ public class PojoClass {
 	private String name;
 	private PojoField id;
 	private List<PojoField> pojoFields;
-	private final Map<String, Object> valueMap = Maps.newHashMap();
-
+	
 	public Set<Class<?>> getClasses() {
 		Set<Class<?>> classes = Sets.newHashSet();
 		if (interfaces != null) {
@@ -80,7 +77,7 @@ public class PojoClass {
 	}
 
 	// --------------------------------------
-	// ---- Getter Setter ToString
+	// ---- Getter Setter toString
 	// --------------------------------------
 
 	public String getPackageName() {
@@ -137,10 +134,6 @@ public class PojoClass {
 
 	public void setEntityFields(List<PojoField> pojoFields) {
 		this.pojoFields = pojoFields;
-	}
-
-	public Map<String, Object> getValueMap() {
-		return valueMap;
 	}
 
 	@Override

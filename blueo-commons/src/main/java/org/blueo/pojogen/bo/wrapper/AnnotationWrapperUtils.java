@@ -1,9 +1,9 @@
-package org.blueo.pojogen.vo.wrapper;
+package org.blueo.pojogen.bo.wrapper;
 
 import java.lang.annotation.Annotation;
 
-import org.blueo.pojogen.vo.wrapper.buildin.ColumnWrapper;
-import org.blueo.pojogen.vo.wrapper.buildin.TableWrapper;
+import org.blueo.pojogen.bo.wrapper.buildin.ColumnWrapper;
+import org.blueo.pojogen.bo.wrapper.buildin.TableWrapper;
 
 public abstract class AnnotationWrapperUtils {
 

@@ -1,9 +1,9 @@
-package org.blueo.pojogen.vo.wrapper.buildin;
+package org.blueo.pojogen.bo.wrapper.buildin;
 
 import javax.persistence.Table;
 
-import org.blueo.pojogen.vo.PojoClass;
-import org.blueo.pojogen.vo.wrapper.ClassAnnotationWrapper;
+import org.blueo.pojogen.bo.PojoClass;
+import org.blueo.pojogen.bo.wrapper.ClassAnnotationWrapper;
 import org.springframework.util.Assert;
 
 public class TableWrapper extends ClassAnnotationWrapper {

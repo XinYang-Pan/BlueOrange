@@ -1,9 +1,9 @@
-package org.blueo.pojogen.vo.wrapper.buildin;
+package org.blueo.pojogen.bo.wrapper.buildin;
 
 import javax.persistence.Column;
 
-import org.blueo.pojogen.vo.PojoField;
-import org.blueo.pojogen.vo.wrapper.FieldAnnotationWrapper;
+import org.blueo.pojogen.bo.PojoField;
+import org.blueo.pojogen.bo.wrapper.FieldAnnotationWrapper;
 import org.springframework.util.Assert;
 
 public class ColumnWrapper extends FieldAnnotationWrapper {

@@ -3,10 +3,10 @@ package org.blueo.pojogen.test;
 import java.io.Serializable;
 
 import org.blueo.pojogen.JavaFileGenerator;
-import org.blueo.pojogen.vo.PojoClass;
-import org.blueo.pojogen.vo.PojoField;
-import org.blueo.pojogen.vo.PojoField.AnnotationType;
-import org.blueo.pojogen.vo.wrapper.AnnotationWrapperUtils;
+import org.blueo.pojogen.bo.PojoClass;
+import org.blueo.pojogen.bo.PojoField;
+import org.blueo.pojogen.bo.PojoField.AnnotationType;
+import org.blueo.pojogen.bo.wrapper.AnnotationWrapperUtils;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -14,7 +14,7 @@ import com.google.common.collect.Lists;
 public class JavaFileGeneratorTest {
 	
 	@Test
-	public void test() {
+	public void test() throws Exception {
 		PojoField pojoField1 = new PojoField();
 		pojoField1.setName("name");
 		pojoField1.getValueMap().put("columnName", "NAME");
@@ -38,7 +38,7 @@ public class JavaFileGeneratorTest {
 		pojoClass.addInterfaces(Serializable.class, Cloneable.class, Serializable.class);
 		
 		// test
-		JavaFileGenerator javaFileGenerator = new JavaFileGenerator(pojoClass);
+		JavaFileGenerator javaFileGenerator = new JavaFileGenerator(pojoClass, "./tmp");
 		javaFileGenerator.generateClassCode();
 	}
 	

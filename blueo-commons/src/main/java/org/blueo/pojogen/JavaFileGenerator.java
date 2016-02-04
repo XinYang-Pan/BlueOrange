@@ -1,5 +1,7 @@
 package org.blueo.pojogen;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Formatter;
 import java.util.Iterator;
 import java.util.List;
@@ -8,11 +10,13 @@ import java.util.Set;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.blueo.commons.FormatterWrapper;
-import org.blueo.pojogen.vo.PojoClass;
-import org.blueo.pojogen.vo.PojoField;
-import org.blueo.pojogen.vo.PojoField.AnnotationType;
-import org.blueo.pojogen.vo.wrapper.AnnotationWrapper;
+import org.blueo.pojogen.bo.PojoClass;
+import org.blueo.pojogen.bo.PojoField;
+import org.blueo.pojogen.bo.PojoField.AnnotationType;
+import org.blueo.pojogen.bo.wrapper.AnnotationWrapper;
 import org.springframework.util.CollectionUtils;
+
+import com.google.common.io.Files;
 
 public class JavaFileGenerator {
 	private PojoClass pojoClass;
@@ -21,6 +25,16 @@ public class JavaFileGenerator {
 
 	public JavaFileGenerator(PojoClass pojoClass) {
 		this(pojoClass, new FormatterWrapper(new Formatter(System.out)));
+		autoClose = true;
+	}
+
+	public JavaFileGenerator(PojoClass pojoClass, String baseFolder) throws IOException {
+		this.pojoClass = pojoClass;
+		String filePath = String.format("%s/%s/%s.java", baseFolder, pojoClass.getPackageName().replace('.', '/'), pojoClass.getName());
+		File file = new File(filePath);
+		Files.createParentDirs(file);
+		file.createNewFile();
+		this.formatterWrapper = new FormatterWrapper(new Formatter(file));
 		autoClose = true;
 	}
 
@@ -138,19 +152,19 @@ public class JavaFileGenerator {
 	// ---- field code generate method
 	// --------------------------------------
 
-	public void generateFieldCode(PojoField pojoField) {
+	private void generateFieldCode(PojoField pojoField) {
 		generateAnnotation(pojoField, AnnotationType.Field);
 		formatterWrapper.formatln(1, "private %s %s;", pojoField.getType().getSimpleName(), pojoField.getName());
 	}
 
-	public void generateFieldGetCode(PojoField pojoField) {
+	private void generateFieldGetCode(PojoField pojoField) {
 		generateAnnotation(pojoField, AnnotationType.Get);
 		formatterWrapper.formatln(1, "public %s get%s() {", pojoField.getType().getSimpleName(), StringUtils.capitalize(pojoField.getName()));
 		formatterWrapper.formatln(2, "return %s;", pojoField.getName());
 		formatterWrapper.formatln(1, "}");
 	}
 
-	public void generateFieldSetCode(PojoField pojoField) {
+	private void generateFieldSetCode(PojoField pojoField) {
 		String name = pojoField.getName();
 		generateAnnotation(pojoField, AnnotationType.Set);
 		formatterWrapper.formatln(1, "public void set%s(%s %s) {", StringUtils.capitalize(name), pojoField.getType().getSimpleName(), name);

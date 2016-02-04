@@ -11,10 +11,10 @@ import org.blueo.db.load.SqlUtils;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
 import org.blueo.pojogen.JavaFileGenerator;
-import org.blueo.pojogen.vo.PojoClass;
-import org.blueo.pojogen.vo.PojoField;
-import org.blueo.pojogen.vo.PojoField.AnnotationType;
-import org.blueo.pojogen.vo.wrapper.AnnotationWrapperUtils;
+import org.blueo.pojogen.bo.PojoClass;
+import org.blueo.pojogen.bo.PojoField;
+import org.blueo.pojogen.bo.PojoField.AnnotationType;
+import org.blueo.pojogen.bo.wrapper.AnnotationWrapperUtils;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
@@ -70,7 +70,7 @@ public class DbToolsTest {
 		List<DbTable> dbTables = Loader.loadFromExcel("src/test/java/org/blueo/table/test.xls");
 		System.out.println(ToStringUtils.wellFormat(dbTables));
 		for (DbTable dbTable : dbTables) {
-			JavaFileGenerator javaFileGenerator = new JavaFileGenerator(buildEntityClass(dbTable));
+			JavaFileGenerator javaFileGenerator = new JavaFileGenerator(buildEntityClass(dbTable), "./tmp");
 			javaFileGenerator.generateClassCode();
 		}
 	}

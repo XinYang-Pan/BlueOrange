@@ -1,4 +1,4 @@
-package org.blueo.pojogen.vo.wrapper;
+package org.blueo.pojogen.bo.wrapper;
 
 import java.lang.annotation.Annotation;
 

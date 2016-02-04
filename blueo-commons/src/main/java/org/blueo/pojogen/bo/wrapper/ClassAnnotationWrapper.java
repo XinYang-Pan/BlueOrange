@@ -1,8 +1,8 @@
-package org.blueo.pojogen.vo.wrapper;
+package org.blueo.pojogen.bo.wrapper;
 
 import java.lang.annotation.Annotation;
 
-import org.blueo.pojogen.vo.PojoClass;
+import org.blueo.pojogen.bo.PojoClass;
 
 public class ClassAnnotationWrapper extends AnnotationWrapper<PojoClass> {
 

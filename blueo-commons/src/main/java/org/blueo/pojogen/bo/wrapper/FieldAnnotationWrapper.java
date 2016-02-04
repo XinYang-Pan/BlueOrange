@@ -1,8 +1,8 @@
-package org.blueo.pojogen.vo.wrapper;
+package org.blueo.pojogen.bo.wrapper;
 
 import java.lang.annotation.Annotation;
 
-import org.blueo.pojogen.vo.PojoField;
+import org.blueo.pojogen.bo.PojoField;
 
 public class FieldAnnotationWrapper extends AnnotationWrapper<PojoField> {
 
