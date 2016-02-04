@@ -38,7 +38,8 @@ public class JavaFileGeneratorTest {
 		pojoClass.addInterfaces(Serializable.class, Cloneable.class, Serializable.class);
 		
 		// test
-		JavaFileGenerator javaFileGenerator = new JavaFileGenerator(pojoClass, "./tmp");
+//		JavaFileGenerator javaFileGenerator = new JavaFileGenerator(pojoClass, "./tmp");
+		JavaFileGenerator javaFileGenerator = new JavaFileGenerator(pojoClass);
 		javaFileGenerator.generateClassCode();
 	}
 	

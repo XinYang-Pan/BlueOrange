@@ -2,12 +2,14 @@ package org.blueo.pojogen;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Formatter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.blueo.commons.FormatterWrapper;
 import org.blueo.pojogen.bo.PojoClass;
@@ -49,7 +51,8 @@ public class JavaFileGenerator {
 		formatterWrapper.formatln();
 		this.generateImportCode();
 		formatterWrapper.formatln();
-		this.generateClassDeclarationCode();
+		this.generateClassDeclarationCode(); // 
+		this.generateserialVersionCode();
 		this.generateFieldCode();
 		formatterWrapper.formatln();
 		this.generateGetSetCode();
@@ -107,6 +110,16 @@ public class JavaFileGenerator {
 			}
 		}
 		formatterWrapper.formatln("public class %s%s%s {", pojoClass.getName(), extendsString, implementsSb);
+	}
+
+	private void generateserialVersionCode() {
+		if (pojoClass.getInterfaces() == null) {
+			return;
+		}
+		if (pojoClass.getInterfaces().contains(Serializable.class)) {
+			formatterWrapper.formatln(1, "private static final long serialVersionUID = %sL;", RandomUtils.nextLong(1, Long.MAX_VALUE));
+			formatterWrapper.formatln();
+		}
 	}
 
 	private void generateFieldCode() {

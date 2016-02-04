@@ -2,6 +2,7 @@ package org.blueo.commons;
 
 import java.io.Closeable;
 import java.io.Flushable;
+import java.text.MessageFormat;
 import java.util.Formatter;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +12,10 @@ public class FormatterWrapper  implements Closeable, Flushable {
 	private final Formatter formatter;
 	private final String prefix;
 	private final int defaultPrefixRepeat;
+
+	// --------------------------------------
+	// ---- Constructors
+	// --------------------------------------
 	
 	public FormatterWrapper() {
 		this(DEFAULT_PREFIX);
@@ -37,23 +42,45 @@ public class FormatterWrapper  implements Closeable, Flushable {
 		this.prefix = prefix;
 		this.defaultPrefixRepeat = defaultPrefixRepeat;
 	}
+	
+	// --------------------------------------
+	// ---- messageformat
+	// --------------------------------------
 
+    public FormatterWrapper messageformat(String format, Object ... args) {
+    	return this.messageformat(0, format, args);
+    }
+
+    public FormatterWrapper messageformat(int prefixRepeat, String format, Object ... args) {
+    	return this.messageformat(prefixRepeat, false, format, args);
+    }
+
+    public FormatterWrapper messageformatln(String format, Object ... args) {
+    	return this.messageformatln(0, format, args);
+    }
+
+    public FormatterWrapper messageformatln(int prefixRepeat, String format, Object ... args) {
+    	return this.messageformat(prefixRepeat, true, format, args);
+    }
+	
+    public FormatterWrapper messageformat(int prefixRepeat, boolean newLine, String format, Object ... args) {
+    	return this.format(prefixRepeat, true, MessageFormat.format(format, args));
+    }
+
+	// --------------------------------------
+	// ---- format
+	// --------------------------------------
+    
     public FormatterWrapper format(String format, Object ... args) {
     	return this.format(0, format, args);
     }
     
-    // -------------------------------------
     public FormatterWrapper format(int prefixRepeat, String format, Object ... args) {
-    	prefixRepeat = prefixRepeat + defaultPrefixRepeat;
-    	if (prefixRepeat > 0) {
-        	formatter.format("%s", StringUtils.repeat(prefix, prefixRepeat));
-    	}
-    	formatter.format(format, args);
-    	return this;
+    	return this.format(prefixRepeat, false, format, args);
     }
 
     public FormatterWrapper formatln() {
-    	return this.formatln(- defaultPrefixRepeat, "");
+    	return this.formatln(0 - defaultPrefixRepeat, "");
     }
 
     public FormatterWrapper formatln(String format, Object ... args) {
@@ -61,6 +88,10 @@ public class FormatterWrapper  implements Closeable, Flushable {
     }
 
     public FormatterWrapper formatln(int prefixRepeat, String format, Object ... args) {
+    	return this.format(prefixRepeat, true, format, args);
+    }
+	
+    public FormatterWrapper format(int prefixRepeat, boolean newLine, String format, Object ... args) {
     	prefixRepeat = prefixRepeat + defaultPrefixRepeat;
     	if (prefixRepeat > 0) {
         	formatter.format("%s", StringUtils.repeat(prefix, prefixRepeat));
@@ -68,10 +99,12 @@ public class FormatterWrapper  implements Closeable, Flushable {
     	if (StringUtils.isNotEmpty(format)) {
         	formatter.format(format, args);
     	}
-    	formatter.format("%s", System.lineSeparator());
+    	if (newLine) {
+        	formatter.format("%s", System.lineSeparator());
+    	}
     	return this;
     }
-	
+    
     @Override
     public void close() {
     	formatter.close();
