@@ -8,21 +8,31 @@ Blue Orange Utilities
 4. New Feature - add message format support
 
 #### Sample Code
-1. org.blueo.codegen.CodeGenerator.generateSetting(Class<?>, String)
+```java
+org.blueo.codegen.CodeGenerator.generateSetting(Class<?>, String)
+```
 
 ## 2. org.blueo.commons.tostring.ToStringUtils
 #### Sample Code
-1. org.blueo.commons.tostring.test.ToStringTester.main(String[])
+```java
+org.blueo.commons.tostring.test.ToStringTester.main(String[])
+```
 
 ## org.blueo.commons.jdbc.EntityWrapper<T>
 #### Sample Code
-1. org.blueo.commons.test.EntityWrapperTester.main(String[])
+```java
+org.blueo.commons.test.EntityWrapperTester.main(String[])
+```
 
 ## org.blueo.pojogen.JavaFileGenerator
 #### Sample Code
-1. org.blueo.pojogen.test.JavaFileGeneratorTest.test()
+```java
+org.blueo.pojogen.test.JavaFileGeneratorTest.test()
+```
 
 ## org.blueo.codegen.CodeGenerator
 #### Sample Code
-1. org.blueo.commons.test.CodeGeneratorTester.main(String[])
+```java
+org.blueo.commons.test.CodeGeneratorTester.main(String[])
+```
 
