@@ -1,8 +1,6 @@
 package org.blueo;
 
-import java.text.MessageFormat;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.reflect.Invokable;
@@ -10,14 +8,12 @@ import com.google.common.reflect.TypeToken;
 
 public class BlueoTest {
 
-	public static void main1(String[] args) throws ParseException {
-		MessageFormat messageFormat = new MessageFormat("Hi {0} {0}");
-		Object[] objects = messageFormat.parse("Hi Sean Sean");
-		System.out.println(Arrays.toString(objects));
+	public static void main(String[] args) throws ParseException {
+		System.out.println(String.format("fjwoejfweio %s %n1", "haha"));
 	}
 
 	@SuppressWarnings({ "serial", "rawtypes" })
-	public static void main(String[] args) throws Exception {
+	public static void main1(String[] args) throws Exception {
 		TypeToken<List<String>> typeToken = new TypeToken<List<String>>() {
 		};
 		Invokable<List<String>, ?> invokable = typeToken.method(Object.class.getMethod("hashCode"));

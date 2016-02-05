@@ -20,13 +20,12 @@ import org.springframework.util.CollectionUtils;
 import com.google.common.io.Files;
 
 public class JavaFileGenerator {
-	private PojoClass pojoClass;
-	private FormatterWrapper formatterWrapper = new FormatterWrapper(new Formatter(System.out));
-	private boolean autoClose;
+	private final PojoClass pojoClass;
+	private final FormatterWrapper formatterWrapper;
+	private final boolean autoClose;
 
 	public JavaFileGenerator(PojoClass pojoClass) {
-		this(pojoClass, new FormatterWrapper(new Formatter(System.out)));
-		autoClose = true;
+		this(pojoClass, new FormatterWrapper(new Formatter(System.out)), false);
 	}
 
 	public JavaFileGenerator(PojoClass pojoClass, String baseFolder) throws IOException {
@@ -40,9 +39,14 @@ public class JavaFileGenerator {
 	}
 
 	public JavaFileGenerator(PojoClass pojoClass, FormatterWrapper formatterWrapper) {
+		this(pojoClass, formatterWrapper, true);
+	}
+
+	public JavaFileGenerator(PojoClass pojoClass, FormatterWrapper formatterWrapper, boolean autoClose) {
 		super();
 		this.pojoClass = pojoClass;
 		this.formatterWrapper = formatterWrapper;
+		this.autoClose = autoClose;
 	}
 
 	public void generateClassCode() {

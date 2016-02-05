@@ -100,13 +100,18 @@ public class FormatterWrapper  implements Closeable, Flushable {
         	formatter.format(format, args);
     	}
     	if (newLine) {
-        	formatter.format("%s", System.lineSeparator());
+        	formatter.format("%n");
     	}
     	return this;
     }
     
     @Override
     public void close() {
+    	Appendable out = formatter.out();
+    	// NEVER CLOSE System.out
+		if (out == null || out == System.out) {
+			return;
+    	}
     	formatter.close();
     }
     
