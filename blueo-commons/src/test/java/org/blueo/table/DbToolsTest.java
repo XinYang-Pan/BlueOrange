@@ -3,6 +3,10 @@ package org.blueo.table;
 import java.io.IOException;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 import jxl.read.biff.BiffException;
 
 import org.blueo.commons.tostring.ToStringUtils;
@@ -40,21 +44,25 @@ public class DbToolsTest {
 			return null;
 		}
 		List<PojoField> pojoFields = Lists.newArrayList();
+		PojoField pk = buildEntityField(dbTable.getPk(), true);
+		if (pk != null) {
+			pojoFields.add(pk);
+		}
 		for (DbColumn dbColumn : dbTable.getDbColumns()) {
-			pojoFields.add(buildEntityField(dbColumn));
+			pojoFields.add(buildEntityField(dbColumn, false));
 		}
 		// 
 		PojoClass pojoClass = new PojoClass();
-		pojoClass.setId(buildEntityField(dbTable.getPk()));
 		pojoClass.setPackageName(PACKAGE_NAME);
 		pojoClass.setEntityFields(pojoFields);
 		pojoClass.getValueMap().put("tableName", dbTable.getName());
 		pojoClass.setName(TABLE_NAME_TO_CLASS_NAME.convert(dbTable.getName()));
+		pojoClass.addAnnotation(Entity.class);
 		pojoClass.addAnnotationWrapper(AnnotationWrapperUtils.TABLE_WRAPPER);
 		return pojoClass;
 	}
 	
-	public static PojoField buildEntityField(DbColumn dbColumn) {
+	public static PojoField buildEntityField(DbColumn dbColumn, boolean isPk) {
 		if (dbColumn == null) {
 			return null;
 		}
@@ -62,7 +70,11 @@ public class DbToolsTest {
 		pojoField.setName(COLUMN_NAME_TO_FIELD_NAME.convert(dbColumn.getName()));
 		pojoField.setType(SqlUtils.getJavaType(dbColumn.getType()));
 		pojoField.getValueMap().put("columnName", dbColumn.getName());
-		pojoField.addAnnotation(AnnotationType.Get, AnnotationWrapperUtils.COLUMN_WRAPPER);
+		if (isPk) {
+			pojoField.addAnnotation(AnnotationType.Get, Id.class);
+			pojoField.addAnnotation(AnnotationType.Get, GeneratedValue.class);
+		}
+		pojoField.addAnnotationWrapper(AnnotationType.Get, AnnotationWrapperUtils.COLUMN_WRAPPER);
 		return pojoField;
 	}
 

@@ -1,21 +1,22 @@
 package org.blueo.pojogen.bo;
 
+import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.blueo.pojogen.bo.wrapper.AnnotationWrapper;
+import org.blueo.pojogen.bo.wrapper.AnnotationWrapperUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class PojoClass extends ValueMapObject {
+	private String name;
 	private String packageName;
 	private Class<?> superClass;
 	private LinkedHashSet<Class<?>> interfaces;
 	private List<AnnotationWrapper<PojoClass>> annotationWrappers;
-	private String name;
-	private PojoField id;
 	private List<PojoField> pojoFields;
 	
 	public Set<Class<?>> getClasses() {
@@ -38,9 +39,6 @@ public class PojoClass extends ValueMapObject {
 		if (superClass != null) {
 			classes.add(superClass);
 		}
-		if (id != null) {
-			classes.addAll(id.getClasses());
-		}
 		return classes;
 	}
 
@@ -54,6 +52,15 @@ public class PojoClass extends ValueMapObject {
 		for (Class<?> class1 : interfaces) {
 			this.interfaces.add(class1);
 		}
+	}
+
+	public PojoClass addAnnotation(Class<? extends Annotation> annotation) {
+		if (annotation == null) {
+			return this;
+		}
+		AnnotationWrapper<PojoClass> wrapper = AnnotationWrapperUtils.simpleWrapper(annotation);
+		this.addAnnotationWrapper(wrapper);
+		return this;
 	}
 
 	public PojoClass addAnnotationWrapper(AnnotationWrapper<PojoClass> annotationWrapper) {
@@ -120,14 +127,6 @@ public class PojoClass extends ValueMapObject {
 		this.name = name;
 	}
 
-	public PojoField getId() {
-		return id;
-	}
-
-	public void setId(PojoField id) {
-		this.id = id;
-	}
-
 	public List<PojoField> getEntityFields() {
 		return pojoFields;
 	}
@@ -139,7 +138,9 @@ public class PojoClass extends ValueMapObject {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("PojoClass [packageName=");
+		builder.append("PojoClass [name=");
+		builder.append(name);
+		builder.append(", packageName=");
 		builder.append(packageName);
 		builder.append(", superClass=");
 		builder.append(superClass);
@@ -147,14 +148,8 @@ public class PojoClass extends ValueMapObject {
 		builder.append(interfaces);
 		builder.append(", annotationWrappers=");
 		builder.append(annotationWrappers);
-		builder.append(", name=");
-		builder.append(name);
-		builder.append(", id=");
-		builder.append(id);
-		builder.append(", entityFields=");
+		builder.append(", pojoFields=");
 		builder.append(pojoFields);
-		builder.append(", valueMap=");
-		builder.append(valueMap);
 		builder.append("]");
 		return builder.toString();
 	}
