@@ -17,12 +17,6 @@ import com.google.common.collect.Lists;
 public class JavaFileGeneratorExample {
 	
 	public static void main(String[] args) {
-		PojoField pojoField1 = new PojoField();
-		pojoField1.setName("name");
-		pojoField1.getValueMap().put("columnName", "NAME");
-		pojoField1.setType(String.class);
-		pojoField1.addAnnotationWrapper(AnnotationType.Get, AnnotationWrapperUtils.COLUMN_WRAPPER);
-		
 		PojoField pojoField = new PojoField();
 		pojoField.setName("id");
 		pojoField.getValueMap().put("columnName", "ID");
@@ -30,6 +24,13 @@ public class JavaFileGeneratorExample {
 		pojoField.addAnnotation(AnnotationType.Get, Id.class);
 		pojoField.addAnnotation(AnnotationType.Get, GeneratedValue.class);
 		pojoField.addAnnotationWrapper(AnnotationType.Get, AnnotationWrapperUtils.COLUMN_WRAPPER);
+		
+		PojoField pojoField1 = new PojoField();
+		pojoField1.setName("name");
+		pojoField1.getValueMap().put("columnName", "NAME");
+		pojoField1.setType(String.class);
+		pojoField1.addAnnotationWrapper(AnnotationType.Get, AnnotationWrapperUtils.COLUMN_WRAPPER);
+		
 
 		PojoClass pojoClass = new PojoClass();
 		pojoClass.setPackageName("org.blueo.db");
