@@ -1,6 +1,7 @@
-package org.blueo.table;
+package org.blueo.example.table;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -24,7 +25,7 @@ import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
 import com.google.common.collect.Lists;
 
-public class DbToolsTest {
+public class DbToolsExample {
 	private static Converter<String, String> COLUMN_NAME_TO_FIELD_NAME = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_CAMEL);
 	private static Converter<String, String> TABLE_NAME_TO_CLASS_NAME = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL);
 	private static String PACKAGE_NAME = "org.blueo.table.po";
@@ -79,7 +80,8 @@ public class DbToolsTest {
 	}
 
 	public static void main(String[] args) throws BiffException, IOException {
-		List<DbTable> dbTables = Loader.loadFromExcel("src/test/java/org/blueo/table/test.xls");
+		URL url = DbToolsExample.class.getResource("test.xls");
+		List<DbTable> dbTables = Loader.loadFromExcel(url.getPath());
 		System.out.println(ToStringUtils.wellFormat(dbTables));
 		for (DbTable dbTable : dbTables) {
 			JavaFileGenerator javaFileGenerator = new JavaFileGenerator(buildEntityClass(dbTable), "./tmp");

@@ -1,10 +1,10 @@
-package org.blueo.commons.test;
+package org.blueo.example.commons;
 
 import org.blueo.codegen.JdbcGenerator;
 import org.blueo.commons.jdbc.EntityWrapper;
-import org.blueo.commons.test.object.YzpCodeLog;
+import org.blueo.test.object.YzpCodeLog;
 
-public class EntityWrapperTester {
+public class EntityWrapperExample {
 
 	public static void main(String[] args) {
 		EntityWrapper<YzpCodeLog> entityWrapper = EntityWrapper.with(YzpCodeLog.class);

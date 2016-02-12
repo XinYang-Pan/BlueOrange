@@ -1,4 +1,4 @@
-package org.blueo.commons.test.object;
+package org.blueo.test.object;
 
 // Generated 2015-4-14 23:20:03 by Hibernate Tools 3.4.0.CR1
 

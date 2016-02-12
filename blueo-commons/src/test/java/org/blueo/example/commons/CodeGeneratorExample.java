@@ -1,10 +1,10 @@
-package org.blueo.commons.test;
+package org.blueo.example.commons;
 
 import org.blueo.codegen.CodeGenerator;
-import org.blueo.commons.test.object.Person;
 import org.blueo.db.vo.DbColumn;
+import org.blueo.test.object.Person;
 
-public class CodeGeneratorTester {
+public class CodeGeneratorExample {
 
 	public static void main(String[] args) {
 		CodeGenerator.generateSetting(DbColumn.class);

@@ -1,4 +1,4 @@
-package org.blueo.commons.test.object;
+package org.blueo.test.object;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;

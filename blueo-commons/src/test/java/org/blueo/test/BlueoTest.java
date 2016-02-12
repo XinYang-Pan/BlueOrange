@@ -1,4 +1,4 @@
-package org.blueo;
+package org.blueo.test;
 
 import java.text.ParseException;
 import java.util.List;
