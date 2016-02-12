@@ -55,14 +55,14 @@ public class PojoClass extends ValueMapObject {
 		}
 	}
 
-	public void addInterfaces(ClassWrapper... interfaces) {
-		if (interfaces == null) {
+	public void addInterfaces(ClassWrapper... classWrappers) {
+		if (classWrappers == null) {
 			return;
 		}
 		if (this.interfaces == null) {
 			this.interfaces = Sets.newLinkedHashSet();
 		}
-		for (ClassWrapper wrapper : interfaces) {
+		for (ClassWrapper wrapper : classWrappers) {
 			this.interfaces.add(wrapper);
 		}
 	}

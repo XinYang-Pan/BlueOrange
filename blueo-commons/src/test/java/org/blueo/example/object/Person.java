@@ -1,4 +1,4 @@
-package org.blueo.test.object;
+package org.blueo.example.object;
 
 public class Person {
 	private String name;

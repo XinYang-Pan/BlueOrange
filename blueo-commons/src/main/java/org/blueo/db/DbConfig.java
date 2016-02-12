@@ -2,24 +2,46 @@ package org.blueo.db;
 
 import java.util.List;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 public class DbConfig {
-	// Java 
+	// Java
 	private String sourceDir = "./tmp/src";
 	private String poPackage = "org.blueo.db.po";
 	private String poSuperclass;
-	private List<String> poInterfaces = Lists.newArrayList("java.io.Serializable");
+	private String poInterfaces = "java.io.Serializable";
 	private String daoPackage;
 	private String daoSuperclass;
-	private List<String> daoInterfaces;
-	// DDL 
+	private String daoInterfaces;
+	// DDL
 	private String ddlDir = "./tmp/ddl";
 	private String ddlFileName = "createTables.sql";
 
 	// -----------------------------
+	// ----- Non-Static Methods
+	// -----------------------------
+	
+	public List<String> getPoInterfacesInList() {
+		if (poInterfaces == null) {
+			return Lists.newArrayList();
+		}
+		Splitter splitter = Splitter.on(',').trimResults().omitEmptyStrings();
+		return splitter.splitToList(poInterfaces);
+	}
+
+	public List<String> getDaoInterfacesInList() {
+		if (daoInterfaces == null) {
+			return Lists.newArrayList();
+		}
+		Splitter splitter = Splitter.on(',').trimResults().omitEmptyStrings();
+		return splitter.splitToList(daoInterfaces);
+	}
+
+	// -----------------------------
 	// ----- Get Set ToString HashCode Equals
 	// -----------------------------
+	
 	public String getPoPackage() {
 		return poPackage;
 	}
@@ -36,11 +58,11 @@ public class DbConfig {
 		this.poSuperclass = poSuperclass;
 	}
 
-	public List<String> getPoInterfaces() {
+	public String getPoInterfaces() {
 		return poInterfaces;
 	}
 
-	public void setPoInterfaces(List<String> poInterfaces) {
+	public void setPoInterfaces(String poInterfaces) {
 		this.poInterfaces = poInterfaces;
 	}
 
@@ -60,11 +82,11 @@ public class DbConfig {
 		this.daoSuperclass = daoSuperclass;
 	}
 
-	public List<String> getDaoInterfaces() {
+	public String getDaoInterfaces() {
 		return daoInterfaces;
 	}
 
-	public void setDaoInterfaces(List<String> daoInterfaces) {
+	public void setDaoInterfaces(String daoInterfaces) {
 		this.daoInterfaces = daoInterfaces;
 	}
 
@@ -84,13 +106,19 @@ public class DbConfig {
 		this.ddlDir = ddlDir;
 	}
 
+	public String getDdlFileName() {
+		return ddlFileName;
+	}
+
+	public void setDdlFileName(String ddlFileName) {
+		this.ddlFileName = ddlFileName;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("DbConfig [sourceDir=");
 		builder.append(sourceDir);
-		builder.append(", ddlDir=");
-		builder.append(ddlDir);
 		builder.append(", poPackage=");
 		builder.append(poPackage);
 		builder.append(", poSuperclass=");
@@ -103,16 +131,16 @@ public class DbConfig {
 		builder.append(daoSuperclass);
 		builder.append(", daoInterfaces=");
 		builder.append(daoInterfaces);
+		builder.append(", ddlDir=");
+		builder.append(ddlDir);
+		builder.append(", ddlFileName=");
+		builder.append(ddlFileName);
+		builder.append(", getPoInterfacesInList()=");
+		builder.append(getPoInterfacesInList());
+		builder.append(", getDaoInterfacesInList()=");
+		builder.append(getDaoInterfacesInList());
 		builder.append("]");
 		return builder.toString();
-	}
-
-	public String getDdlFileName() {
-		return ddlFileName;
-	}
-
-	public void setDdlFileName(String ddlFileName) {
-		this.ddlFileName = ddlFileName;
 	}
 
 }

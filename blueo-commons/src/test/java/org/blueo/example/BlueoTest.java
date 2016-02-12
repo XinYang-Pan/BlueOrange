@@ -1,4 +1,4 @@
-package org.blueo.test;
+package org.blueo.example;
 
 import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
 

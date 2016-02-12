@@ -1,10 +1,10 @@
-package org.blueo.db.util;
+package org.blueo.db.sql;
 
 import org.apache.commons.lang3.StringUtils;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
 
-public class DdlUtils {
+public class DdlBuildUtils {
 	
 	private static String oneLineOfCreateSql(DbColumn dbColumn) {
 		String columnName = dbColumn.getName();

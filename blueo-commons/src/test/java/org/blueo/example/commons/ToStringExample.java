@@ -1,9 +1,9 @@
 package org.blueo.example.commons;
 
 import org.blueo.commons.tostring.ToStringUtils;
-import org.blueo.test.object.Company;
-import org.blueo.test.object.Department;
-import org.blueo.test.object.Person;
+import org.blueo.example.object.Company;
+import org.blueo.example.object.Department;
+import org.blueo.example.object.Person;
 
 import com.google.common.collect.Lists;
 

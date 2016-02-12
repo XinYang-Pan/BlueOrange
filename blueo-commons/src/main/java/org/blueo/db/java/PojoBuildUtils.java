@@ -1,4 +1,4 @@
-package org.blueo.db.util;
+package org.blueo.db.java;
 
 import java.util.List;
 import java.util.Map;
@@ -7,12 +7,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import org.blueo.db.DbConfig;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
 import org.blueo.pojogen.bo.PojoClass;
 import org.blueo.pojogen.bo.PojoField;
 import org.blueo.pojogen.bo.PojoField.AnnotationType;
 import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapperUtils;
+import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
 import org.springframework.util.Assert;
 
 import com.google.common.base.CaseFormat;
@@ -20,13 +22,11 @@ import com.google.common.base.Converter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class DbUtils {
+public class PojoBuildUtils {
 	private static Converter<String, String> COLUMN_NAME_TO_FIELD_NAME = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_CAMEL);
 	private static Converter<String, String> TABLE_NAME_TO_CLASS_NAME = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL);
-	private static String PACKAGE_NAME = "org.blueo.table.po";
-	// 
 	private static Map<String, Class<?>> sqlTypeToJavaType = Maps.newHashMap();
-
+	
 	static {
 		sqlTypeToJavaType.put("bigint", Long.class);
 		sqlTypeToJavaType.put("varchar", String.class);
@@ -37,19 +37,8 @@ public class DbUtils {
 		Assert.notNull(sqlType);
 		return sqlTypeToJavaType.get(sqlType.toLowerCase());
 	}
-	
-	public static List<PojoClass> buildEntityClasses(List<DbTable> dbTables) {
-		List<PojoClass> entityClasses = Lists.newArrayList();
-		if (dbTables == null) {
-			return entityClasses;
-		}
-		for (DbTable dbTable : dbTables) {
-			entityClasses.add(buildEntityClass(dbTable));
-		}
-		return entityClasses;
-	}
 
-	public static PojoClass buildEntityClass(DbTable dbTable) {
+	public static PojoClass buildEntityClass(DbTable dbTable, DbConfig dbConfig) {
 		if (dbTable == null) {
 			return null;
 		}
@@ -63,12 +52,20 @@ public class DbUtils {
 		}
 		//
 		PojoClass pojoClass = new PojoClass();
-		pojoClass.setPackageName(PACKAGE_NAME);
+		pojoClass.setPackageName(dbConfig.getPoPackage());
 		pojoClass.setEntityFields(pojoFields);
 		pojoClass.getValueMap().put("tableName", dbTable.getName());
 		pojoClass.setName(TABLE_NAME_TO_CLASS_NAME.convert(dbTable.getName()));
 		pojoClass.addAnnotation(Entity.class);
 		pojoClass.addAnnotationWrapper(AnnotationWrapperUtils.TABLE_WRAPPER);
+		String poSuperclass = dbConfig.getPoSuperclass();
+		if (poSuperclass != null) {
+			pojoClass.setSuperClass(ClassWrapper.of(poSuperclass));
+		}
+		List<String> poInterfacesInList = dbConfig.getPoInterfacesInList();
+		for (String className : poInterfacesInList) {
+			pojoClass.addInterfaces(ClassWrapper.of(className));
+		}
 		return pojoClass;
 	}
 
@@ -78,7 +75,7 @@ public class DbUtils {
 		}
 		PojoField pojoField = new PojoField();
 		pojoField.setName(COLUMN_NAME_TO_FIELD_NAME.convert(dbColumn.getName()));
-		pojoField.setType(getJavaType(dbColumn.getType()));
+		pojoField.setType(PojoBuildUtils.getJavaType(dbColumn.getType()));
 		pojoField.getValueMap().put("columnName", dbColumn.getName());
 		if (isPk) {
 			pojoField.addAnnotation(AnnotationType.Get, Id.class);

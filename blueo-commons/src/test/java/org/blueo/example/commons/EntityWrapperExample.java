@@ -2,7 +2,7 @@ package org.blueo.example.commons;
 
 import org.blueo.codegen.JdbcGenerator;
 import org.blueo.commons.jdbc.EntityWrapper;
-import org.blueo.test.object.YzpCodeLog;
+import org.blueo.example.object.YzpCodeLog;
 
 public class EntityWrapperExample {
 

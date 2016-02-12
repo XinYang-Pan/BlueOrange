@@ -2,7 +2,7 @@ package org.blueo.example.commons;
 
 import org.blueo.codegen.CodeGenerator;
 import org.blueo.db.vo.DbColumn;
-import org.blueo.test.object.Person;
+import org.blueo.example.object.Person;
 
 public class CodeGeneratorExample {
 

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.blueo.commons.tostring.ToStringUtils;
 import org.blueo.csv.Parser;
-import org.blueo.test.object.Person;
+import org.blueo.example.object.Person;
 
 public class CsvExample {
 	

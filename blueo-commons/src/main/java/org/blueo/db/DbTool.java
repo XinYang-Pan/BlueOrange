@@ -4,29 +4,34 @@ import java.util.Formatter;
 import java.util.List;
 
 import org.blueo.commons.FormatterWrapper;
-import org.blueo.db.util.DbUtils;
-import org.blueo.db.util.DdlUtils;
-import org.blueo.db.util.Loader;
+import org.blueo.db.java.DataLoader;
+import org.blueo.db.java.PojoBuildUtils;
+import org.blueo.db.sql.DdlBuildUtils;
 import org.blueo.db.vo.DbTable;
 import org.blueo.pojogen.JavaFileGenerator;
 
 public class DbTool {
-	private String excelPath;
-	private DbConfig dbConfig;
+	private final String excelPath;
 	private boolean printToConsole;
 	// Internal process fields
+	private DbConfig dbConfig;
 	private List<DbTable> dbTables;
 	
-	public static DbTool buildAndInit(String excelPath, DbConfig dbConfig) {
-		DbTool dbTool = new DbTool();
-		dbTool.setExcelPath(excelPath);
-		dbTool.setDbConfig(dbConfig);
+	private DbTool(String excelPath) {
+		super();
+		this.excelPath = excelPath;
+	}
+
+	public static DbTool build(String excelPath) {
+		DbTool dbTool = new DbTool(excelPath);
 		dbTool.init();
 		return dbTool;
 	}
 	
-	public void init() {
-		dbTables = Loader.loadFromExcel(excelPath);
+	private void init() {
+		DataLoader loader = DataLoader.build(excelPath);
+		dbConfig = loader.getDbConfig();
+		dbTables = loader.getDbTables();
 	}
 
 	public void generateCreateDdls() {
@@ -38,7 +43,7 @@ public class DbTool {
 			formatterWrapper = new FormatterWrapper(FormatterWrapper.createFormatter(filePath));
 		}
 		for (DbTable dbTable : dbTables) {
-			formatterWrapper.formatln(DdlUtils.generateCreateSql(dbTable));
+			formatterWrapper.formatln(DdlBuildUtils.generateCreateSql(dbTable));
 		}
 		formatterWrapper.close();
 	}
@@ -47,9 +52,9 @@ public class DbTool {
 		for (DbTable dbTable : dbTables) {
 			JavaFileGenerator javaFileGenerator;
 			if (printToConsole) {
-				javaFileGenerator = new JavaFileGenerator(DbUtils.buildEntityClass(dbTable));
+				javaFileGenerator = new JavaFileGenerator(PojoBuildUtils.buildEntityClass(dbTable, dbConfig));
 			} else {
-				javaFileGenerator = new JavaFileGenerator(DbUtils.buildEntityClass(dbTable), dbConfig.getSourceDir());
+				javaFileGenerator = new JavaFileGenerator(PojoBuildUtils.buildEntityClass(dbTable, dbConfig), dbConfig.getSourceDir());
 			}
 			javaFileGenerator.generateClassCode();
 		}
@@ -62,16 +67,8 @@ public class DbTool {
 		return excelPath;
 	}
 
-	public void setExcelPath(String excelPath) {
-		this.excelPath = excelPath;
-	}
-
 	public DbConfig getDbConfig() {
 		return dbConfig;
-	}
-
-	public void setDbConfig(DbConfig dbConfig) {
-		this.dbConfig = dbConfig;
 	}
 
 	public boolean isPrintToConsole() {

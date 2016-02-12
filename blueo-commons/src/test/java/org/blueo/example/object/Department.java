@@ -1,4 +1,4 @@
-package org.blueo.test.object;
+package org.blueo.example.object;
 
 import java.util.List;
 
