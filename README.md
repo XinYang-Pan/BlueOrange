@@ -10,7 +10,7 @@ Blue Orange Utilities
 ```java
 org.blueo.example.table.DbToolExample.main(String[])
 ```
-#### Sample Code
+
 ```java
 URL url = DbToolExample.class.getResource("test.xls");
 DbTool dbTool = DbTool.build(url.getPath());
