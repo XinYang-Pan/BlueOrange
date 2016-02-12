@@ -1,4 +1,4 @@
-package org.blueo.pojogen.bo.wrapper;
+package org.blueo.pojogen.bo.wrapper.annotation;
 
 import java.lang.annotation.Annotation;
 
@@ -12,7 +12,7 @@ public class ClassAnnotationWrapper extends AnnotationWrapper<PojoClass> {
 
 	@Override
 	public String getDisplayString(PojoClass t) {
-		return String.format("@%s", annotationClass.getSimpleName());
+		return String.format("@%s", classWrapper.getName());
 	}
 
 }

@@ -1,11 +1,16 @@
 package org.blueo.commons;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.Flushable;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Formatter;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.base.Throwables;
+import com.google.common.io.Files;
 
 public class FormatterWrapper  implements Closeable, Flushable {
 	private static final String DEFAULT_PREFIX = "\t";
@@ -41,6 +46,21 @@ public class FormatterWrapper  implements Closeable, Flushable {
 		this.formatter = formatter;
 		this.prefix = prefix;
 		this.defaultPrefixRepeat = defaultPrefixRepeat;
+	}
+
+	// -----------------------------
+	// ----- Static Methods
+	// -----------------------------
+	
+	public static Formatter createFormatter(String filePath) {
+		try {
+			File file = new File(filePath);
+			Files.createParentDirs(file);
+			file.createNewFile();
+			return new Formatter(file);
+		} catch (IOException e) {
+			throw Throwables.propagate(e);
+		}
 	}
 	
 	// --------------------------------------

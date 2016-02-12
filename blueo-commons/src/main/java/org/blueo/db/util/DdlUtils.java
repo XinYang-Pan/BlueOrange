@@ -1,28 +1,10 @@
-package org.blueo.db.load;
-
-import java.util.Map;
+package org.blueo.db.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
-import org.springframework.util.Assert;
 
-import com.google.common.collect.Maps;
-
-public class SqlUtils {
-	
-	private static Map<String, Class<?>> sqlTypeToJavaType = Maps.newHashMap();
-	
-	static {
-		sqlTypeToJavaType.put("bigint", Long.class);
-		sqlTypeToJavaType.put("varchar", String.class);
-		sqlTypeToJavaType.put("int", Integer.class);
-	}
-	
-	public static Class<?> getJavaType(String sqlType) {
-		Assert.notNull(sqlType);
-		return sqlTypeToJavaType.get(sqlType.toLowerCase());
-	}
+public class DdlUtils {
 	
 	private static String oneLineOfCreateSql(DbColumn dbColumn) {
 		String columnName = dbColumn.getName();
@@ -55,6 +37,12 @@ public class SqlUtils {
 	public static String generateCreateSql(DbTable dbTable) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(String.format("CREATE TABLE %s (%s", dbTable.getName(), System.lineSeparator()));
+		// pk
+		DbColumn pk = dbTable.getPk();
+		if (pk != null) {
+			sb.append(oneLineOfCreateSql(pk));
+		}
+		// others
 		for (DbColumn dbColumn : dbTable.getDbColumns()) {
 			sb.append(oneLineOfCreateSql(dbColumn));
 		}

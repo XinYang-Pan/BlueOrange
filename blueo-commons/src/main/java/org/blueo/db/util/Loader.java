@@ -1,4 +1,4 @@
-package org.blueo.db.load;
+package org.blueo.db.util;
 
 import java.io.File;
 import java.util.List;
@@ -18,7 +18,7 @@ import com.google.common.collect.Lists;
 public class Loader {
 	private static Pair<Integer, Integer> TABLE_NAME_COORDINATE = Pair.with(1, 1);
 	private static final int ROW_START_INDEX = 3;
-	
+
 	private static String getContent(Cell cell) {
 		String contents = cell.getContents();
 		if (StringUtils.isBlank(contents)) {
@@ -27,14 +27,14 @@ public class Loader {
 			return contents;
 		}
 	}
-	
+
 	// for each sheet
 	public static List<DbTable> loadFromExcel(String path) {
 		try {
 			Workbook workbook = Workbook.getWorkbook(new File(path));
 			Sheet sheet = workbook.getSheet(0);
 			String tableName = getContent(sheet.getCell(TABLE_NAME_COORDINATE.getValue0(), TABLE_NAME_COORDINATE.getValue1()));
-//			int columns = sheet.getColumns();
+			// int columns = sheet.getColumns();
 			int rows = sheet.getRows();
 			DbColumn pk = null;
 			List<DbColumn> dbColumns = Lists.newArrayList();
@@ -50,15 +50,15 @@ public class Loader {
 				dbcolumn.setPk("y".equalsIgnoreCase(getContent(sheet.getCell(4, i))));
 				dbcolumn.setNullable("y".equalsIgnoreCase(ObjectUtils.firstNonNull(getContent(sheet.getCell(5, i)), "y")));
 				dbcolumn.setComment(getContent(sheet.getCell(6, i)));
-				// 
+				//
 				if (dbcolumn.isPk()) {
 					pk = dbcolumn;
 					continue;
 				}
-				// 
+				//
 				dbColumns.add(dbcolumn);
 			}
-			// 
+			//
 			DbTable dbTable = new DbTable();
 			dbTable.setName(tableName);
 			dbTable.setPk(pk);
@@ -68,4 +68,5 @@ public class Loader {
 			throw new RuntimeException(e);
 		}
 	}
+	
 }

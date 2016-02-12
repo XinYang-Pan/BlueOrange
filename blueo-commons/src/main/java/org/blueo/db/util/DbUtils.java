@@ -1,35 +1,43 @@
-package org.blueo.example.table;
+package org.blueo.db.util;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-import jxl.read.biff.BiffException;
-
-import org.blueo.commons.tostring.ToStringUtils;
-import org.blueo.db.load.Loader;
-import org.blueo.db.load.SqlUtils;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
-import org.blueo.pojogen.JavaFileGenerator;
 import org.blueo.pojogen.bo.PojoClass;
 import org.blueo.pojogen.bo.PojoField;
 import org.blueo.pojogen.bo.PojoField.AnnotationType;
-import org.blueo.pojogen.bo.wrapper.AnnotationWrapperUtils;
+import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapperUtils;
+import org.springframework.util.Assert;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
-public class DbToolsExample {
+public class DbUtils {
 	private static Converter<String, String> COLUMN_NAME_TO_FIELD_NAME = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_CAMEL);
 	private static Converter<String, String> TABLE_NAME_TO_CLASS_NAME = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL);
 	private static String PACKAGE_NAME = "org.blueo.table.po";
+	// 
+	private static Map<String, Class<?>> sqlTypeToJavaType = Maps.newHashMap();
 
+	static {
+		sqlTypeToJavaType.put("bigint", Long.class);
+		sqlTypeToJavaType.put("varchar", String.class);
+		sqlTypeToJavaType.put("int", Integer.class);
+	}
+
+	private static Class<?> getJavaType(String sqlType) {
+		Assert.notNull(sqlType);
+		return sqlTypeToJavaType.get(sqlType.toLowerCase());
+	}
+	
 	public static List<PojoClass> buildEntityClasses(List<DbTable> dbTables) {
 		List<PojoClass> entityClasses = Lists.newArrayList();
 		if (dbTables == null) {
@@ -40,6 +48,7 @@ public class DbToolsExample {
 		}
 		return entityClasses;
 	}
+
 	public static PojoClass buildEntityClass(DbTable dbTable) {
 		if (dbTable == null) {
 			return null;
@@ -52,7 +61,7 @@ public class DbToolsExample {
 		for (DbColumn dbColumn : dbTable.getDbColumns()) {
 			pojoFields.add(buildEntityField(dbColumn, false));
 		}
-		// 
+		//
 		PojoClass pojoClass = new PojoClass();
 		pojoClass.setPackageName(PACKAGE_NAME);
 		pojoClass.setEntityFields(pojoFields);
@@ -62,14 +71,14 @@ public class DbToolsExample {
 		pojoClass.addAnnotationWrapper(AnnotationWrapperUtils.TABLE_WRAPPER);
 		return pojoClass;
 	}
-	
-	public static PojoField buildEntityField(DbColumn dbColumn, boolean isPk) {
+
+	private static PojoField buildEntityField(DbColumn dbColumn, boolean isPk) {
 		if (dbColumn == null) {
 			return null;
 		}
 		PojoField pojoField = new PojoField();
 		pojoField.setName(COLUMN_NAME_TO_FIELD_NAME.convert(dbColumn.getName()));
-		pojoField.setType(SqlUtils.getJavaType(dbColumn.getType()));
+		pojoField.setType(getJavaType(dbColumn.getType()));
 		pojoField.getValueMap().put("columnName", dbColumn.getName());
 		if (isPk) {
 			pojoField.addAnnotation(AnnotationType.Get, Id.class);
@@ -78,15 +87,4 @@ public class DbToolsExample {
 		pojoField.addAnnotationWrapper(AnnotationType.Get, AnnotationWrapperUtils.COLUMN_WRAPPER);
 		return pojoField;
 	}
-
-	public static void main(String[] args) throws BiffException, IOException {
-		URL url = DbToolsExample.class.getResource("test.xls");
-		List<DbTable> dbTables = Loader.loadFromExcel(url.getPath());
-		System.out.println(ToStringUtils.wellFormat(dbTables));
-		for (DbTable dbTable : dbTables) {
-			JavaFileGenerator javaFileGenerator = new JavaFileGenerator(buildEntityClass(dbTable), "./tmp");
-			javaFileGenerator.generateClassCode();
-		}
-	}
-	
 }

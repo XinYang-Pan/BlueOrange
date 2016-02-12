@@ -1,7 +1,5 @@
 package org.blueo.pojogen;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Formatter;
 import java.util.Iterator;
@@ -14,10 +12,9 @@ import org.blueo.commons.FormatterWrapper;
 import org.blueo.pojogen.bo.PojoClass;
 import org.blueo.pojogen.bo.PojoField;
 import org.blueo.pojogen.bo.PojoField.AnnotationType;
-import org.blueo.pojogen.bo.wrapper.AnnotationWrapper;
+import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapper;
+import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
 import org.springframework.util.CollectionUtils;
-
-import com.google.common.io.Files;
 
 public class JavaFileGenerator {
 	private final PojoClass pojoClass;
@@ -28,13 +25,10 @@ public class JavaFileGenerator {
 		this(pojoClass, new FormatterWrapper(new Formatter(System.out)), false);
 	}
 
-	public JavaFileGenerator(PojoClass pojoClass, String baseFolder) throws IOException {
+	public JavaFileGenerator(PojoClass pojoClass, String baseFolder) {
 		this.pojoClass = pojoClass;
 		String filePath = String.format("%s/%s/%s.java", baseFolder, pojoClass.getPackageName().replace('.', '/'), pojoClass.getName());
-		File file = new File(filePath);
-		Files.createParentDirs(file);
-		file.createNewFile();
-		this.formatterWrapper = new FormatterWrapper(new Formatter(file));
+		this.formatterWrapper = new FormatterWrapper(FormatterWrapper.createFormatter(filePath));
 		autoClose = true;
 	}
 
@@ -72,18 +66,22 @@ public class JavaFileGenerator {
 	}
 
 	protected void generateImportCode() {
-		Set<Class<?>> importClasses = pojoClass.getClasses();
-		for (Class<?> importClass : importClasses) {
-			if (ClassUtils.isPrimitiveOrWrapper(importClass)) {
+		Set<ClassWrapper> importClasses = pojoClass.getClasses();
+		for (ClassWrapper classWrapper : importClasses) {
+			Class<?> importClass = classWrapper.getClassIfPossible();
+			if (importClass != null) {
+				if (ClassUtils.isPrimitiveOrWrapper(importClass)) {
+					continue;
+				}
+				if (importClass.isArray()) {
+					continue;
+				}
+			}
+			// 
+			if (classWrapper.getPackageName().startsWith("java.lang")) {
 				continue;
 			}
-			if (importClass.isArray()) {
-				continue;
-			}
-			if (importClass.getName().startsWith("java.lang")) {
-				continue;
-			}
-			formatterWrapper.formatln("import %s;", importClass.getName());
+			formatterWrapper.formatln("import %s;", classWrapper.getFullName());
 		}
 	}
 
@@ -95,29 +93,28 @@ public class JavaFileGenerator {
 				formatterWrapper.formatln(annotationWrapper.getDisplayString(pojoClass));
 			}
 		}
+		// Suppress Serial Warnings
+		if (pojoClass.getInterfaces() != null) {
+			if (pojoClass.getInterfaces().contains(ClassWrapper.of(Serializable.class))) {
+				formatterWrapper.formatln("@SuppressWarnings(\"serial\")");
+			}
+		}
 		// class line
 		String extendsString = "";
 		if (pojoClass.getSuperClass() != null) {
-			extendsString = String.format(" extends %s", pojoClass.getSuperClass().getSimpleName());
+			extendsString = String.format(" extends %s", pojoClass.getSuperClass().getName());
 		}
 		StringBuffer implementsSb = new StringBuffer("");
 		if (!CollectionUtils.isEmpty(pojoClass.getInterfaces())) {
 			implementsSb.append(" implements ");
-			Iterator<Class<?>> iterator = pojoClass.getInterfaces().iterator();
+			Iterator<ClassWrapper> iterator = pojoClass.getInterfaces().iterator();
 			while (iterator.hasNext()) {
-				Class<?> interface_ = (Class<?>) iterator.next();
-				implementsSb.append(interface_.getSimpleName());
+				ClassWrapper interface_ = (ClassWrapper) iterator.next();
+				implementsSb.append(interface_.getName());
 				if (iterator.hasNext()) {
 					implementsSb.append(", ");
 				}
 			}
-		}
-		// 
-		if (pojoClass.getInterfaces() == null) {
-			return;
-		}
-		if (pojoClass.getInterfaces().contains(Serializable.class)) {
-			formatterWrapper.formatln("@SuppressWarnings(\"serial\")");
 		}
 		formatterWrapper.formatln("public class %s%s%s {", pojoClass.getName(), extendsString, implementsSb);
 	}
@@ -176,12 +173,12 @@ public class JavaFileGenerator {
 
 	protected void generateFieldCode(PojoField pojoField) {
 		generateAnnotation(pojoField, AnnotationType.Field);
-		formatterWrapper.formatln(1, "private %s %s;", pojoField.getType().getSimpleName(), pojoField.getName());
+		formatterWrapper.formatln(1, "private %s %s;", pojoField.getType().getName(), pojoField.getName());
 	}
 
 	protected void generateFieldGetCode(PojoField pojoField) {
 		generateAnnotation(pojoField, AnnotationType.Get);
-		formatterWrapper.formatln(1, "public %s get%s() {", pojoField.getType().getSimpleName(), StringUtils.capitalize(pojoField.getName()));
+		formatterWrapper.formatln(1, "public %s get%s() {", pojoField.getType().getName(), StringUtils.capitalize(pojoField.getName()));
 		formatterWrapper.formatln(2, "return %s;", pojoField.getName());
 		formatterWrapper.formatln(1, "}");
 	}
@@ -189,7 +186,7 @@ public class JavaFileGenerator {
 	protected void generateFieldSetCode(PojoField pojoField) {
 		String name = pojoField.getName();
 		generateAnnotation(pojoField, AnnotationType.Set);
-		formatterWrapper.formatln(1, "public void set%s(%s %s) {", StringUtils.capitalize(name), pojoField.getType().getSimpleName(), name);
+		formatterWrapper.formatln(1, "public void set%s(%s %s) {", StringUtils.capitalize(name), pojoField.getType().getName(), name);
 		formatterWrapper.formatln(2, "this.%s = %s;", name, name);
 		formatterWrapper.formatln(1, "}");
 	}

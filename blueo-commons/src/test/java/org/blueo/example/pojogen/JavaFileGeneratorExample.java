@@ -10,7 +10,7 @@ import org.blueo.pojogen.JavaFileGenerator;
 import org.blueo.pojogen.bo.PojoClass;
 import org.blueo.pojogen.bo.PojoField;
 import org.blueo.pojogen.bo.PojoField.AnnotationType;
-import org.blueo.pojogen.bo.wrapper.AnnotationWrapperUtils;
+import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapperUtils;
 
 import com.google.common.collect.Lists;
 

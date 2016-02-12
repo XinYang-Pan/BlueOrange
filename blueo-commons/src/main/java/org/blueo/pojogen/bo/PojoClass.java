@@ -5,8 +5,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.blueo.pojogen.bo.wrapper.AnnotationWrapper;
-import org.blueo.pojogen.bo.wrapper.AnnotationWrapperUtils;
+import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapper;
+import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapperUtils;
+import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -14,21 +15,21 @@ import com.google.common.collect.Sets;
 public class PojoClass extends ValueMapObject {
 	private String name;
 	private String packageName;
-	private Class<?> superClass;
-	private LinkedHashSet<Class<?>> interfaces;
+	private ClassWrapper superClass;
+	private LinkedHashSet<ClassWrapper> interfaces;
 	private List<AnnotationWrapper<PojoClass>> annotationWrappers;
 	private List<PojoField> pojoFields;
 	
-	public Set<Class<?>> getClasses() {
-		Set<Class<?>> classes = Sets.newHashSet();
+	public Set<ClassWrapper> getClasses() {
+		Set<ClassWrapper> classes = Sets.newHashSet();
 		if (interfaces != null) {
-			for (Class<?> interface_ : interfaces) {
+			for (ClassWrapper interface_ : interfaces) {
 				classes.add(interface_);
 			}
 		}
 		if (annotationWrappers != null) {
-			for (AnnotationWrapper<PojoClass> wrapper : annotationWrappers) {
-				classes.add(wrapper.getAnnotationClass());
+			for (AnnotationWrapper<PojoClass> annotationWrapper : annotationWrappers) {
+				classes.add(annotationWrapper.getClassWrapper());
 			}
 		}
 		if (pojoFields != null) {
@@ -50,7 +51,19 @@ public class PojoClass extends ValueMapObject {
 			this.interfaces = Sets.newLinkedHashSet();
 		}
 		for (Class<?> class1 : interfaces) {
-			this.interfaces.add(class1);
+			this.interfaces.add(ClassWrapper.of(class1));
+		}
+	}
+
+	public void addInterfaces(ClassWrapper... interfaces) {
+		if (interfaces == null) {
+			return;
+		}
+		if (this.interfaces == null) {
+			this.interfaces = Sets.newLinkedHashSet();
+		}
+		for (ClassWrapper wrapper : interfaces) {
+			this.interfaces.add(wrapper);
 		}
 	}
 
@@ -95,19 +108,23 @@ public class PojoClass extends ValueMapObject {
 		this.packageName = packageName;
 	}
 
-	public Class<?> getSuperClass() {
+	public ClassWrapper getSuperClass() {
 		return superClass;
 	}
 
-	public void setSuperClass(Class<?> superClass) {
+	public void setSuperClass(ClassWrapper superClass) {
 		this.superClass = superClass;
 	}
 
-	public LinkedHashSet<Class<?>> getInterfaces() {
+	public void setSuperClass(Class<?> superClass) {
+		this.superClass = ClassWrapper.of(superClass);
+	}
+
+	public LinkedHashSet<ClassWrapper> getInterfaces() {
 		return interfaces;
 	}
 
-	public void setInterfaces(LinkedHashSet<Class<?>> interfaces) {
+	public void setInterfaces(LinkedHashSet<ClassWrapper> interfaces) {
 		this.interfaces = interfaces;
 	}
 

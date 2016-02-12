@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.blueo.pojogen.bo.wrapper.AnnotationWrapper;
-import org.blueo.pojogen.bo.wrapper.AnnotationWrapperUtils;
+import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapper;
+import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapperUtils;
+import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
 import org.springframework.util.Assert;
 
 import com.google.common.collect.Lists;
@@ -20,7 +21,7 @@ public class PojoField extends ValueMapObject {
 	}
 
 	private String name;
-	private Class<?> type;
+	private ClassWrapper type;
 	private Map<AnnotationType, List<AnnotationWrapper<PojoField>>> annotationWrapperMap;
 
 	public PojoField addAnnotation(AnnotationType annotationType, Class<? extends Annotation> annotation) {
@@ -59,12 +60,12 @@ public class PojoField extends ValueMapObject {
 		return list;
 	}
 
-	public Set<Class<?>> getClasses() {
-		Set<Class<?>> classes = Sets.newHashSet();
+	public Set<ClassWrapper> getClasses() {
+		Set<ClassWrapper> classes = Sets.newHashSet();
 		if (annotationWrapperMap != null) {
-			for (List<AnnotationWrapper<PojoField>> wrappers : annotationWrapperMap.values()) {
-				for (AnnotationWrapper<PojoField> wrapper : wrappers) {
-					classes.add(wrapper.getAnnotationClass());
+			for (List<AnnotationWrapper<PojoField>> annotationWrappers : annotationWrapperMap.values()) {
+				for (AnnotationWrapper<PojoField> annotationWrapper : annotationWrappers) {
+					classes.add(annotationWrapper.getClassWrapper());
 				}
 			}
 		}
@@ -76,14 +77,18 @@ public class PojoField extends ValueMapObject {
 	// ---- Getter Setter toString
 	// --------------------------------------
 
-	public Class<?> getType() {
+	public ClassWrapper getType() {
 		return type;
 	}
 
-	public void setType(Class<?> type) {
+	public void setType(ClassWrapper type) {
 		this.type = type;
 	}
 
+	public void setType(Class<?> type) {
+		this.type = ClassWrapper.of(type);
+	}
+	
 	public String getName() {
 		return name;
 	}
