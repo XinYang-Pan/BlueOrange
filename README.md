@@ -1,7 +1,29 @@
 # BlueOrange
 Blue Orange Utilities
 
-## 1. org.blueo.commons.FormatterWrapper
+## org.blueo.db.DbTool - generate db related artifacts from a predefined excel
+1. generate ddl
+2. generate po
+3. generate dao - TODO
+
+#### Sample Code
+```java
+org.blueo.example.table.DbToolExample.main(String[])
+```
+#### Sample Code
+```java
+URL url = DbToolExample.class.getResource("test.xls");
+DbTool dbTool = DbTool.build(url.getPath());
+//
+dbTool.setPrintToConsole(true);
+System.out.println("********************************");
+dbTool.generateCreateDdls();
+System.out.println("********************************");
+dbTool.generatePos();
+System.out.println("********************************");
+```
+
+## org.blueo.commons.FormatterWrapper
 1. Enhancement and wrapper of java.util.Formatter
 2. New Feature - add print line support method formatln
 3. New Feature - add prefix support
@@ -12,7 +34,7 @@ Blue Orange Utilities
 org.blueo.codegen.CodeGenerator.generateSetting(Class<?>, String)
 ```
 
-## 2. org.blueo.commons.tostring.ToStringUtils
+##org.blueo.commons.tostring.ToStringUtils
 #### Sample Code
 ```java
 org.blueo.example.commons.ToStringExample.main(String[])
@@ -69,7 +91,7 @@ Person [name=Jack Tech, sex=male, age=1, staff=false]
 
 
 
-## org.blueo.commons.jdbc.EntityWrapper<T>
+##org.blueo.commons.jdbc.EntityWrapper<T>
 #### Sample Code
 ```java
 org.blueo.example.commons.EntityWrapperExample.main(String[])
