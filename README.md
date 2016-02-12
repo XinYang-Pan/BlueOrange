@@ -1,7 +1,8 @@
 # BlueOrange
 Blue Orange Utilities
 
-## org.blueo.db.DbTool - generate db related artifacts from a predefined excel
+## org.blueo.db.DbTool
+######generate db related artifacts from a predefined excel
 1. generate ddl
 2. generate po
 3. generate dao - TODO
