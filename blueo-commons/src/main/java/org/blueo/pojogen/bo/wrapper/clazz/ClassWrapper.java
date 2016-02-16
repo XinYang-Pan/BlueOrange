@@ -1,26 +1,69 @@
 package org.blueo.pojogen.bo.wrapper.clazz;
 
+import java.util.List;
+
 import org.apache.commons.lang3.ClassUtils;
+import org.springframework.util.CollectionUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 public class ClassWrapper {
 	private final String packageName;
 	private final String name;
+	private final List<ClassWrapper> parameterizedTypes;
 	
-	private ClassWrapper(String clazzFullName) {
-		packageName = Strings.emptyToNull(ClassUtils.getPackageName(clazzFullName));
-		name = ClassUtils.getShortClassName(clazzFullName);
+	private ClassWrapper(String clazzFullName, List<ClassWrapper> parameterizedTypes) {
+		this.packageName = Strings.emptyToNull(ClassUtils.getPackageName(clazzFullName));
+		this.name = ClassUtils.getShortClassName(clazzFullName);
+		this.parameterizedTypes = parameterizedTypes;
 	}
+	
+	// -----------------------------
+	// ----- Static Methods
+	// -----------------------------
 	
 	public static ClassWrapper of(Class<?> clazz) {
 		return of(clazz.getName());
 	}
 	
-	public static ClassWrapper of(String clazzFullName) {
-		return new ClassWrapper(clazzFullName);
+//	public static ClassWrapper of(Class<?> clazz, Class<?> ... parameterizedTypes) {
+//		return of(clazz.getName(), parameterizedTypes);
+//	}
+	
+	public static ClassWrapper of(Class<?> clazz, String ... parameterizedTypes) {
+		return of(clazz.getName(), parameterizedTypes);
 	}
+	
+	public static ClassWrapper of(String clazzFullName) {
+		return new ClassWrapper(clazzFullName, null);
+	}
+	
+	public static ClassWrapper of(String clazzFullName, String ... parameterizedTypes) {
+		if (parameterizedTypes == null) {
+			return new ClassWrapper(clazzFullName, null);
+		} else {
+			List<ClassWrapper> ClassWrappers = Lists.newArrayList();
+			for (String parameterizedType : parameterizedTypes) {
+				ClassWrappers.add(ClassWrapper.of(parameterizedType));
+			}
+			return new ClassWrapper(clazzFullName, ClassWrappers);
+		}
+	}
+	
+	public static ClassWrapper of(String clazzFullName, ClassWrapper ... parameterizedTypes) {
+		if (parameterizedTypes != null) {
+			List<ClassWrapper> ClassWrappers = Lists.newArrayList(parameterizedTypes);
+			return new ClassWrapper(clazzFullName, ClassWrappers);
+		} else {
+			return new ClassWrapper(clazzFullName, null);
+		}
+	}
+	
+	// -----------------------------
+	// ----- Non-Static Methods
+	// -----------------------------
 	
 	public Class<?> getClassIfPossible() {
 		try {
@@ -32,6 +75,30 @@ public class ClassWrapper {
 	
 	public String getFullName() {
 		return Joiner.on('.').skipNulls().join(packageName, name);
+	}
+	
+	public String getTypedName() {
+		if (!CollectionUtils.isEmpty(parameterizedTypes)) {
+			List<String> names = Lists.newArrayList();
+			for (ClassWrapper wrapper : parameterizedTypes) {
+				names.add(wrapper.getName());
+			}
+			String parameterizedTypesuffix = Joiner.on(", ").join(names);
+			return String.format("%s<%s>", this.getName(), parameterizedTypesuffix);
+		} else {
+			return this.getName();
+		}
+	}
+	
+	public List<ClassWrapper> getImports() {
+		List<ClassWrapper> classWrappers = Lists.newArrayList();
+		classWrappers.add(this);
+		if (!CollectionUtils.isEmpty(parameterizedTypes)) {
+			for (ClassWrapper wrapper : parameterizedTypes) {
+				classWrappers.addAll(wrapper.getImports());
+			}
+		}
+		return classWrappers;
 	}
 	
 	// -----------------------------
@@ -72,8 +139,7 @@ public class ClassWrapper {
 	public String getPackageName() {
 		return packageName;
 	}
-
-
+	
 	public String getName() {
 		return name;
 	}

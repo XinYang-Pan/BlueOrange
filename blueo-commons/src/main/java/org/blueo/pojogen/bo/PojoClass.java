@@ -20,25 +20,25 @@ public class PojoClass extends ValueMapObject {
 	private List<AnnotationWrapper<PojoClass>> annotationWrappers;
 	private List<PojoField> pojoFields;
 	
-	public Set<ClassWrapper> getClasses() {
+	public Set<ClassWrapper> getImports() {
 		Set<ClassWrapper> classes = Sets.newHashSet();
 		if (interfaces != null) {
 			for (ClassWrapper interface_ : interfaces) {
-				classes.add(interface_);
+				classes.addAll(interface_.getImports());
 			}
 		}
 		if (annotationWrappers != null) {
 			for (AnnotationWrapper<PojoClass> annotationWrapper : annotationWrappers) {
-				classes.add(annotationWrapper.getClassWrapper());
+				classes.addAll(annotationWrapper.getClassWrapper().getImports());
 			}
 		}
 		if (pojoFields != null) {
 			for (PojoField pojoField : pojoFields) {
-				classes.addAll(pojoField.getClasses());
+				classes.addAll(pojoField.getImports());
 			}
 		}
 		if (superClass != null) {
-			classes.add(superClass);
+			classes.addAll(superClass.getImports());
 		}
 		return classes;
 	}

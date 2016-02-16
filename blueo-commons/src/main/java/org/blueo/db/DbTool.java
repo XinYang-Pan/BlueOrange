@@ -9,6 +9,7 @@ import org.blueo.db.java.PojoBuildUtils;
 import org.blueo.db.sql.DdlBuildUtils;
 import org.blueo.db.vo.DbTable;
 import org.blueo.pojogen.JavaFileGenerator;
+import org.blueo.pojogen.bo.PojoClass;
 
 public class DbTool {
 	private final String excelPath;
@@ -48,21 +49,24 @@ public class DbTool {
 		formatterWrapper.close();
 	}
 	
-	public void generatePos() {
+	public void generatePoAndDaos() {
 		for (DbTable dbTable : dbTables) {
-			JavaFileGenerator javaFileGenerator;
+			PojoClass pojoClass = PojoBuildUtils.buildEntityClass(dbTable, dbConfig);
+			PojoClass daoClass = PojoBuildUtils.buildDaoClass(pojoClass, dbConfig);
 			if (printToConsole) {
-				javaFileGenerator = new JavaFileGenerator(PojoBuildUtils.buildEntityClass(dbTable, dbConfig));
+				new JavaFileGenerator(pojoClass).generateClassCode();
+				new JavaFileGenerator(daoClass).generateClassCode();
 			} else {
-				javaFileGenerator = new JavaFileGenerator(PojoBuildUtils.buildEntityClass(dbTable, dbConfig), dbConfig.getSourceDir());
+				new JavaFileGenerator(pojoClass, dbConfig.getSourceDir()).generateClassCode();
+				new JavaFileGenerator(daoClass, dbConfig.getSourceDir()).generateClassCode();
 			}
-			javaFileGenerator.generateClassCode();
 		}
 	}
 	
 	// -----------------------------
 	// ----- Get Set ToString HashCode Equals
 	// -----------------------------
+	
 	public String getExcelPath() {
 		return excelPath;
 	}

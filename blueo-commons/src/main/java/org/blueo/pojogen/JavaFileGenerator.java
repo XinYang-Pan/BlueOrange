@@ -66,7 +66,7 @@ public class JavaFileGenerator {
 	}
 
 	protected void generateImportCode() {
-		Set<ClassWrapper> importClasses = pojoClass.getClasses();
+		Set<ClassWrapper> importClasses = pojoClass.getImports();
 		for (ClassWrapper classWrapper : importClasses) {
 			Class<?> importClass = classWrapper.getClassIfPossible();
 			if (importClass != null) {
@@ -102,7 +102,7 @@ public class JavaFileGenerator {
 		// class line
 		String extendsString = "";
 		if (pojoClass.getSuperClass() != null) {
-			extendsString = String.format(" extends %s", pojoClass.getSuperClass().getName());
+			extendsString = String.format(" extends %s", pojoClass.getSuperClass().getTypedName());
 		}
 		StringBuffer implementsSb = new StringBuffer("");
 		if (!CollectionUtils.isEmpty(pojoClass.getInterfaces())) {
@@ -110,7 +110,7 @@ public class JavaFileGenerator {
 			Iterator<ClassWrapper> iterator = pojoClass.getInterfaces().iterator();
 			while (iterator.hasNext()) {
 				ClassWrapper interface_ = (ClassWrapper) iterator.next();
-				implementsSb.append(interface_.getName());
+				implementsSb.append(interface_.getTypedName());
 				if (iterator.hasNext()) {
 					implementsSb.append(", ");
 				}
@@ -130,13 +130,21 @@ public class JavaFileGenerator {
 	}
 
 	protected void generateFieldCode() {
-		for (PojoField pojoField : pojoClass.getEntityFields()) {
+		List<PojoField> entityFields = pojoClass.getEntityFields();
+		if (entityFields == null) {
+			return;
+		}
+		for (PojoField pojoField : entityFields) {
 			this.generateFieldCode(pojoField);
 		}
 	}
 
 	protected void generateGetSetCode() {
-		for (PojoField pojoField : pojoClass.getEntityFields()) {
+		List<PojoField> entityFields = pojoClass.getEntityFields();
+		if (entityFields == null) {
+			return;
+		}
+		for (PojoField pojoField : entityFields) {
 			this.generateFieldGetCode(pojoField);
 			formatterWrapper.formatln();
 			this.generateFieldSetCode(pojoField);
@@ -145,11 +153,15 @@ public class JavaFileGenerator {
 	}
 
 	protected void generateToStringCode() {
+		List<PojoField> entityFields = pojoClass.getEntityFields();
+		if (entityFields == null) {
+			return;
+		}
 		formatterWrapper.formatln(1, "@Override");
 		formatterWrapper.formatln(1, "public String toString() {");
 		formatterWrapper.formatln(2, "StringBuilder builder = new StringBuilder();");
 		boolean first = true;
-		for (PojoField pojoField : pojoClass.getEntityFields()) {
+		for (PojoField pojoField : entityFields) {
 			if (first) {
 				first = false;
 				formatterWrapper.formatln(2, "builder.append(\"%s [%s=\");", pojoClass.getName(), pojoField.getName());

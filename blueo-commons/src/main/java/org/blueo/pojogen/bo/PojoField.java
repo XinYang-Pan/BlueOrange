@@ -60,7 +60,7 @@ public class PojoField extends ValueMapObject {
 		return list;
 	}
 
-	public Set<ClassWrapper> getClasses() {
+	public Set<ClassWrapper> getImports() {
 		Set<ClassWrapper> classes = Sets.newHashSet();
 		if (annotationWrapperMap != null) {
 			for (List<AnnotationWrapper<PojoField>> annotationWrappers : annotationWrapperMap.values()) {
@@ -69,7 +69,7 @@ public class PojoField extends ValueMapObject {
 				}
 			}
 		}
-		classes.add(this.getType());
+		classes.addAll(this.getType().getImports());
 		return classes;
 	}
 

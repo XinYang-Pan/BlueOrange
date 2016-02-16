@@ -11,6 +11,7 @@ import org.blueo.pojogen.bo.PojoClass;
 import org.blueo.pojogen.bo.PojoField;
 import org.blueo.pojogen.bo.PojoField.AnnotationType;
 import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapperUtils;
+import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
 
 import com.google.common.collect.Lists;
 
@@ -33,14 +34,15 @@ public class JavaFileGeneratorExample {
 		
 
 		PojoClass pojoClass = new PojoClass();
-		pojoClass.setPackageName("org.blueo.db");
+		pojoClass.setPackageName("test.org.blueo.db");
 		pojoClass.setEntityFields(Lists.newArrayList(pojoField, pojoField1));
 		pojoClass.setName("Person");
 		pojoClass.getValueMap().put("tableName", "TBL_PERSON");
 		pojoClass.addAnnotation(Entity.class);
 		pojoClass.addAnnotationWrapper(AnnotationWrapperUtils.TABLE_WRAPPER);
 		pojoClass.setSuperClass(Object.class);
-		pojoClass.addInterfaces(Serializable.class, Cloneable.class, Serializable.class);
+		pojoClass.addInterfaces(Serializable.class, Cloneable.class);
+		pojoClass.addInterfaces(ClassWrapper.of("test.dao.HasId", Long.class.getName()));
 		
 //		JavaFileGenerator javaFileGenerator = new JavaFileGenerator(pojoClass, "./tmp");
 		JavaFileGenerator javaFileGenerator = new JavaFileGenerator(pojoClass);

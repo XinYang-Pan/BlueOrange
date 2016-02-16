@@ -17,7 +17,7 @@ public class DbToolExample {
 		System.out.println("********************************");
 		dbTool.generateCreateDdls();
 		System.out.println("********************************");
-		dbTool.generatePos();
+		dbTool.generatePoAndDaos();
 		System.out.println("********************************");
 	}
 

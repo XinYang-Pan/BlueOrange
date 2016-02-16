@@ -17,6 +17,8 @@ import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapperUtils;
 import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
 import org.springframework.util.Assert;
 
+import test.dao.impl.AbstractDao;
+
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
 import com.google.common.collect.Lists;
@@ -36,6 +38,14 @@ public class PojoBuildUtils {
 	private static Class<?> getJavaType(String sqlType) {
 		Assert.notNull(sqlType);
 		return sqlTypeToJavaType.get(sqlType.toLowerCase());
+	}
+	
+	public static PojoClass buildDaoClass(PojoClass pojoClass, DbConfig dbConfig) {
+		PojoClass daoClass = new PojoClass();
+		daoClass.setPackageName(dbConfig.getDaoPackage());
+		daoClass.setName(String.format("%sDao", pojoClass.getName()));
+		daoClass.setSuperClass(ClassWrapper.of(AbstractDao.class, String.format("%s.%s", pojoClass.getPackageName(), pojoClass.getName()), Long.class.getName()));
+		return daoClass;
 	}
 
 	public static PojoClass buildEntityClass(DbTable dbTable, DbConfig dbConfig) {
