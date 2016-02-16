@@ -14,7 +14,7 @@ public class ClassWrapper {
 	private final String name;
 	private final List<ClassWrapper> parameterizedTypes;
 	
-	private ClassWrapper(String clazzFullName, List<ClassWrapper> parameterizedTypes) {
+	ClassWrapper(String clazzFullName, List<ClassWrapper> parameterizedTypes) {
 		this.packageName = Strings.emptyToNull(ClassUtils.getPackageName(clazzFullName));
 		this.name = ClassUtils.getShortClassName(clazzFullName);
 		this.parameterizedTypes = parameterizedTypes;

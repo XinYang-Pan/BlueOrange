@@ -12,7 +12,7 @@ public class JavaDaoFileGeneratorExample {
 		PojoClass pojoClass = new PojoClass();
 		pojoClass.setPackageName("test.org.blueo.db");
 		pojoClass.setName("PersonDao");
-		pojoClass.setSuperClass(ClassWrapper.of(AbstractDao.class, "<Person, Long>"));
+		pojoClass.setSuperClass(ClassWrapper.of(AbstractDao.class, "test.org.blueo.db.Person", Long.class.getName()));
 		
 //		JavaFileGenerator javaFileGenerator = new JavaFileGenerator(pojoClass, "./tmp");
 		JavaFileGenerator javaFileGenerator = new JavaFileGenerator(pojoClass);
