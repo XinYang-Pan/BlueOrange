@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.blueo.db.DbConfig;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
@@ -16,8 +17,6 @@ import org.blueo.pojogen.bo.PojoField.AnnotationType;
 import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapperUtils;
 import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
 import org.springframework.util.Assert;
-
-import test.dao.impl.AbstractDao;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
@@ -40,11 +39,16 @@ public class PojoBuildUtils {
 		return sqlTypeToJavaType.get(sqlType.toLowerCase());
 	}
 	
-	public static PojoClass buildDaoClass(PojoClass pojoClass, DbConfig dbConfig) {
+	public static PojoClass buildDaoClass(PojoClass poClass, DbConfig dbConfig) {
 		PojoClass daoClass = new PojoClass();
 		daoClass.setPackageName(dbConfig.getDaoPackage());
-		daoClass.setName(String.format("%sDao", pojoClass.getName()));
-		daoClass.setSuperClass(ClassWrapper.of(AbstractDao.class, String.format("%s.%s", pojoClass.getPackageName(), pojoClass.getName()), Long.class.getName()));
+		daoClass.setName(String.format("%sDao", poClass.getName()));
+		// 
+		Map<String, String> valueMap = Maps.newHashMap();
+		valueMap.put("poName", poClass.getFullName());
+		String superClassString = StrSubstitutor.replace(dbConfig.getDaoSuperclass(), valueMap);
+		// 
+		daoClass.setSuperClass(ClassWrapper.of(superClassString));
 		return daoClass;
 	}
 

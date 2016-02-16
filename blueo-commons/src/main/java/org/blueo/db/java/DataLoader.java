@@ -72,7 +72,7 @@ public class DataLoader {
 	private Map<String, String> key2Value(Sheet sheet) {
 		Map<String, String> key2Value = Maps.newHashMap();
 		int rows = sheet.getRows();
-		for (int i = ROW_START_INDEX; i < rows; i++) {
+		for (int i = 0; i < rows; i++) {
 			String key = getContent(sheet.getCell(0, i));
 			if (key != null) {
 				String value = getContent(sheet.getCell(1, i));

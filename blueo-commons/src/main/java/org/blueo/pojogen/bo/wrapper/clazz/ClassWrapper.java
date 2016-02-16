@@ -36,8 +36,8 @@ public class ClassWrapper {
 		return of(clazz.getName(), parameterizedTypes);
 	}
 	
-	public static ClassWrapper of(String clazzFullName) {
-		return new ClassWrapper(clazzFullName, null);
+	public static ClassWrapper of(String classNameWithParameterizedTypes) {
+		return ClassWrapperParser.parse(classNameWithParameterizedTypes);
 	}
 	
 	public static ClassWrapper of(String clazzFullName, String ... parameterizedTypes) {
@@ -151,6 +151,8 @@ public class ClassWrapper {
 		builder.append(packageName);
 		builder.append(", name=");
 		builder.append(name);
+		builder.append(", parameterizedTypes=");
+		builder.append(parameterizedTypes);
 		builder.append("]");
 		return builder.toString();
 	}

@@ -9,6 +9,7 @@ import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapper;
 import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapperUtils;
 import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -96,6 +97,10 @@ public class PojoClass extends ValueMapObject {
 		}
 	}
 
+	public String getFullName() {
+		return Joiner.on('.').skipNulls().join(this.getPackageName(), this.getName());
+	}
+	
 	// --------------------------------------
 	// ---- Getter Setter toString
 	// --------------------------------------

@@ -4,7 +4,7 @@ import java.lang.reflect.Type;
 
 import com.google.common.reflect.TypeToken;
 
-public class Super<T> {
+public class Super<T, F> {
 	
 	@SuppressWarnings({ "unchecked", "serial" })
 	Class<T> getParameterizedClass() {

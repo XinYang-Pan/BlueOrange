@@ -42,7 +42,7 @@ public class JavaFileGeneratorExample {
 		pojoClass.addAnnotationWrapper(AnnotationWrapperUtils.TABLE_WRAPPER);
 		pojoClass.setSuperClass(Object.class);
 		pojoClass.addInterfaces(Serializable.class, Cloneable.class);
-		pojoClass.addInterfaces(ClassWrapper.of("test.dao.HasId", Long.class.getName()));
+		pojoClass.addInterfaces(ClassWrapper.of("test.dao.HasId", "Long"));
 		
 //		JavaFileGenerator javaFileGenerator = new JavaFileGenerator(pojoClass, "./tmp");
 		JavaFileGenerator javaFileGenerator = new JavaFileGenerator(pojoClass);

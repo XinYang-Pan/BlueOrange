@@ -1,80 +1,81 @@
-package test.dao.impl;
+package org.blueo.commons.jdbc.core.impl;
 
 import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.List;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.blueo.commons.jdbc.core.Crud;
+import org.blueo.commons.jdbc.core.CrudBatch;
+import org.blueo.commons.jdbc.core.ReadType;
+import org.blueo.commons.jdbc.core.Search;
 
-import test.dao.Crud;
-import test.dao.ReadType;
-import test.dao.Search;
-
-import com.google.common.reflect.TypeToken;
-
-public class AbstractDao<T, K> implements Crud<T, K>, Search<T> {
-	protected HibernateTemplate hibernateTemplate;
-	protected JdbcTemplate jdbcTemplate;
+public class AbstractDao<T, K> implements Crud<T, K>, CrudBatch<T, K>, Search<T> {
 	protected Crud<T, K> crud;
+	protected CrudBatch<T, K> crudBatch;
 	protected Search<T> search;
-	//
-	protected final Class<T> clazz;
-
-	public AbstractDao() {
-		clazz = this.getParameterizedClass();
-	}
 
 	// -----------------------------
 	// ----- delegate to Crud
 	// -----------------------------
+
+	@Override
 	public T getById(K id) {
 		return crud.getById(id);
 	}
 
+	@Override
 	public T getById(Serializable id, ReadType type) {
 		return crud.getById(id, type);
 	}
 
+	@Override
 	public K save(T t) {
 		return crud.save(t);
 	}
 
+	@Override
 	public List<K> saveAll(List<T> list) {
-		return crud.saveAll(list);
+		return crudBatch.saveAll(list);
 	}
 
+	@Override
 	public void update(T t) {
 		crud.update(t);
 	}
 
+	@Override
 	public void updateAll(List<T> list) {
-		crud.updateAll(list);
+		crudBatch.updateAll(list);
 	}
 
+	@Override
 	public void saveOrUpdate(T t) {
 		crud.saveOrUpdate(t);
 	}
 
+	@Override
 	public void saveOrUpdateAll(List<T> list) {
-		crud.saveOrUpdateAll(list);
+		crudBatch.saveOrUpdateAll(list);
 	}
 
+	@Override
 	public void delete(T t) {
 		crud.delete(t);
 	}
 
+	@Override
 	public void deleteAll(List<T> ts) {
-		crud.deleteAll(ts);
+		crudBatch.deleteAll(ts);
 	}
 
-	public void deleteById(Serializable id) {
+	@Override
+	public void deleteById(K id) {
 		crud.deleteById(id);
 	}
 
 	// -----------------------------
 	// ----- Search
 	// -----------------------------
+
 	@Override
 	public T findByExample(T t, boolean nullableResult) {
 		return search.findByExample(t, nullableResult);
@@ -91,42 +92,8 @@ public class AbstractDao<T, K> implements Crud<T, K>, Search<T> {
 	}
 
 	// -----------------------------
-	// ----- Others
-	// -----------------------------
-
-	@SuppressWarnings({ "unchecked", "serial" })
-	private Class<T> getParameterizedClass() {
-		TypeToken<T> typeToken = new TypeToken<T>(this.getClass()) {
-		};
-		Type type = typeToken.getType();
-		//
-		if (type instanceof Class<?>) {
-			Class<T> clazz = (Class<T>) type;
-			return clazz;
-		} else {
-			return null;
-		}
-	}
-
-	// -----------------------------
 	// ----- Get Set ToString HashCode Equals
 	// -----------------------------
-
-	public HibernateTemplate getHibernateTemplate() {
-		return hibernateTemplate;
-	}
-
-	public void setHibernateTemplate(HibernateTemplate hibernateTemplate) {
-		this.hibernateTemplate = hibernateTemplate;
-	}
-
-	public JdbcTemplate getJdbcTemplate() {
-		return jdbcTemplate;
-	}
-
-	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-		this.jdbcTemplate = jdbcTemplate;
-	}
 
 	public Crud<T, K> getCrud() {
 		return crud;

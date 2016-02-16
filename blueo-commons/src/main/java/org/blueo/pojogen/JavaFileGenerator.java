@@ -78,7 +78,12 @@ public class JavaFileGenerator {
 				}
 			}
 			// 
-			if (classWrapper.getPackageName().startsWith("java.lang")) {
+			String packageName = classWrapper.getPackageName();
+			if (packageName == null) {
+				// in case omitting java.lang. like String, Long etc.
+				continue;
+			}
+			if (packageName.startsWith("java.lang")) {
 				continue;
 			}
 			formatterWrapper.formatln("import %s;", classWrapper.getFullName());

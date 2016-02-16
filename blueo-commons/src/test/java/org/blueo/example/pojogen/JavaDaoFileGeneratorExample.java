@@ -1,10 +1,9 @@
 package org.blueo.example.pojogen;
 
+import org.blueo.commons.jdbc.core.impl.AbstractDao;
 import org.blueo.pojogen.JavaFileGenerator;
 import org.blueo.pojogen.bo.PojoClass;
 import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
-
-import test.dao.impl.AbstractDao;
 
 public class JavaDaoFileGeneratorExample {
 	

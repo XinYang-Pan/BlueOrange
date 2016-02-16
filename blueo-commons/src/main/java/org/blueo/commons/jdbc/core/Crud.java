@@ -1,7 +1,6 @@
-package test.dao;
+package org.blueo.commons.jdbc.core;
 
 import java.io.Serializable;
-import java.util.List;
 
 // T is entity, K is key
 public interface Crud<T, K> {
@@ -20,15 +19,11 @@ public interface Crud<T, K> {
 
 	public K save(T t);
 
-	public List<K> saveAll(List<T> list);
-
 	// -----------------------------
 	// ----- Update
 	// -----------------------------
 	
 	public void update(T t);
-
-	public void updateAll(List<T> list);
 
 	// -----------------------------
 	// ----- Create/Update
@@ -36,16 +31,12 @@ public interface Crud<T, K> {
 	
 	public void saveOrUpdate(T t);
 
-	public void saveOrUpdateAll(List<T> list);
-
 	// -----------------------------
 	// ----- Delete
 	// -----------------------------
 
 	public void delete(T t);
 
-	public void deleteAll(List<T> ts);
-
-	public void deleteById(Serializable id);
+	public void deleteById(K id);
 
 }

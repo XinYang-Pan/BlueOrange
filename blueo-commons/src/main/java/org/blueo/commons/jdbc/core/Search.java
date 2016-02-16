@@ -1,4 +1,4 @@
-package test.dao;
+package org.blueo.commons.jdbc.core;
 
 import java.util.List;
 
