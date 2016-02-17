@@ -4,6 +4,7 @@ import java.util.Formatter;
 import java.util.List;
 
 import org.blueo.commons.FormatterWrapper;
+import org.blueo.db.config.DbGlobalConfig;
 import org.blueo.db.java.DataLoader;
 import org.blueo.db.java.PojoBuildUtils;
 import org.blueo.db.sql.DdlBuildUtils;
@@ -15,7 +16,7 @@ public class DbTool {
 	private final String excelPath;
 	private boolean printToConsole;
 	// Internal process fields
-	private DbConfig dbConfig;
+	private DbGlobalConfig dbConfig;
 	private List<DbTable> dbTables;
 	
 	private DbTool(String excelPath) {
@@ -71,7 +72,7 @@ public class DbTool {
 		return excelPath;
 	}
 
-	public DbConfig getDbConfig() {
+	public DbGlobalConfig getDbConfig() {
 		return dbConfig;
 	}
 

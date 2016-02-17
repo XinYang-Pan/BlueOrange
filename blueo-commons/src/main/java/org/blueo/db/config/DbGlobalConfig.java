@@ -1,11 +1,11 @@
-package org.blueo.db;
+package org.blueo.db.config;
 
 import java.util.List;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
-public class DbConfig {
+public class DbGlobalConfig {
 	// Java
 	private String sourceDir = "./tmp/src";
 	private String poPackage = "org.blueo.db.po";
@@ -17,10 +17,32 @@ public class DbConfig {
 	// DDL
 	private String ddlDir = "./tmp/ddl";
 	private String ddlFileName = "createTables.sql";
-
+	// table default
+	private DbTableConfig dbTableConfig;
+	
 	// -----------------------------
 	// ----- Non-Static Methods
 	// -----------------------------
+	
+	public DbTableConfig loadDefaultTo(DbTableConfig dbTableConfig) {
+		// 
+		if (dbTableConfig.getTraceable() == null) {
+			dbTableConfig.setTraceable(this.dbTableConfig.getTraceable());
+		}
+		// 
+		if (dbTableConfig.getTraceType() == null) {
+			dbTableConfig.setTraceType(this.dbTableConfig.getTraceType());
+		}
+		// 
+		if (dbTableConfig.getHasId() == null) {
+			dbTableConfig.setHasId(this.dbTableConfig.getHasId());
+		}
+		// 
+		if (dbTableConfig.getIdType() == null) {
+			dbTableConfig.setIdType(this.dbTableConfig.getIdType());
+		}
+		return dbTableConfig;
+	}
 	
 	public List<String> getPoInterfacesInList() {
 		if (poInterfaces == null) {
@@ -114,6 +136,14 @@ public class DbConfig {
 		this.ddlFileName = ddlFileName;
 	}
 
+	public DbTableConfig getDbTableConfig() {
+		return dbTableConfig;
+	}
+
+	public void setDbTableConfig(DbTableConfig dbTableConfig) {
+		this.dbTableConfig = dbTableConfig;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -135,6 +165,8 @@ public class DbConfig {
 		builder.append(ddlDir);
 		builder.append(", ddlFileName=");
 		builder.append(ddlFileName);
+		builder.append(", dbTableConfig=");
+		builder.append(dbTableConfig);
 		builder.append(", getPoInterfacesInList()=");
 		builder.append(getPoInterfacesInList());
 		builder.append(", getDaoInterfacesInList()=");

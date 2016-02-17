@@ -1,5 +1,6 @@
 package org.blueo.db.java;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +9,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
-import org.blueo.db.DbConfig;
+import org.blueo.commons.jdbc.core.po.HasId;
+import org.blueo.commons.jdbc.core.po.TraceablePo;
+import org.blueo.db.config.DbGlobalConfig;
+import org.blueo.db.config.DbTableConfig;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
 import org.blueo.pojogen.bo.PojoClass;
@@ -16,10 +20,12 @@ import org.blueo.pojogen.bo.PojoField;
 import org.blueo.pojogen.bo.PojoField.AnnotationType;
 import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapperUtils;
 import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
+import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -32,17 +38,21 @@ public class PojoBuildUtils {
 		sqlTypeToJavaType.put("bigint", Long.class);
 		sqlTypeToJavaType.put("varchar", String.class);
 		sqlTypeToJavaType.put("int", Integer.class);
+		sqlTypeToJavaType.put("long", Long.class);
+		sqlTypeToJavaType.put("date", Date.class);
+		sqlTypeToJavaType.put("boolean", Boolean.class);
 	}
 
 	private static Class<?> getJavaType(String sqlType) {
 		Assert.notNull(sqlType);
-		return sqlTypeToJavaType.get(sqlType.toLowerCase());
+		return Preconditions.checkNotNull(sqlTypeToJavaType.get(sqlType.toLowerCase()), String.format("No java class found for %s.", sqlType));
 	}
 	
-	public static PojoClass buildDaoClass(PojoClass poClass, DbConfig dbConfig) {
+	public static PojoClass buildDaoClass(PojoClass poClass, DbGlobalConfig dbConfig) {
 		PojoClass daoClass = new PojoClass();
 		daoClass.setPackageName(dbConfig.getDaoPackage());
 		daoClass.setName(String.format("%sDao", poClass.getName()));
+		daoClass.addAnnotation(Repository.class);
 		// 
 		Map<String, String> valueMap = Maps.newHashMap();
 		valueMap.put("poName", poClass.getFullName());
@@ -52,10 +62,12 @@ public class PojoBuildUtils {
 		return daoClass;
 	}
 
-	public static PojoClass buildEntityClass(DbTable dbTable, DbConfig dbConfig) {
+	public static PojoClass buildEntityClass(DbTable dbTable, DbGlobalConfig dbConfig) {
 		if (dbTable == null) {
 			return null;
 		}
+		DbTableConfig dbTableConfig = dbTable.getDbTableConfig();
+		// 
 		List<PojoField> pojoFields = Lists.newArrayList();
 		PojoField pk = buildEntityField(dbTable.getPk(), true);
 		if (pk != null) {
@@ -80,6 +92,12 @@ public class PojoBuildUtils {
 		for (String className : poInterfacesInList) {
 			pojoClass.addInterfaces(ClassWrapper.of(className));
 		}
+		if (dbTableConfig.isTraceableInBoolean()) {
+			pojoClass.addInterfaces(ClassWrapper.of(TraceablePo.class, getJavaType(dbTableConfig.getTraceType())));
+		}
+		if (dbTableConfig.isHasIdInBoolean()) {
+			pojoClass.addInterfaces(ClassWrapper.of(HasId.class, getJavaType(dbTableConfig.getIdType())));
+		}
 		return pojoClass;
 	}
 
@@ -98,4 +116,5 @@ public class PojoBuildUtils {
 		pojoField.addAnnotationWrapper(AnnotationType.Get, AnnotationWrapperUtils.COLUMN_WRAPPER);
 		return pojoField;
 	}
+
 }

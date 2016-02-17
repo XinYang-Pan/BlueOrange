@@ -8,9 +8,9 @@ import org.javatuples.Triplet;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
-public class ClassWrapperParser {
+class ClassWrapperParser {
 
-	public static ClassWrapper parse(String classNameWithParameterizedTypes) {
+	static ClassWrapper parse(String classNameWithParameterizedTypes) {
 		Triplet<String, String, String> texts = BlueoStrs.parse(classNameWithParameterizedTypes, '<', '>');
 		String parameterizedTypeStr = texts.getValue0();
 		if (parameterizedTypeStr == null) {

@@ -2,10 +2,13 @@ package org.blueo.db.vo;
 
 import java.util.List;
 
+import org.blueo.db.config.DbTableConfig;
+
 public class DbTable {
 	private String name;
 	private DbColumn pk;
 	private List<DbColumn> dbColumns;
+	private DbTableConfig dbTableConfig;
 
 	public String getName() {
 		return name;
@@ -31,6 +34,14 @@ public class DbTable {
 		this.dbColumns = dbColumns;
 	}
 
+	public DbTableConfig getDbTableConfig() {
+		return dbTableConfig;
+	}
+
+	public void setDbTableConfig(DbTableConfig dbTableConfig) {
+		this.dbTableConfig = dbTableConfig;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -40,6 +51,8 @@ public class DbTable {
 		builder.append(pk);
 		builder.append(", dbColumns=");
 		builder.append(dbColumns);
+		builder.append(", dbTableConfig=");
+		builder.append(dbTableConfig);
 		builder.append("]");
 		return builder.toString();
 	}

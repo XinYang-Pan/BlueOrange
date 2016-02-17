@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import org.blueo.commons.jdbc.core.po.HasId;
 import org.blueo.pojogen.JavaFileGenerator;
 import org.blueo.pojogen.bo.PojoClass;
 import org.blueo.pojogen.bo.PojoField;
@@ -42,7 +43,7 @@ public class JavaFileGeneratorExample {
 		pojoClass.addAnnotationWrapper(AnnotationWrapperUtils.TABLE_WRAPPER);
 		pojoClass.setSuperClass(Object.class);
 		pojoClass.addInterfaces(Serializable.class, Cloneable.class);
-		pojoClass.addInterfaces(ClassWrapper.of("test.dao.HasId", "Long"));
+		pojoClass.addInterfaces(ClassWrapper.of(HasId.class, "Long"));
 		
 //		JavaFileGenerator javaFileGenerator = new JavaFileGenerator(pojoClass, "./tmp");
 		JavaFileGenerator javaFileGenerator = new JavaFileGenerator(pojoClass);
