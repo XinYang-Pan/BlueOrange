@@ -24,26 +24,6 @@ public class DbGlobalConfig {
 	// ----- Non-Static Methods
 	// -----------------------------
 	
-	public DbTableConfig loadDefaultTo(DbTableConfig dbTableConfig) {
-		// 
-		if (dbTableConfig.getTraceable() == null) {
-			dbTableConfig.setTraceable(this.dbTableConfig.getTraceable());
-		}
-		// 
-		if (dbTableConfig.getTraceType() == null) {
-			dbTableConfig.setTraceType(this.dbTableConfig.getTraceType());
-		}
-		// 
-		if (dbTableConfig.getHasId() == null) {
-			dbTableConfig.setHasId(this.dbTableConfig.getHasId());
-		}
-		// 
-		if (dbTableConfig.getIdType() == null) {
-			dbTableConfig.setIdType(this.dbTableConfig.getIdType());
-		}
-		return dbTableConfig;
-	}
-	
 	public List<String> getPoInterfacesInList() {
 		if (poInterfaces == null) {
 			return Lists.newArrayList();

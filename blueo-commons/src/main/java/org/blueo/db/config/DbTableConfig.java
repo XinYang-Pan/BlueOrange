@@ -7,6 +7,8 @@ public class DbTableConfig {
 	private String traceType;
 	private String hasId;
 	private String idType;
+	private String traceTimeType;
+	private String traceDelFlagType;
 
 	public boolean isTraceableInBoolean() {
 		return BooleanUtils.isTrue(BooleanUtils.toBooleanObject(traceable));
@@ -52,6 +54,22 @@ public class DbTableConfig {
 		this.idType = idType;
 	}
 
+	public String getTraceTimeType() {
+		return traceTimeType;
+	}
+
+	public void setTraceTimeType(String traceTimeType) {
+		this.traceTimeType = traceTimeType;
+	}
+
+	public String getTraceDelFlagType() {
+		return traceDelFlagType;
+	}
+
+	public void setTraceDelFlagType(String traceDelFlagType) {
+		this.traceDelFlagType = traceDelFlagType;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -63,6 +81,10 @@ public class DbTableConfig {
 		builder.append(hasId);
 		builder.append(", idType=");
 		builder.append(idType);
+		builder.append(", traceTimeType=");
+		builder.append(traceTimeType);
+		builder.append(", traceDelFlagType=");
+		builder.append(traceDelFlagType);
 		builder.append("]");
 		return builder.toString();
 	}

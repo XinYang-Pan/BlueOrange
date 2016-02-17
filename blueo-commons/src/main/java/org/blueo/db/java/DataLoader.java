@@ -17,7 +17,6 @@ import org.blueo.db.config.DbTableConfig;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -95,6 +94,9 @@ public class DataLoader {
 	private DbTableConfig buildDbTableConfig(Map<String, String> key2Value) throws IllegalAccessException, InvocationTargetException {
 		// 
 		DbTableConfig dbTableConfig = new DbTableConfig();
+		if (dbConfig != null) {
+			BeanUtils.copyProperties(dbTableConfig, dbConfig.getDbTableConfig());
+		}
 		BeanUtils.populate(dbTableConfig, key2Value);
 		return dbTableConfig;
 	}
@@ -124,9 +126,6 @@ public class DataLoader {
 		}
 		// 
 		DbTableConfig dbTableConfig = buildDbTableConfig(key2Value);
-		Preconditions.checkNotNull(dbConfig);
-		dbConfig.loadDefaultTo(dbTableConfig);
-		// 
 		int rows = sheet.getRows();
 		Integer rowStartIndex = null;
 		for (int i = 0; i < rows; i++) {
@@ -150,7 +149,7 @@ public class DataLoader {
 			DbColumn dbcolumn = new DbColumn();
 			dbcolumn.setName(name.toUpperCase());
 			dbcolumn.setType(getContent(sheet, 2, i));
-			dbcolumn.setSize(getContent(sheet, 3, i));
+			dbcolumn.setLength(getContent(sheet, 3, i));
 			dbcolumn.setPk("y".equalsIgnoreCase(getContent(sheet, 4, i)));
 			dbcolumn.setNullable("y".equalsIgnoreCase(ObjectUtils.firstNonNull(getContent(sheet, 5, i), "y")));
 			dbcolumn.setComment(getContent(sheet, 6, i));
@@ -171,15 +170,15 @@ public class DataLoader {
 		if (dbTableConfig.isTraceableInBoolean()) {
 			dbColumns.add(buildDbColumn("CREATE_ID", dbTableConfig.getTraceType()));
 			dbColumns.add(buildDbColumn("UPDATE_ID", dbTableConfig.getTraceType()));
-			dbColumns.add(buildDbColumn("CREATE_TIME", "date"));
-			dbColumns.add(buildDbColumn("UPDATE_TIME", "date"));
-			dbColumns.add(buildDbColumn("DEL_FLAG", "boolean"));
+			dbColumns.add(buildDbColumn("CREATE_TIME", dbTableConfig.getTraceTimeType()));
+			dbColumns.add(buildDbColumn("UPDATE_TIME", dbTableConfig.getTraceTimeType()));
+			dbColumns.add(buildDbColumn("DEL_FLAG", dbTableConfig.getTraceDelFlagType()));
 		}
 		if (dbTableConfig.isHasIdInBoolean() && dbTable.getPk() == null) {
 			DbColumn dbcolumn = new DbColumn();
 			dbcolumn.setName("ID");
 			dbcolumn.setType(dbTableConfig.getIdType());
-			dbcolumn.setSize(null);
+			dbcolumn.setLength(null);
 			dbcolumn.setPk(true);
 			dbcolumn.setNullable(false);
 			dbcolumn.setComment("Auto added for HasId Po");

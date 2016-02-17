@@ -26,7 +26,7 @@ public class DdlBuildUtils {
 	}
 	
 	private static String getColumnTypeSize(DbColumn dbColumn) {
-		String size = dbColumn.getSize();
+		String size = dbColumn.getLength();
 		if (StringUtils.isBlank(size)) {
 			return "";
 		} else {

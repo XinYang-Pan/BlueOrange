@@ -3,7 +3,7 @@ package org.blueo.db.vo;
 public class DbColumn {
 	private String name;
 	private String type;
-	private String size;
+	private String length;
 	private boolean pk;
 	private boolean nullable;
 	private String comment;
@@ -24,12 +24,12 @@ public class DbColumn {
 		this.type = type;
 	}
 
-	public String getSize() {
-		return size;
+	public String getLength() {
+		return length;
 	}
 
-	public void setSize(String size) {
-		this.size = size;
+	public void setLength(String size) {
+		this.length = size;
 	}
 
 	public boolean isPk() {
@@ -63,8 +63,8 @@ public class DbColumn {
 		builder.append(name);
 		builder.append(", type=");
 		builder.append(type);
-		builder.append(", size=");
-		builder.append(size);
+		builder.append(", length=");
+		builder.append(length);
 		builder.append(", pk=");
 		builder.append(pk);
 		builder.append(", nullable=");
