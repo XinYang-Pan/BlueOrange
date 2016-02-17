@@ -68,8 +68,8 @@ public abstract class BlueoUtils {
 		}
 		if (methodName.startsWith("get")) {
 			return true;
-		} else if (methodName.startsWith("is")) {
-			return boolean.class == method.getReturnType();
+		} else if (methodName.startsWith("is") && boolean.class == method.getReturnType()) {
+			return true;
 		}
 		return false;
 	}

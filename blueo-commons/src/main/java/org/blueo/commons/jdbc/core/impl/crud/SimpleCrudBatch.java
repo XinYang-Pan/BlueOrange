@@ -10,7 +10,7 @@ import org.springframework.util.CollectionUtils;
 import com.google.common.collect.Lists;
 
 public class SimpleCrudBatch<T, K> implements CrudBatch<T, K> {
-	private final Crud<T, K> crud;
+	private Crud<T, K> crud;
 
 	public SimpleCrudBatch(Crud<T, K> crud) {
 		this.crud = crud;
@@ -53,6 +53,18 @@ public class SimpleCrudBatch<T, K> implements CrudBatch<T, K> {
 		for (T t : ts) {
 			crud.delete(t);
 		}
+	}
+
+	// -----------------------------
+	// ----- Get Set ToString HashCode Equals
+	// -----------------------------
+
+	public Crud<T, K> getCrud() {
+		return crud;
+	}
+
+	public void setCrud(Crud<T, K> crud) {
+		this.crud = crud;
 	}
 
 }

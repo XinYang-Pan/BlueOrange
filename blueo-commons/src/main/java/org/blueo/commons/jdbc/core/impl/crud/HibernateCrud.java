@@ -65,10 +65,10 @@ public class HibernateCrud<T extends HasId<K>, K extends Serializable, U> extend
 	    		traceablePo.setDelFlag(false);
 	    	}
 	    	if (traceablePo.getCreateId() == null) {
-	    		traceablePo.setCreateId(this.getUserId());
+	    		traceablePo.setCreateId(createUpdateUserIdGetter.getUserId());
 	    	}
 	    	if (traceablePo.getUpdateId() == null) {
-	    		traceablePo.setUpdateId(this.getUserId());
+	    		traceablePo.setUpdateId(createUpdateUserIdGetter.getUserId());
 	    	}
 	    }
 		return (K) hibernateTemplate.save(t);
@@ -83,7 +83,7 @@ public class HibernateCrud<T extends HasId<K>, K extends Serializable, U> extend
 	    if (t instanceof TraceablePo<?>) {
 	    	TraceablePo<U> traceablePo = (TraceablePo<U>) t;
     		traceablePo.setUpdateTime(this.now());
-    		traceablePo.setUpdateId(this.getUserId());
+    		traceablePo.setUpdateId(createUpdateUserIdGetter.getUserId());
         }
 		hibernateTemplate.update(t);
 	}

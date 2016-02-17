@@ -6,12 +6,13 @@ import java.util.Date;
 import org.blueo.commons.jdbc.core.Crud;
 import org.blueo.commons.jdbc.core.ReadType;
 import org.blueo.commons.jdbc.core.impl.ParameterizedClass;
+import org.blueo.commons.jdbc.core.po.CreateUpdateUserIdGetter;
 import org.blueo.commons.jdbc.core.po.HasId;
-import org.blueo.commons.jdbc.core.po.ThreadLocalGetter;
 
-public abstract class AbstractCrud<T extends HasId<K>, K extends Serializable, U> extends ThreadLocalGetter<U> implements Crud<T, K> {
-	protected final ParameterizedClass<T> parameterizedClass = new ParameterizedClass<T>(){};
-
+public abstract class AbstractCrud<T extends HasId<K>, K extends Serializable, U> implements Crud<T, K> {
+	protected ParameterizedClass<T> parameterizedClass = new ParameterizedClass<T>(){};
+	protected CreateUpdateUserIdGetter<U> createUpdateUserIdGetter;
+	
 	@Override
 	public T getById(K id) {
 		return this.getById(id, ReadType.Active);
@@ -27,6 +28,18 @@ public abstract class AbstractCrud<T extends HasId<K>, K extends Serializable, U
 
 	protected Date now() {
 		return new Date();
+	}
+	
+	// -----------------------------
+	// ----- Get Set ToString HashCode Equals
+	// -----------------------------
+	
+	public CreateUpdateUserIdGetter<U> getCreateUpdateUserIdGetter() {
+		return createUpdateUserIdGetter;
+	}
+
+	public void setCreateUpdateUserIdGetter(CreateUpdateUserIdGetter<U> createUpdateUserIdGetter) {
+		this.createUpdateUserIdGetter = createUpdateUserIdGetter;
 	}
 
 }

@@ -103,6 +103,14 @@ public class AbstractDao<T, K> implements Crud<T, K>, CrudBatch<T, K>, Search<T>
 		this.crud = crud;
 	}
 
+	public CrudBatch<T, K> getCrudBatch() {
+		return crudBatch;
+	}
+
+	public void setCrudBatch(CrudBatch<T, K> crudBatch) {
+		this.crudBatch = crudBatch;
+	}
+
 	public Search<T> getSearch() {
 		return search;
 	}
