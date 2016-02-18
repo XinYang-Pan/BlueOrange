@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.blueo.commons.FormatterWrapper;
@@ -14,7 +15,6 @@ import org.blueo.pojogen.bo.PojoField;
 import org.blueo.pojogen.bo.PojoField.AnnotationType;
 import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapper;
 import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
-import org.springframework.util.CollectionUtils;
 
 public class JavaFileGenerator {
 	private final PojoClass pojoClass;
@@ -110,7 +110,7 @@ public class JavaFileGenerator {
 			extendsString = String.format(" extends %s", pojoClass.getSuperClass().getTypedName());
 		}
 		StringBuffer implementsSb = new StringBuffer("");
-		if (!CollectionUtils.isEmpty(pojoClass.getInterfaces())) {
+		if (CollectionUtils.isNotEmpty(pojoClass.getInterfaces())) {
 			implementsSb.append(" implements ");
 			Iterator<ClassWrapper> iterator = pojoClass.getInterfaces().iterator();
 			while (iterator.hasNext()) {
