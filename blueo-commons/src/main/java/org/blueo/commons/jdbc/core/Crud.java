@@ -1,13 +1,12 @@
 package org.blueo.commons.jdbc.core;
 
-
 // T is entity, K is key
 public interface Crud<T, K> {
 
 	// -----------------------------
 	// ----- Read
 	// -----------------------------
-	
+
 	public T getById(K id);
 
 	// -----------------------------
@@ -19,14 +18,8 @@ public interface Crud<T, K> {
 	// -----------------------------
 	// ----- Update
 	// -----------------------------
-	
-	public void update(T t);
 
-	// -----------------------------
-	// ----- Create/Update
-	// -----------------------------
-	
-	public void saveOrUpdate(T t);
+	public void update(T t);
 
 	// -----------------------------
 	// ----- Delete

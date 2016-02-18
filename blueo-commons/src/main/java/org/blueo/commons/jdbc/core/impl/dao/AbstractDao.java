@@ -7,17 +7,21 @@ import org.blueo.commons.jdbc.core.Crud;
 import org.blueo.commons.jdbc.core.CrudBatch;
 import org.blueo.commons.jdbc.core.Search;
 import org.blueo.commons.jdbc.core.impl.ParameterizedClass;
+import org.blueo.commons.jdbc.core.po.HasId;
 import org.springframework.beans.BeanUtils;
 
-public class AbstractDao<T, K> implements Crud<T, K>, CrudBatch<T, K>, Search<T> {
-	protected ParameterizedClass<T> parameterizedClass = new ParameterizedClass<T>(){};
-	
+import com.google.common.collect.Lists;
+
+public class AbstractDao<T extends HasId<K>, K> implements Crud<T, K>, CrudBatch<T, K>, Search<T> {
+	protected ParameterizedClass<T> parameterizedClass = new ParameterizedClass<T>() {
+	};
+
 	private Crud<T, K> crud;
 	private CrudBatch<T, K> crudBatch;
 	private Search<T> search;
 
 	// -----------------------------
-	// ----- delegate to Crud
+	// ----- CRUD
 	// -----------------------------
 
 	@Override
@@ -31,28 +35,8 @@ public class AbstractDao<T, K> implements Crud<T, K>, CrudBatch<T, K>, Search<T>
 	}
 
 	@Override
-	public List<K> saveAll(List<T> list) {
-		return crudBatch.saveAll(list);
-	}
-
-	@Override
 	public void update(T t) {
 		crud.update(t);
-	}
-
-	@Override
-	public void updateAll(List<T> list) {
-		crudBatch.updateAll(list);
-	}
-
-	@Override
-	public void saveOrUpdate(T t) {
-		crud.saveOrUpdate(t);
-	}
-
-	@Override
-	public void saveOrUpdateAll(List<T> list) {
-		crudBatch.saveOrUpdateAll(list);
 	}
 
 	@Override
@@ -61,13 +45,55 @@ public class AbstractDao<T, K> implements Crud<T, K>, CrudBatch<T, K>, Search<T>
 	}
 
 	@Override
-	public void deleteAll(List<T> ts) {
-		crudBatch.deleteAll(ts);
+	public void deleteById(K id) {
+		crud.deleteById(id);
+	}
+
+	public final void saveOrUpdate(T t) {
+		if (t == null) {
+			return;
+		}
+		if (t.getId() == null) {
+			this.save(t);
+		} else {
+			this.update(t);
+		}
+	}
+
+	// -----------------------------
+	// ----- CRUD Batch
+	// -----------------------------
+
+	@Override
+	public List<K> saveAll(List<T> list) {
+		return crudBatch.saveAll(list);
 	}
 
 	@Override
-	public void deleteById(K id) {
-		crud.deleteById(id);
+	public void updateAll(List<T> list) {
+		crudBatch.updateAll(list);
+	}
+
+	@Override
+	public void deleteAll(List<T> list) {
+		crudBatch.deleteAll(list);
+	}
+
+	public final void saveOrUpdateAll(List<T> list) {
+		if (list == null) {
+			return;
+		}
+		List<T> saves = Lists.newArrayList();
+		List<T> updates = Lists.newArrayList();
+		for (T t : updates) {
+			if (t.getId() == null) {
+				saves.add(t);
+			} else {
+				updates.add(t);
+			}
+		}
+		this.saveAll(saves);
+		this.updateAll(updates);
 	}
 
 	// -----------------------------
@@ -78,7 +104,7 @@ public class AbstractDao<T, K> implements Crud<T, K>, CrudBatch<T, K>, Search<T>
 	public List<T> findByExample(T t) {
 		return search.findByExample(t);
 	}
-	
+
 	public final T findByExample(T t, boolean nullableResult) {
 		List<T> findByExample = this.findByExample(t);
 		if (nullableResult) {

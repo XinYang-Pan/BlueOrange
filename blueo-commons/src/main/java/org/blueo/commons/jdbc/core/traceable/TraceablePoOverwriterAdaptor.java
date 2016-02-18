@@ -1,32 +1,28 @@
 package org.blueo.commons.jdbc.core.traceable;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.blueo.commons.jdbc.core.DelFlagType;
 
-public abstract class TraceablePoOverwriterAdaptor<U> implements TraceablePoOverwriter<U> {
-	
+public abstract class TraceablePoOverwriterAdaptor<T extends TraceablePo<U>, U> implements TraceablePoOverwriter<T, U> {
+
 	@Override
-	public <T> T getOverwrite(T t, DelFlagType type) {
+	public <K extends T> K getOverwrite(K t, DelFlagType type) {
 		if (t == null) {
 			return t;
 		}
-		if (!(t instanceof TraceablePo<?>)) {
-			return t;
-		}
-		// None null traceable PO
-		TraceablePo<?> traceablePo = (TraceablePo<?>) t;
 		switch (type) {
 		case All:
 			return t;
 		case Active:
-			if (BooleanUtils.isNotTrue(traceablePo.getDelFlag())) {
+			if (BooleanUtils.isNotTrue(t.getDelFlag())) {
 				return t;
 			}
 			break;
 		case Del:
-			if (BooleanUtils.isTrue(traceablePo.getDelFlag())) {
+			if (BooleanUtils.isTrue(t.getDelFlag())) {
 				return t;
 			}
 			break;
@@ -37,63 +33,95 @@ public abstract class TraceablePoOverwriterAdaptor<U> implements TraceablePoOver
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public void saveOverwrite(Object t) {
-		if (t instanceof TraceablePo<?>) {
-	    	TraceablePo<U> traceablePo = (TraceablePo<U>) t;
-	    	if (traceablePo.getCreateTime() == null) {
-				traceablePo.setCreateTime(this.currentTime());
-	    	}
-	    	if (traceablePo.getUpdateTime() == null) {
-	    		traceablePo.setUpdateTime(this.currentTime());
-	    	}
-	    	if (traceablePo.getDelFlag() == null) {
-	    		traceablePo.setDelFlag(false);
-	    	}
-	    	if (traceablePo.getCreateId() == null) {
-	    		traceablePo.setCreateId(this.getUserId());
-	    	}
-	    	if (traceablePo.getUpdateId() == null) {
-	    		traceablePo.setUpdateId(this.getUserId());
-	    	}
-	    }
+	public void saveOverwrite(T t) {
+		Date currentTime = this.currentTime();
+		if (t.getCreateTime() == null) {
+			t.setCreateTime(currentTime);
+		}
+		if (t.getUpdateTime() == null) {
+			t.setUpdateTime(currentTime);
+		}
+		if (t.getDelFlag() == null) {
+			t.setDelFlag(false);
+		}
+		if (t.getCreateId() == null) {
+			t.setCreateId(this.getUserId());
+		}
+		if (t.getUpdateId() == null) {
+			t.setUpdateId(this.getUserId());
+		}
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public void updateOverwrite(Object t) {
-	    if (t instanceof TraceablePo<?>) {
-	    	TraceablePo<U> traceablePo = (TraceablePo<U>) t;
-    		traceablePo.setUpdateTime(this.currentTime());
-    		traceablePo.setUpdateId(this.getUserId());
-        }
+	public void updateOverwrite(T t) {
+		t.setUpdateTime(this.currentTime());
+		t.setUpdateId(this.getUserId());
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public boolean deleteOverwrite(Object t) {
-		if (t instanceof TraceablePo<?>) {
-	    	TraceablePo<U> traceablePo = (TraceablePo<U>) t;
-	    	traceablePo.setDelFlag(true);
-	    	return true;
-        } else {
-        	return false;
-        }
+	public void deleteOverwrite(T t) {
+		t.setDelFlag(true);
 	}
-	
+
 	@Override
-	public void findByExampleOverwrite(Object t) {
-		if (t instanceof TraceablePo<?>) {
-			TraceablePo<?> traceablePo = (TraceablePo<?>) t;
-			if (traceablePo.getDelFlag() == null) {
-				traceablePo.setDelFlag(true);
+	public void saveAllOverwrite(List<T> list) {
+		if (list == null) {
+			return;
+		}
+		Date currentTime = this.currentTime();
+		U userId = this.getUserId();
+		for (T t : list) {
+			if (t.getCreateTime() == null) {
+				t.setCreateTime(currentTime);
+			}
+			if (t.getUpdateTime() == null) {
+				t.setUpdateTime(currentTime);
+			}
+			if (t.getDelFlag() == null) {
+				t.setDelFlag(false);
+			}
+			if (t.getCreateId() == null) {
+				t.setCreateId(userId);
+			}
+			if (t.getUpdateId() == null) {
+				t.setUpdateId(userId);
 			}
 		}
 	}
-	
+
+	@Override
+	public void updateAllOverwrite(List<T> list) {
+		if (list == null) {
+			return;
+		}
+		Date currentTime = this.currentTime();
+		U userId = this.getUserId();
+		for (T t : list) {
+			t.setUpdateTime(currentTime);
+			t.setUpdateId(userId);
+		}
+	}
+
+	@Override
+	public void deleteAllOverwrite(List<T> list) {
+		if (list == null) {
+			return;
+		}
+		for (T t : list) {
+			t.setDelFlag(true);
+		}
+	}
+
+	@Override
+	public void findByExampleOverwrite(T t) {
+		if (t.getDelFlag() == null) {
+			t.setDelFlag(true);
+		}
+	}
+
 	@Override
 	public Date currentTime() {
 		return new Date();
 	}
-	
+
 }

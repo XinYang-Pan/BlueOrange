@@ -32,18 +32,6 @@ public class HibernateCrud<T extends HasId<K>, K extends Serializable, U> extend
 	}
 
 	@Override
-	public void saveOrUpdate(T t) {
-		if (t == null) {
-			return;
-		}
-		if (t.getId() == null) {
-			this.save(t);
-		} else {
-			this.update(t);
-		}
-	}
-
-	@Override
 	public void delete(T t) {
 		if (t == null) {
 			return;

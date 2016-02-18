@@ -1,23 +1,30 @@
 package org.blueo.commons.jdbc.core.traceable;
 
 import java.util.Date;
+import java.util.List;
 
 import org.blueo.commons.jdbc.core.DelFlagType;
 
-public interface TraceablePoOverwriter<U> {
+public interface TraceablePoOverwriter<T extends TraceablePo<U>, U> {
 
-	public <T> T getOverwrite(T t, DelFlagType type);
+	<K extends T> K getOverwrite(K t, DelFlagType type);
 
-	public void saveOverwrite(Object t);
+	void saveOverwrite(T t);
 
-	public void updateOverwrite(Object t);
+	void updateOverwrite(T t);
 
-	public boolean deleteOverwrite(Object t);
+	void deleteOverwrite(T t);
+
+	void saveAllOverwrite(List<T> list);
+
+	void updateAllOverwrite(List<T> list);
+
+	void deleteAllOverwrite(List<T> list);
 	
-	public void findByExampleOverwrite(Object t);
+	void findByExampleOverwrite(T t);
 	
-    public U getUserId();
+    U getUserId();
     
-    public Date currentTime();
-    
+    Date currentTime();
+
 }

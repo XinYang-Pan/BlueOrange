@@ -18,16 +18,10 @@ public interface CrudBatch<T, K> {
 	public void updateAll(List<T> list);
 
 	// -----------------------------
-	// ----- Create/Update
-	// -----------------------------
-
-	public void saveOrUpdateAll(List<T> list);
-
-	// -----------------------------
 	// ----- Delete
 	// -----------------------------
 
-	public void deleteAll(List<T> ts);
+	public void deleteAll(List<T> list);
 
 	// -----------------------------
 	// ----- Read

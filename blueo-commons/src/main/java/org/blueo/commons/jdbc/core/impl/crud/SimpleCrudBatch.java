@@ -39,18 +39,8 @@ public class SimpleCrudBatch<T, K> implements CrudBatch<T, K> {
 	}
 
 	@Override
-	public void saveOrUpdateAll(List<T> list) {
-		if (CollectionUtils.isEmpty(list)) {
-			return;
-		}
+	public void deleteAll(List<T> list) {
 		for (T t : list) {
-			crud.saveOrUpdate(t);
-		}
-	}
-
-	@Override
-	public void deleteAll(List<T> ts) {
-		for (T t : ts) {
 			crud.delete(t);
 		}
 	}

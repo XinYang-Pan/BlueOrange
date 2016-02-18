@@ -1,7 +1,7 @@
 package org.blueo.commons.jdbc.core.traceable;
 
 
-public class ThreadLocalGetter<U> extends TraceablePoOverwriterAdaptor<U> {
+public class ThreadLocalGetter<T extends TraceablePo<U>, U> extends TraceablePoOverwriterAdaptor<T, U> {
 
 	private ThreadLocal<U> createUpdateIdGetter = new ThreadLocal<>();
 

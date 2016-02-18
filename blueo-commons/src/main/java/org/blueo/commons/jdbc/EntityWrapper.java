@@ -32,8 +32,10 @@ public class EntityWrapper<T> {
 	//
 	private String insertSql;
 	private String updateSql;
+	private String deleteSql;
 	private ParameterizedPreparedStatementSetter<T> insertPss;
 	private ParameterizedPreparedStatementSetter<T> updatePss;
+	private ParameterizedPreparedStatementSetter<T> deletePss;
 	
 	public static <T> EntityWrapper<T> of(Class<T> clazz) {
 		return new EntityWrapper<>(clazz);
@@ -77,6 +79,9 @@ public class EntityWrapper<T> {
 		// update
 		updatePss = this.buildUpdatePss(noneIdCols, idCol);
 		updateSql = this.buildUpdateSql(tableName, noneIdCols, idCol);
+		// delete
+		updatePss = this.buildDeletePss(idCol);
+		deleteSql = this.buildDeleteSql(tableName, idCol);
 	}
 
 	private String buildInsertSql(String tableName, List<PropertyDescriptor> columnPds) {
@@ -86,13 +91,17 @@ public class EntityWrapper<T> {
 		return String.format("INSERT INTO %s(%s) VALUES(%s)", tableName, columnPart, valuePart);
 	}
 
-	private String buildUpdateSql(String tableName, final List<PropertyDescriptor> noneIds, final PropertyDescriptor id) {
+	private String buildUpdateSql(String tableName, List<PropertyDescriptor> noneIds, PropertyDescriptor id) {
 		List<String> setPiece = Lists.newArrayList();
 		for (String columnName : EntityField.getColumnNames(noneIds)) {
 			setPiece.add(String.format("%s=?", columnName));
 		}
 		String setPart = StringUtils.join(setPiece, SEPARATOR);
 		return String.format("UPDATE %s SET %s WHERE %s=?", tableName, setPart, EntityField.getColumnName(id));
+	}
+
+	private String buildDeleteSql(String tableName, PropertyDescriptor id) {
+		return String.format("DELETE FROM %s WHERE %s=?", tableName, EntityField.getColumnName(id));
 	}
 
 	private Object getValue(Object value, Method method) {
@@ -175,12 +184,43 @@ public class EntityWrapper<T> {
 		};
 	}
 
+	private ParameterizedPreparedStatementSetter<T> buildDeletePss(final PropertyDescriptor idCol) {
+		return new ParameterizedPreparedStatementSetter<T>() {
+
+			@Override
+			public void setValues(PreparedStatement ps, T t) throws SQLException {
+				//
+				Object[] args = new Object[1];
+				int[] argTypes = new int[1];
+				// 
+				argTypes[0] = StatementCreatorUtils.javaTypeToSqlParameterType(idCol.getPropertyType());
+				// 
+				Method readMethod = idCol.getReadMethod();
+				Object value = ReflectionUtils.invokeMethod(readMethod, t);
+				args[0] = getValue(value, readMethod);
+				//
+				ArgumentTypePreparedStatementSetter stmtSetter = new ArgumentTypePreparedStatementSetter(args, argTypes);
+				stmtSetter.setValues(ps);
+			}
+
+			@Override
+			public String toString() {
+				return String.valueOf(idCol);
+			}
+			
+		};
+	}
+
 	public void saveAll(JdbcTemplate jdbcTemplate, List<T> entities) {
 		jdbcTemplate.batchUpdate(insertSql, entities, BATCH_SIZE, insertPss);
 	}
 
 	public void updateAll(JdbcTemplate jdbcTemplate, List<T> entities) {
 		jdbcTemplate.batchUpdate(updateSql, entities, BATCH_SIZE, updatePss);
+	}
+
+	public void deleteAll(JdbcTemplate jdbcTemplate, List<T> entities) {
+		jdbcTemplate.batchUpdate(deleteSql, entities, BATCH_SIZE, deletePss);
 	}
 
 	@Override
