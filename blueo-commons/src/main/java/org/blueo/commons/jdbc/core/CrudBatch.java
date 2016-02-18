@@ -9,7 +9,7 @@ public interface CrudBatch<T, K> {
 	// ----- Create
 	// -----------------------------
 
-	public List<K> saveAll(List<T> list);
+	public void saveAll(List<T> list);
 
 	// -----------------------------
 	// ----- Update

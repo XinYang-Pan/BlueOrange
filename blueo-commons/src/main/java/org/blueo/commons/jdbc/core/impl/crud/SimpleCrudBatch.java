@@ -1,13 +1,10 @@
 package org.blueo.commons.jdbc.core.impl.crud;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.blueo.commons.jdbc.core.Crud;
 import org.blueo.commons.jdbc.core.CrudBatch;
 import org.springframework.util.CollectionUtils;
-
-import com.google.common.collect.Lists;
 
 public class SimpleCrudBatch<T, K> implements CrudBatch<T, K> {
 	private Crud<T, K> crud;
@@ -17,15 +14,13 @@ public class SimpleCrudBatch<T, K> implements CrudBatch<T, K> {
 	}
 
 	@Override
-	public List<K> saveAll(List<T> list) {
+	public void saveAll(List<T> list) {
 		if (CollectionUtils.isEmpty(list)) {
-			return Collections.emptyList();
+			return;
 		}
-		List<K> ids = Lists.newArrayList();
 		for (T t : list) {
-			ids.add(crud.save(t));
+			crud.save(t);
 		}
-		return ids;
 	}
 
 	@Override

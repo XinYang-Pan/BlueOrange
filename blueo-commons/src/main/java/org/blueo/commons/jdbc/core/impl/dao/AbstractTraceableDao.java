@@ -55,9 +55,9 @@ public class AbstractTraceableDao<T extends HasId<K> & TraceablePo<U>, K, U> ext
 	// -----------------------------
 
 	@Override
-	public List<K> saveAll(List<T> list) {
+	public void saveAll(List<T> list) {
 		TraceablePoOverwriter.saveAllOverwrite(list);
-		return super.saveAll(list);
+		super.saveAll(list);
 	}
 
 	@Override

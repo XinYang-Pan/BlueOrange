@@ -14,12 +14,12 @@ import org.springframework.core.annotation.AnnotationUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-public class EntityField {
+public class EntityWrapperUtils {
 
 	public static List<String> getColumnNames(List<PropertyDescriptor> pds) {
 		List<String> columnNames = Lists.newArrayList();
 		for (PropertyDescriptor pd : pds) {
-			columnNames.add(EntityField.getColumnName(pd));
+			columnNames.add(EntityWrapperUtils.getColumnName(pd));
 		}
 		return columnNames;
 	}
@@ -42,8 +42,8 @@ public class EntityField {
 	}
 
 	public static boolean hasAnnotation(PropertyDescriptor pd, Class<? extends Annotation> annotationType) {
-		Annotation column = getAnnotation(pd, annotationType);
-		return column == null;
+		Annotation annotation = getAnnotation(pd, annotationType);
+		return annotation != null;
 	}
 
 	public static <T extends Annotation> T getAnnotation(PropertyDescriptor pd, Class<T> annotationType) {

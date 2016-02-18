@@ -60,13 +60,13 @@ public class EntityWrapper<T> {
 		PropertyDescriptor idCol = null;
 		for (PropertyDescriptor pd : pds) {
 			// method has Column, but not GeneratedValue.
-			if (EntityField.isColumn(pd)) {
-				if (EntityField.isId(pd)) {
+			if (EntityWrapperUtils.isColumn(pd)) {
+				if (EntityWrapperUtils.isId(pd)) {
 					idCol = pd;
 				} else {
 					noneIdCols.add(pd);
 				}
-				if (!EntityField.isGeneratedValue(pd)) {
+				if (!EntityWrapperUtils.isGeneratedValue(pd)) {
 					noneGenValueCols.add(pd);
 				} 
 			}
@@ -80,12 +80,12 @@ public class EntityWrapper<T> {
 		updatePss = this.buildUpdatePss(noneIdCols, idCol);
 		updateSql = this.buildUpdateSql(tableName, noneIdCols, idCol);
 		// delete
-		updatePss = this.buildDeletePss(idCol);
+		deletePss = this.buildDeletePss(idCol);
 		deleteSql = this.buildDeleteSql(tableName, idCol);
 	}
 
 	private String buildInsertSql(String tableName, List<PropertyDescriptor> columnPds) {
-		List<String> columnNames = EntityField.getColumnNames(columnPds);
+		List<String> columnNames = EntityWrapperUtils.getColumnNames(columnPds);
 		String columnPart = StringUtils.join(columnNames, SEPARATOR);
 		String valuePart = StringUtils.repeat("?", SEPARATOR, columnNames.size());
 		return String.format("INSERT INTO %s(%s) VALUES(%s)", tableName, columnPart, valuePart);
@@ -93,15 +93,15 @@ public class EntityWrapper<T> {
 
 	private String buildUpdateSql(String tableName, List<PropertyDescriptor> noneIds, PropertyDescriptor id) {
 		List<String> setPiece = Lists.newArrayList();
-		for (String columnName : EntityField.getColumnNames(noneIds)) {
+		for (String columnName : EntityWrapperUtils.getColumnNames(noneIds)) {
 			setPiece.add(String.format("%s=?", columnName));
 		}
 		String setPart = StringUtils.join(setPiece, SEPARATOR);
-		return String.format("UPDATE %s SET %s WHERE %s=?", tableName, setPart, EntityField.getColumnName(id));
+		return String.format("UPDATE %s SET %s WHERE %s=?", tableName, setPart, EntityWrapperUtils.getColumnName(id));
 	}
 
 	private String buildDeleteSql(String tableName, PropertyDescriptor id) {
-		return String.format("DELETE FROM %s WHERE %s=?", tableName, EntityField.getColumnName(id));
+		return String.format("DELETE FROM %s WHERE %s=?", tableName, EntityWrapperUtils.getColumnName(id));
 	}
 
 	private Object getValue(Object value, Method method) {
@@ -144,7 +144,11 @@ public class EntityWrapper<T> {
 
 			@Override
 			public String toString() {
-				return String.valueOf(columnPds);
+				StringBuilder builder = new StringBuilder();
+				builder.append("InsertPss [columnPds=");
+				builder.append(columnPds);
+				builder.append("]");
+				return builder.toString();
 			}
 			
 		};
@@ -178,7 +182,13 @@ public class EntityWrapper<T> {
 
 			@Override
 			public String toString() {
-				return String.valueOf(noneIds);
+				StringBuilder builder = new StringBuilder();
+				builder.append("UpdatePss [noneIds=");
+				builder.append(noneIds);
+				builder.append(", id=");
+				builder.append(id);
+				builder.append("]");
+				return builder.toString();
 			}
 			
 		};
@@ -205,7 +215,11 @@ public class EntityWrapper<T> {
 
 			@Override
 			public String toString() {
-				return String.valueOf(idCol);
+				StringBuilder builder = new StringBuilder();
+				builder.append("DeletePss [idCol=");
+				builder.append(idCol);
+				builder.append("]");
+				return builder.toString();
 			}
 			
 		};

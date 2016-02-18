@@ -65,8 +65,8 @@ public class AbstractDao<T extends HasId<K>, K> implements Crud<T, K>, CrudBatch
 	// -----------------------------
 
 	@Override
-	public List<K> saveAll(List<T> list) {
-		return crudBatch.saveAll(list);
+	public void saveAll(List<T> list) {
+		crudBatch.saveAll(list);
 	}
 
 	@Override
