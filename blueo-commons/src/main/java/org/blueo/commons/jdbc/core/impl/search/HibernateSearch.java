@@ -6,9 +6,8 @@ import org.blueo.commons.BlueoUtils;
 import org.blueo.commons.jdbc.core.Search;
 import org.blueo.commons.jdbc.core.impl.ParameterizedClass;
 import org.blueo.commons.jdbc.core.po.TraceablePo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-
-import com.google.common.base.Throwables;
 
 public class HibernateSearch<T> implements Search<T> {
 	protected ParameterizedClass<T> parameterizedClass = new ParameterizedClass<T>(){};
@@ -37,12 +36,8 @@ public class HibernateSearch<T> implements Search<T> {
 	@Override
 	public List<T> findAll() {
 		Class<T> clazz = parameterizedClass.getParameterizedClass();
-		try {
-			T t = clazz.newInstance();
-			return this.findByExample(t);
-		} catch (Exception e) {
-			throw Throwables.propagate(e);
-		}
+		T t = BeanUtils.instantiate(clazz);
+		return this.findByExample(t);
 	}
 
 }
