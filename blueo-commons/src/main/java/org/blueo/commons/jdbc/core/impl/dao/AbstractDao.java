@@ -1,17 +1,20 @@
-package org.blueo.commons.jdbc.core.impl;
+package org.blueo.commons.jdbc.core.impl.dao;
 
-import java.io.Serializable;
 import java.util.List;
 
+import org.blueo.commons.BlueoUtils;
 import org.blueo.commons.jdbc.core.Crud;
 import org.blueo.commons.jdbc.core.CrudBatch;
-import org.blueo.commons.jdbc.core.DelFlagType;
 import org.blueo.commons.jdbc.core.Search;
+import org.blueo.commons.jdbc.core.impl.ParameterizedClass;
+import org.springframework.beans.BeanUtils;
 
 public class AbstractDao<T, K> implements Crud<T, K>, CrudBatch<T, K>, Search<T> {
-	protected Crud<T, K> crud;
-	protected CrudBatch<T, K> crudBatch;
-	protected Search<T> search;
+	protected ParameterizedClass<T> parameterizedClass = new ParameterizedClass<T>(){};
+	
+	private Crud<T, K> crud;
+	private CrudBatch<T, K> crudBatch;
+	private Search<T> search;
 
 	// -----------------------------
 	// ----- delegate to Crud
@@ -20,11 +23,6 @@ public class AbstractDao<T, K> implements Crud<T, K>, CrudBatch<T, K>, Search<T>
 	@Override
 	public T getById(K id) {
 		return crud.getById(id);
-	}
-
-	@Override
-	public T getById(Serializable id, DelFlagType type) {
-		return crud.getById(id, type);
 	}
 
 	@Override
@@ -77,18 +75,23 @@ public class AbstractDao<T, K> implements Crud<T, K>, CrudBatch<T, K>, Search<T>
 	// -----------------------------
 
 	@Override
-	public T findByExample(T t, boolean nullableResult) {
-		return search.findByExample(t, nullableResult);
-	}
-
-	@Override
 	public List<T> findByExample(T t) {
 		return search.findByExample(t);
 	}
+	
+	public final T findByExample(T t, boolean nullableResult) {
+		List<T> findByExample = this.findByExample(t);
+		if (nullableResult) {
+			return BlueoUtils.oneOrNull(findByExample);
+		} else {
+			return BlueoUtils.oneNoNull(findByExample);
+		}
+	}
 
-	@Override
-	public List<T> findAll() {
-		return search.findAll();
+	public final List<T> findAll() {
+		Class<T> clazz = parameterizedClass.getParameterizedClass();
+		T t = BeanUtils.instantiate(clazz);
+		return this.findByExample(t);
 	}
 
 	// -----------------------------

@@ -1,6 +1,5 @@
 package org.blueo.commons.jdbc.core;
 
-import java.io.Serializable;
 
 // T is entity, K is key
 public interface Crud<T, K> {
@@ -10,8 +9,6 @@ public interface Crud<T, K> {
 	// -----------------------------
 	
 	public T getById(K id);
-
-	public T getById(Serializable id, DelFlagType type);
 
 	// -----------------------------
 	// ----- Create

@@ -82,6 +82,16 @@ public abstract class TraceablePoOverwriterAdaptor<U> implements TraceablePoOver
 	}
 	
 	@Override
+	public void findByExampleOverwrite(Object t) {
+		if (t instanceof TraceablePo<?>) {
+			TraceablePo<?> traceablePo = (TraceablePo<?>) t;
+			if (traceablePo.getDelFlag() == null) {
+				traceablePo.setDelFlag(true);
+			}
+		}
+	}
+	
+	@Override
 	public Date currentTime() {
 		return new Date();
 	}

@@ -13,7 +13,9 @@ public interface TraceablePoOverwriter<U> {
 	public void updateOverwrite(Object t);
 
 	public boolean deleteOverwrite(Object t);
-
+	
+	public void findByExampleOverwrite(Object t);
+	
     public U getUserId();
     
     public Date currentTime();
