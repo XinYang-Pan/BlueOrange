@@ -10,7 +10,7 @@ import javax.persistence.Id;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.blueo.commons.jdbc.core.po.HasId;
-import org.blueo.commons.jdbc.core.po.TraceablePo;
+import org.blueo.commons.jdbc.core.traceable.TraceablePo;
 import org.blueo.db.config.DbGlobalConfig;
 import org.blueo.db.config.DbTableConfig;
 import org.blueo.db.vo.DbColumn;

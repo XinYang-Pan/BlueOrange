@@ -1,5 +1,5 @@
 package org.blueo.commons.jdbc.core;
 
-public enum ReadType {
+public enum DelFlagType {
 	Active, Del, All
 }

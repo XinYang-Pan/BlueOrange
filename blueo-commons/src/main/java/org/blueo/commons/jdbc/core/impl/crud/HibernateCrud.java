@@ -3,9 +3,9 @@ package org.blueo.commons.jdbc.core.impl.crud;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.blueo.commons.jdbc.core.ReadType;
+import org.blueo.commons.jdbc.core.DelFlagType;
 import org.blueo.commons.jdbc.core.po.HasId;
-import org.blueo.commons.jdbc.core.po.TraceablePo;
+import org.blueo.commons.jdbc.core.traceable.TraceablePo;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 import com.google.common.base.Preconditions;
@@ -15,7 +15,7 @@ public class HibernateCrud<T extends HasId<K>, K extends Serializable, U> extend
 	protected HibernateTemplate hibernateTemplate;
 	
 	@Override
-	public T getById(Serializable id, ReadType type) {
+	public T getById(Serializable id, DelFlagType type) {
 		Preconditions.checkNotNull(id);
 		Preconditions.checkNotNull(type);
 		// 
@@ -53,38 +53,16 @@ public class HibernateCrud<T extends HasId<K>, K extends Serializable, U> extend
 		if (t == null) {
 			return null;
 		}
-	    if (t instanceof TraceablePo<?>) {
-	    	TraceablePo<U> traceablePo = (TraceablePo<U>) t;
-	    	if (traceablePo.getCreateTime() == null) {
-				traceablePo.setCreateTime(this.now());
-	    	}
-	    	if (traceablePo.getUpdateTime() == null) {
-	    		traceablePo.setUpdateTime(this.now());
-	    	}
-	    	if (traceablePo.getDelFlag() == null) {
-	    		traceablePo.setDelFlag(false);
-	    	}
-	    	if (traceablePo.getCreateId() == null) {
-	    		traceablePo.setCreateId(createUpdateUserIdGetter.getUserId());
-	    	}
-	    	if (traceablePo.getUpdateId() == null) {
-	    		traceablePo.setUpdateId(createUpdateUserIdGetter.getUserId());
-	    	}
-	    }
+	    traceablePoOverwriter.saveOverwrite(t);
 		return (K) hibernateTemplate.save(t);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void update(T t) {
 		if (t == null) {
 			return;
 		}
-	    if (t instanceof TraceablePo<?>) {
-	    	TraceablePo<U> traceablePo = (TraceablePo<U>) t;
-    		traceablePo.setUpdateTime(this.now());
-    		traceablePo.setUpdateId(createUpdateUserIdGetter.getUserId());
-        }
+		traceablePoOverwriter.updateOverwrite(t);
 		hibernateTemplate.update(t);
 	}
 
@@ -98,18 +76,14 @@ public class HibernateCrud<T extends HasId<K>, K extends Serializable, U> extend
 		} else {
 			this.update(t);
 		}
-	
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void delete(T t) {
 		if (t == null) {
 			return;
 		}
-	    if (t instanceof TraceablePo<?>) {
-	    	TraceablePo<U> traceablePo = (TraceablePo<U>) t;
-	    	traceablePo.setDelFlag(true);
+	    if (traceablePoOverwriter.deleteOverwrite(t)) {
             this.update(t);
         } else {
             hibernateTemplate.delete(t);

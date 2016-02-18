@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.blueo.commons.jdbc.core.Crud;
 import org.blueo.commons.jdbc.core.CrudBatch;
-import org.blueo.commons.jdbc.core.ReadType;
+import org.blueo.commons.jdbc.core.DelFlagType;
 import org.blueo.commons.jdbc.core.Search;
 
 public class AbstractDao<T, K> implements Crud<T, K>, CrudBatch<T, K>, Search<T> {
@@ -23,7 +23,7 @@ public class AbstractDao<T, K> implements Crud<T, K>, CrudBatch<T, K>, Search<T>
 	}
 
 	@Override
-	public T getById(Serializable id, ReadType type) {
+	public T getById(Serializable id, DelFlagType type) {
 		return crud.getById(id, type);
 	}
 

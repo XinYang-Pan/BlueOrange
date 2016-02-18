@@ -11,7 +11,7 @@ public interface Crud<T, K> {
 	
 	public T getById(K id);
 
-	public T getById(Serializable id, ReadType type);
+	public T getById(Serializable id, DelFlagType type);
 
 	// -----------------------------
 	// ----- Create

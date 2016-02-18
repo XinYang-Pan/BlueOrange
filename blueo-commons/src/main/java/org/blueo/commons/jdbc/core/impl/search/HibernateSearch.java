@@ -5,7 +5,7 @@ import java.util.List;
 import org.blueo.commons.BlueoUtils;
 import org.blueo.commons.jdbc.core.Search;
 import org.blueo.commons.jdbc.core.impl.ParameterizedClass;
-import org.blueo.commons.jdbc.core.po.TraceablePo;
+import org.blueo.commons.jdbc.core.traceable.TraceablePo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 

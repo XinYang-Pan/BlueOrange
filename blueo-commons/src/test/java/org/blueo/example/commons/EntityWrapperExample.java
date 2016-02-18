@@ -7,7 +7,7 @@ import org.blueo.example.object.YzpCodeLog;
 public class EntityWrapperExample {
 
 	public static void main(String[] args) {
-		EntityWrapper<YzpCodeLog> entityWrapper = EntityWrapper.with(YzpCodeLog.class);
+		EntityWrapper<YzpCodeLog> entityWrapper = EntityWrapper.of(YzpCodeLog.class);
 		System.out.println(entityWrapper);
 		JdbcGenerator.generateInsertFromEntity(YzpCodeLog.class);
 	}

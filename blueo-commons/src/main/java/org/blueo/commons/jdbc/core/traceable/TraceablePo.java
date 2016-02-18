@@ -1,18 +1,18 @@
-package org.blueo.commons.jdbc.core.po;
+package org.blueo.commons.jdbc.core.traceable;
 
 import java.util.Date;
 
-// T is ID type
-public interface TraceablePo<T> {
+// U is ID type
+public interface TraceablePo<U> {
 	
-    public T getCreateId() ;
-    public void setCreateId(T createId) ;
+    public U getCreateId() ;
+    public void setCreateId(U createId) ;
 
     public Date getCreateTime() ;
     public void setCreateTime(Date createTime) ;
 
-    public T getUpdateId() ;
-    public void setUpdateId(T updateId) ;
+    public U getUpdateId() ;
+    public void setUpdateId(U updateId) ;
 
     public Date getUpdateTime() ;
     public void setUpdateTime(Date updateTime) ;
