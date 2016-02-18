@@ -1,14 +1,18 @@
 package org.blueo.example;
 
-import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+
+import org.blueo.example.object.Person;
 
 public class BlueoTest {
 
 	public static void main(String[] args) throws Exception {
-		ClassWrapper classWrapper = ClassWrapper.of(Object[].class);
-		System.out.println(classWrapper);
-		System.out.println(classWrapper.getFullName());
-		System.out.println(classWrapper.getClassIfPossible());
+		Field[] declaredFields = Person.class.getDeclaredFields();
+		for (Field field : declaredFields) {
+			System.out.println(field.getName());
+		}
+		System.out.println(Arrays.toString(declaredFields));
 	}
 
 }
