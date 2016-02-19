@@ -1,9 +1,9 @@
-package org.blueo.commons.jdbc.core.impl.crud;
+package org.blueo.commons.persistent.core.dao.impl;
 
 import java.util.List;
 
-import org.blueo.commons.jdbc.core.Crud;
-import org.blueo.commons.jdbc.core.CrudBatch;
+import org.blueo.commons.persistent.core.dao.Crud;
+import org.blueo.commons.persistent.core.dao.CrudBatch;
 import org.springframework.util.CollectionUtils;
 
 public class SimpleCrudBatch<T, K> implements CrudBatch<T, K> {

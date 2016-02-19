@@ -1,4 +1,4 @@
-package org.blueo.commons.jdbc.core.traceable;
+package org.blueo.commons.persistent.core.dao.po.traceable;
 
 
 public class ThreadLocalGetter<T extends TraceablePo<U>, U> extends TraceablePoOverwriterAdaptor<T, U> {

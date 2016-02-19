@@ -1,11 +1,11 @@
-package org.blueo.commons.jdbc.core.impl.dao;
+package org.blueo.commons.persistent.core.dao;
 
 import java.util.List;
 
-import org.blueo.commons.jdbc.core.DelFlagType;
-import org.blueo.commons.jdbc.core.po.HasId;
-import org.blueo.commons.jdbc.core.traceable.TraceablePo;
-import org.blueo.commons.jdbc.core.traceable.TraceablePoOverwriter;
+import org.blueo.commons.persistent.core.dao.po.HasId;
+import org.blueo.commons.persistent.core.dao.po.traceable.DelFlagType;
+import org.blueo.commons.persistent.core.dao.po.traceable.TraceablePo;
+import org.blueo.commons.persistent.core.dao.po.traceable.TraceablePoOverwriter;
 
 public class AbstractTraceableDao<T extends HasId<K> & TraceablePo<U>, K, U> extends AbstractDao<T, K> {
 	private TraceablePoOverwriter<T, U> TraceablePoOverwriter;

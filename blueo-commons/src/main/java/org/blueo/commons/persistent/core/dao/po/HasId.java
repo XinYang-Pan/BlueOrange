@@ -1,4 +1,4 @@
-package org.blueo.commons.jdbc.core.po;
+package org.blueo.commons.persistent.core.dao.po;
 
 public interface HasId<K> {
 	

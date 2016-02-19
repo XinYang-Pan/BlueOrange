@@ -1,30 +1,32 @@
-package org.blueo.commons.jdbc.core;
-
-import java.util.List;
+package org.blueo.commons.persistent.core.dao;
 
 // T is entity, K is key
-public interface CrudBatch<T, K> {
+public interface Crud<T, K> {
+
+	// -----------------------------
+	// ----- Read
+	// -----------------------------
+
+	public T getById(K id);
 
 	// -----------------------------
 	// ----- Create
 	// -----------------------------
 
-	public void saveAll(List<T> list);
+	public K save(T t);
 
 	// -----------------------------
 	// ----- Update
 	// -----------------------------
 
-	public void updateAll(List<T> list);
+	public void update(T t);
 
 	// -----------------------------
 	// ----- Delete
 	// -----------------------------
 
-	public void deleteAll(List<T> list);
+	public void delete(T t);
 
-	// -----------------------------
-	// ----- Read
-	// -----------------------------
+	public void deleteById(K id);
 
 }

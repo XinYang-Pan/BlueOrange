@@ -1,8 +1,9 @@
-package org.blueo.commons.jdbc.core.impl.crud;
+package org.blueo.commons.persistent.hibernate.impl;
 
 import java.io.Serializable;
 
-import org.blueo.commons.jdbc.core.po.HasId;
+import org.blueo.commons.persistent.core.dao.impl.AbstractCrud;
+import org.blueo.commons.persistent.core.dao.po.HasId;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class HibernateCrud<T extends HasId<K>, K extends Serializable, U> extends AbstractCrud<T, K, U> {
@@ -11,7 +12,7 @@ public class HibernateCrud<T extends HasId<K>, K extends Serializable, U> extend
 	
 	@Override
 	public T getById(K id) {
-		return hibernateTemplate.get(parameterizedClass.getParameterizedClass(), id);
+		return hibernateTemplate.get(parameterizedClass, id);
 	}
 	
 	@Override

@@ -1,6 +1,7 @@
 package org.blueo.commons;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,9 +13,26 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.google.common.collect.Lists;
+import com.google.common.reflect.TypeToken;
 
 public abstract class BlueoUtils {
 	private static int MAX_SQL_LENGTH = 10000;
+
+	/* Sample
+	@SuppressWarnings("serial")
+	private final Class<T> parameterizedClass = BlueoUtils.getParameterizedClass(new TypeToken<T>(this.getClass()) {});
+	*/
+	@SuppressWarnings({ "unchecked"})
+	public static <T> Class<T> getParameterizedClass(TypeToken<T> typeToken) {
+		Type type = typeToken.getType();
+		//
+		if (type instanceof Class<?>) {
+			Class<T> clazz = (Class<T>) type;
+			return clazz;
+		} else {
+			return null;
+		}
+	}
 	
 	@Deprecated // NOT TESTED
 	public static <T, P> List<T> queryInClause(String sql, List<P> inParams, RowMapper<T> rowMapper, JdbcTemplate jdbcTemplate) {

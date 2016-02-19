@@ -1,20 +1,17 @@
-package org.blueo.commons.jdbc.core.impl.dao;
+package org.blueo.commons.persistent.core.dao;
 
 import java.util.List;
 
 import org.blueo.commons.BlueoUtils;
-import org.blueo.commons.jdbc.core.Crud;
-import org.blueo.commons.jdbc.core.CrudBatch;
-import org.blueo.commons.jdbc.core.Search;
-import org.blueo.commons.jdbc.core.impl.ParameterizedClass;
-import org.blueo.commons.jdbc.core.po.HasId;
+import org.blueo.commons.persistent.core.dao.po.HasId;
 import org.springframework.beans.BeanUtils;
 
 import com.google.common.collect.Lists;
+import com.google.common.reflect.TypeToken;
 
 public class AbstractDao<T extends HasId<K>, K> implements Crud<T, K>, CrudBatch<T, K>, Search<T> {
-	protected ParameterizedClass<T> parameterizedClass = new ParameterizedClass<T>() {
-	};
+	@SuppressWarnings("serial")
+	private final Class<T> parameterizedClass = BlueoUtils.getParameterizedClass(new TypeToken<T>(this.getClass()) {});
 
 	private Crud<T, K> crud;
 	private CrudBatch<T, K> crudBatch;
@@ -115,8 +112,7 @@ public class AbstractDao<T extends HasId<K>, K> implements Crud<T, K>, CrudBatch
 	}
 
 	public final List<T> findAll() {
-		Class<T> clazz = parameterizedClass.getParameterizedClass();
-		T t = BeanUtils.instantiate(clazz);
+		T t = BeanUtils.instantiate(parameterizedClass);
 		return this.findByExample(t);
 	}
 

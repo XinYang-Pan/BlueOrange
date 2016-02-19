@@ -1,125 +1,107 @@
-package org.blueo.commons.jdbc;
+package org.blueo.commons.persistent.jdbc;
 
 import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import javax.persistence.Entity;
+import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Table;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 import org.apache.commons.lang3.StringUtils;
 import org.blueo.commons.BlueoUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.jdbc.core.ArgumentTypePreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.StatementCreatorUtils;
-import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-public class EntityWrapper<T> {
-	private static final int BATCH_SIZE = 1000;
+public class BlueoJdbcs {
 	private static final String SEPARATOR = ", ";
-	//
-	private final Class<T> clazz;
-	//
-	private String insertSql;
-	private String updateSql;
-	private String deleteSql;
-	private ParameterizedPreparedStatementSetter<T> insertPss;
-	private ParameterizedPreparedStatementSetter<T> updatePss;
-	private ParameterizedPreparedStatementSetter<T> deletePss;
 	
-	public static <T> EntityWrapper<T> of(Class<T> clazz) {
-		return new EntityWrapper<>(clazz);
-	}
+	// -----------------------------
+	// ----- PropertyDescriptor Utils
+	// -----------------------------
 	
-	public EntityWrapper(Class<T> clazz) {
-		this.clazz = clazz;
-		this.init();
-	}
-
-	private void init() {
-		// Is a entity
-		Assert.notNull(AnnotationUtils.findAnnotation(clazz, Entity.class));
-		// Is a table
-		Table table = AnnotationUtils.findAnnotation(clazz, Table.class);
-		Assert.notNull(table);
-		// prepare variables for building
-		String tableName = table.name();
-		PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(clazz);
-		final List<PropertyDescriptor> noneGenValueCols = Lists.newArrayList();
-		final List<PropertyDescriptor> noneIdCols = Lists.newArrayList();
-		PropertyDescriptor idCol = null;
+	public static List<String> getColumnNames(List<PropertyDescriptor> pds) {
+		List<String> columnNames = Lists.newArrayList();
 		for (PropertyDescriptor pd : pds) {
-			// method has Column, but not GeneratedValue.
-			if (EntityWrapperUtils.isColumn(pd)) {
-				if (EntityWrapperUtils.isId(pd)) {
-					idCol = pd;
-				} else {
-					noneIdCols.add(pd);
-				}
-				if (!EntityWrapperUtils.isGeneratedValue(pd)) {
-					noneGenValueCols.add(pd);
-				} 
-			}
+			columnNames.add(BlueoJdbcs.getColumnName(pd));
 		}
-		Assert.notEmpty(noneGenValueCols);
-		// real build
-		// insert
-		insertPss = this.buildInsertPss(noneGenValueCols);
-		insertSql = this.buildInsertSql(tableName, noneGenValueCols);
-		// update
-		updatePss = this.buildUpdatePss(noneIdCols, idCol);
-		updateSql = this.buildUpdateSql(tableName, noneIdCols, idCol);
-		// delete
-		deletePss = this.buildDeletePss(idCol);
-		deleteSql = this.buildDeleteSql(tableName, idCol);
+		return columnNames;
+	}
+	
+	public static String getColumnName(PropertyDescriptor pd) {
+		Column column = getAnnotation(pd, Column.class);
+		return column.name();
+	}
+	
+	public static boolean isColumn(PropertyDescriptor pd) {
+		return hasAnnotation(pd, Column.class);
+	}
+	
+	public static boolean isGeneratedValue(PropertyDescriptor pd) {
+		return hasAnnotation(pd, GeneratedValue.class);
+	}
+	
+	public static boolean isId(PropertyDescriptor pd) {
+		return hasAnnotation(pd, Id.class);
 	}
 
-	private String buildInsertSql(String tableName, List<PropertyDescriptor> columnPds) {
-		List<String> columnNames = EntityWrapperUtils.getColumnNames(columnPds);
+	public static boolean hasAnnotation(PropertyDescriptor pd, Class<? extends Annotation> annotationType) {
+		Annotation annotation = getAnnotation(pd, annotationType);
+		return annotation != null;
+	}
+
+	public static <T extends Annotation> T getAnnotation(PropertyDescriptor pd, Class<T> annotationType) {
+		Method readMethod = pd.getReadMethod();
+		Preconditions.checkNotNull(readMethod);
+		T column = AnnotationUtils.findAnnotation(readMethod, annotationType);
+		return column;
+	}
+	
+	// -----------------------------
+	// ----- sqls
+	// -----------------------------
+
+	public static String buildInsertSql(String tableName, List<PropertyDescriptor> columnPds) {
+		List<String> columnNames = BlueoJdbcs.getColumnNames(columnPds);
 		String columnPart = StringUtils.join(columnNames, SEPARATOR);
 		String valuePart = StringUtils.repeat("?", SEPARATOR, columnNames.size());
 		return String.format("INSERT INTO %s(%s) VALUES(%s)", tableName, columnPart, valuePart);
 	}
 
-	private String buildUpdateSql(String tableName, List<PropertyDescriptor> noneIds, PropertyDescriptor id) {
+	public static String buildUpdateSql(String tableName, List<PropertyDescriptor> noneIds, PropertyDescriptor id) {
 		List<String> setPiece = Lists.newArrayList();
-		for (String columnName : EntityWrapperUtils.getColumnNames(noneIds)) {
+		for (String columnName : BlueoJdbcs.getColumnNames(noneIds)) {
 			setPiece.add(String.format("%s=?", columnName));
 		}
 		String setPart = StringUtils.join(setPiece, SEPARATOR);
-		return String.format("UPDATE %s SET %s WHERE %s=?", tableName, setPart, EntityWrapperUtils.getColumnName(id));
+		return String.format("UPDATE %s SET %s WHERE %s=?", tableName, setPart, BlueoJdbcs.getColumnName(id));
 	}
 
-	private String buildDeleteSql(String tableName, PropertyDescriptor id) {
-		return String.format("DELETE FROM %s WHERE %s=?", tableName, EntityWrapperUtils.getColumnName(id));
+	public static String buildDeleteSql(String tableName, PropertyDescriptor id) {
+		return String.format("DELETE FROM %s WHERE %s=?", tableName, BlueoJdbcs.getColumnName(id));
 	}
 
-	private Object getValue(Object value, Method method) {
-		Enumerated enumerated = AnnotationUtils.findAnnotation(method, Enumerated.class);
-		if (!(value instanceof Enum<?>)) {
-			return value;
-		}
-		Enum<?> enumValue = (Enum<?>) value;
-		if (enumerated == null || enumerated.value() == null || enumerated.value() == EnumType.STRING) {
-			return enumValue.toString();
-		} else if (enumerated.value() == EnumType.ORDINAL) {
-			return enumValue.ordinal();
-		} else {
-			throw BlueoUtils.illegalArgument("never go here.");
-		}
-	}
+	// -----------------------------
+	// ----- ParameterizedPreparedStatementSetter
+	// -----------------------------
 
-	private ParameterizedPreparedStatementSetter<T> buildInsertPss(final List<PropertyDescriptor> columnPds) {
+	public static <T> ParameterizedPreparedStatementSetter<T> buildInsertPss(final List<PropertyDescriptor> columnPds) {
 		return new ParameterizedPreparedStatementSetter<T>() {
 
 			@Override
@@ -154,7 +136,7 @@ public class EntityWrapper<T> {
 		};
 	}
 
-	private ParameterizedPreparedStatementSetter<T> buildUpdatePss(final List<PropertyDescriptor> noneIds, final PropertyDescriptor id) {
+	public static <T> ParameterizedPreparedStatementSetter<T> buildUpdatePss(final List<PropertyDescriptor> noneIds, final PropertyDescriptor id) {
 		return new ParameterizedPreparedStatementSetter<T>() {
 
 			@Override
@@ -194,7 +176,7 @@ public class EntityWrapper<T> {
 		};
 	}
 
-	private ParameterizedPreparedStatementSetter<T> buildDeletePss(final PropertyDescriptor idCol) {
+	public static <T> ParameterizedPreparedStatementSetter<T> buildDeletePss(final PropertyDescriptor idCol) {
 		return new ParameterizedPreparedStatementSetter<T>() {
 
 			@Override
@@ -224,30 +206,43 @@ public class EntityWrapper<T> {
 			
 		};
 	}
-
-	public void saveAll(JdbcTemplate jdbcTemplate, List<T> entities) {
-		jdbcTemplate.batchUpdate(insertSql, entities, BATCH_SIZE, insertPss);
+	
+	private static Object getValue(Object value, Method method) {
+		Enumerated enumerated = AnnotationUtils.findAnnotation(method, Enumerated.class);
+		if (!(value instanceof Enum<?>)) {
+			return value;
+		}
+		Enum<?> enumValue = (Enum<?>) value;
+		if (enumerated == null || enumerated.value() == null || enumerated.value() == EnumType.STRING) {
+			return enumValue.toString();
+		} else if (enumerated.value() == EnumType.ORDINAL) {
+			return enumValue.ordinal();
+		} else {
+			throw BlueoUtils.illegalArgument("never go here.");
+		}
 	}
 
-	public void updateAll(JdbcTemplate jdbcTemplate, List<T> entities) {
-		jdbcTemplate.batchUpdate(updateSql, entities, BATCH_SIZE, updatePss);
-	}
+	// -----------------------------
+	// ----- ParameterizedPreparedStatementSetter
+	// -----------------------------
+	// TODO Object object = rs.getObject(columnName); need to look bean wrapper
+	public static <T> RowMapper<T> getColumnNameRowMapper(final Map<String, PropertyDescriptor> columnName2pdMap, final Class<T> clazz) {
+		return new RowMapper<T>() {
 
-	public void deleteAll(JdbcTemplate jdbcTemplate, List<T> entities) {
-		jdbcTemplate.batchUpdate(deleteSql, entities, BATCH_SIZE, deletePss);
+			@Override
+			public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+				T t = BeanUtils.instantiate(clazz);
+				while (rs.next()) {
+					for (Entry<String, PropertyDescriptor> entry : columnName2pdMap.entrySet()) {
+						String columnName = entry.getKey();
+						PropertyDescriptor pd = entry.getValue();
+						Object object = rs.getObject(columnName);
+						ReflectionUtils.invokeMethod(pd.getWriteMethod(), t, object);
+					}
+				}
+				return t;
+			}
+		};
 	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("EntityForJdbc [clazz=");
-		builder.append(clazz);
-		builder.append(", insertSql=");
-		builder.append(insertSql);
-		builder.append(", pss=");
-		builder.append(insertPss);
-		builder.append("]");
-		return builder.toString();
-	}
-
+	
 }

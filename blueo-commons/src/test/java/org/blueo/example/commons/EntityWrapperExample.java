@@ -2,7 +2,7 @@ package org.blueo.example.commons;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.blueo.commons.jdbc.EntityWrapper;
+import org.blueo.commons.persistent.jdbc.impl.JdbcCrudBatch;
 import org.blueo.example.object.YzpCodeLog;
 
 public class EntityWrapperExample {
@@ -10,8 +10,8 @@ public class EntityWrapperExample {
 	public static void main(String[] args) {
 //		EntityWrapper<YzpCodeLog> entityWrapper = EntityWrapper.of(YzpCodeLog.class);
 //		System.out.println(entityWrapper);
-		Object wrapper = EntityWrapper.of(YzpCodeLog.class);
-		System.out.println(ToStringBuilder.reflectionToString(wrapper, ToStringStyle.MULTI_LINE_STYLE));
+		JdbcCrudBatch<YzpCodeLog, Long> crudBatch = new JdbcCrudBatch<YzpCodeLog, Long>(){};
+		System.out.println(ToStringBuilder.reflectionToString(crudBatch, ToStringStyle.MULTI_LINE_STYLE));
 	}
 	
 }

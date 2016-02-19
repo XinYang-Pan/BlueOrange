@@ -1,12 +1,18 @@
 package sample.org.blueo.db.po;
 
 import javax.persistence.Id;
-import org.blueo.commons.jdbc.core.po.HasId;
-import org.blueo.commons.jdbc.core.traceable.TraceablePo;
+
+import org.blueo.commons.persistent.core.dao.po.HasId;
+import org.blueo.commons.persistent.core.dao.po.traceable.TraceablePo;
+
 import javax.persistence.Column;
+
 import java.util.Date;
+
 import javax.persistence.GeneratedValue;
+
 import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 

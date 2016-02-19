@@ -1,10 +1,9 @@
-package org.blueo.commons.jdbc.core.traceable;
+package org.blueo.commons.persistent.core.dao.po.traceable;
 
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.blueo.commons.jdbc.core.DelFlagType;
 
 public abstract class TraceablePoOverwriterAdaptor<T extends TraceablePo<U>, U> implements TraceablePoOverwriter<T, U> {
 
