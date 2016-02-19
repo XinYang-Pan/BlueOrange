@@ -1,9 +1,11 @@
-package org.blueo.commons.persistent.core.dao;
+package org.blueo.commons.persistent.core;
 
 import java.util.List;
 
+import org.blueo.commons.persistent.core.dao.po.HasId;
+
 // T is entity, K is key
-public interface CrudBatch<T, K> {
+public interface CrudBatch<T extends HasId<K>, K> {
 
 	// -----------------------------
 	// ----- Create

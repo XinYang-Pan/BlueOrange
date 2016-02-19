@@ -6,15 +6,15 @@ import org.blueo.commons.persistent.core.dao.impl.AbstractCrud;
 import org.blueo.commons.persistent.core.dao.po.HasId;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class HibernateCrud<T extends HasId<K>, K extends Serializable, U> extends AbstractCrud<T, K, U> {
-	// 
+public class HibernateCrud<T extends HasId<K>, K extends Serializable> extends AbstractCrud<T, K> {
+	//
 	protected HibernateTemplate hibernateTemplate;
-	
+
 	@Override
 	public T getById(K id) {
 		return hibernateTemplate.get(parameterizedClass, id);
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public K save(T t) {
@@ -37,7 +37,15 @@ public class HibernateCrud<T extends HasId<K>, K extends Serializable, U> extend
 		if (t == null) {
 			return;
 		}
-        hibernateTemplate.delete(t);
+		hibernateTemplate.delete(t);
 	}
-	
+
+	public HibernateTemplate getHibernateTemplate() {
+		return hibernateTemplate;
+	}
+
+	public void setHibernateTemplate(HibernateTemplate hibernateTemplate) {
+		this.hibernateTemplate = hibernateTemplate;
+	}
+
 }

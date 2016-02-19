@@ -7,8 +7,9 @@ import org.blueo.commons.persistent.core.dao.po.traceable.DelFlagType;
 import org.blueo.commons.persistent.core.dao.po.traceable.TraceablePo;
 import org.blueo.commons.persistent.core.dao.po.traceable.TraceablePoOverwriter;
 
-public class AbstractTraceableDao<T extends HasId<K> & TraceablePo<U>, K, U> extends AbstractDao<T, K> {
+public class TraceableDao<T extends HasId<K> & TraceablePo<U>, K, U> extends AbstractDao<T, K> {
 	private TraceablePoOverwriter<T, U> TraceablePoOverwriter;
+	private Dao<T, K> dao;
 
 	// -----------------------------
 	// ----- CRUD
@@ -22,13 +23,13 @@ public class AbstractTraceableDao<T extends HasId<K> & TraceablePo<U>, K, U> ext
 	@Override
 	public K save(T t) {
 		TraceablePoOverwriter.saveOverwrite(t);
-		return super.save(t);
+		return dao.save(t);
 	}
 
 	@Override
 	public void update(T t) {
 		TraceablePoOverwriter.updateOverwrite(t);
-		super.update(t);
+		dao.update(t);
 	}
 
 	@Override
@@ -46,7 +47,7 @@ public class AbstractTraceableDao<T extends HasId<K> & TraceablePo<U>, K, U> ext
 	}
 
 	public T getById(K id, DelFlagType type) {
-		T t = super.getById(id);
+		T t = dao.getById(id);
 		return TraceablePoOverwriter.getOverwrite(t, type);
 	}
 
@@ -57,13 +58,13 @@ public class AbstractTraceableDao<T extends HasId<K> & TraceablePo<U>, K, U> ext
 	@Override
 	public void saveAll(List<T> list) {
 		TraceablePoOverwriter.saveAllOverwrite(list);
-		super.saveAll(list);
+		dao.saveAll(list);
 	}
 
 	@Override
 	public void updateAll(List<T> list) {
 		TraceablePoOverwriter.updateAllOverwrite(list);
-		super.updateAll(list);
+		dao.updateAll(list);
 	}
 
 	@Override
@@ -79,7 +80,27 @@ public class AbstractTraceableDao<T extends HasId<K> & TraceablePo<U>, K, U> ext
 	@Override
 	public List<T> findByExample(T t) {
 		TraceablePoOverwriter.findByExampleOverwrite(t);
-		return super.findByExample(t);
+		return dao.findByExample(t);
+	}
+
+	// -----------------------------
+	// ----- DI
+	// -----------------------------
+	
+	public TraceablePoOverwriter<T, U> getTraceablePoOverwriter() {
+		return TraceablePoOverwriter;
+	}
+
+	public void setTraceablePoOverwriter(TraceablePoOverwriter<T, U> traceablePoOverwriter) {
+		TraceablePoOverwriter = traceablePoOverwriter;
+	}
+
+	public Dao<T, K> getDao() {
+		return dao;
+	}
+
+	public void setDao(Dao<T, K> dao) {
+		this.dao = dao;
 	}
 
 }

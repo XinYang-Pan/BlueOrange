@@ -1,6 +1,6 @@
 package org.blueo.example.pojogen;
 
-import org.blueo.commons.persistent.core.dao.AbstractDao;
+import org.blueo.commons.persistent.core.dao.AssemblableDao;
 import org.blueo.pojogen.JavaFileGenerator;
 import org.blueo.pojogen.bo.PojoClass;
 import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
@@ -11,7 +11,7 @@ public class JavaDaoFileGeneratorExample {
 		PojoClass pojoClass = new PojoClass();
 		pojoClass.setPackageName("test.org.blueo.db");
 		pojoClass.setName("PersonDao");
-		pojoClass.setSuperClass(ClassWrapper.of(AbstractDao.class, "test.org.blueo.db.Person", Long.class.getName()));
+		pojoClass.setSuperClass(ClassWrapper.of(AssemblableDao.class, "test.org.blueo.db.Person", Long.class.getName()));
 		
 //		JavaFileGenerator javaFileGenerator = new JavaFileGenerator(pojoClass, "./tmp");
 		JavaFileGenerator javaFileGenerator = new JavaFileGenerator(pojoClass);

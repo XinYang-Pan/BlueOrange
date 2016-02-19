@@ -1,0 +1,37 @@
+package org.blueo.commons.persistent.hibernate.impl;
+
+import java.io.Serializable;
+
+import javax.annotation.PostConstruct;
+
+import org.blueo.commons.persistent.core.dao.AssemblableDao;
+import org.blueo.commons.persistent.core.dao.impl.SimpleCrudBatch;
+import org.blueo.commons.persistent.core.dao.po.HasId;
+import org.springframework.orm.hibernate3.HibernateTemplate;
+
+public class HibernateDao<T extends HasId<K>, K extends Serializable> extends AssemblableDao<T, K> {
+	//
+	protected HibernateTemplate hibernateTemplate;
+
+	@PostConstruct
+	public void init() {
+		//
+		HibernateCrud<T, K> hibernateCrud = new HibernateCrud<>();
+		hibernateCrud.setHibernateTemplate(hibernateTemplate);
+		HibernateSearch<T> hibernateSearch = new HibernateSearch<>();
+		hibernateSearch.setHibernateTemplate(hibernateTemplate);
+		//
+		this.setCrud(hibernateCrud);
+		this.setCrudBatch(new SimpleCrudBatch<>(hibernateCrud));
+		this.setSearch(hibernateSearch);
+	}
+
+	public HibernateTemplate getHibernateTemplate() {
+		return hibernateTemplate;
+	}
+
+	public void setHibernateTemplate(HibernateTemplate hibernateTemplate) {
+		this.hibernateTemplate = hibernateTemplate;
+	}
+
+}

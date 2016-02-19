@@ -1,4 +1,4 @@
-package org.blueo.commons.persistent.core.dao;
+package org.blueo.commons.persistent.core;
 
 import java.util.List;
 
