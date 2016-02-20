@@ -1,45 +1,35 @@
 package org.blueo.db.vo;
 
-import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.blueo.commons.FormatterWrapper;
-import org.blueo.db.sql.DdlBuildUtils;
+import org.blueo.db.sql.GenericSqlBuilder;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class DbTablePair {
+	// 
+	private GenericSqlBuilder genericSqlBuilder = new GenericSqlBuilder();
+	// 
 	private DbTable current;
 	private DbTable previous;
-
-	private List<DbColumn> add = Lists.newArrayList();
-	private List<DbColumn> modify = Lists.newArrayList();
-	private List<DbColumn> drop = Lists.newArrayList();
-
-	public String generateSql() {
-		if (previous == null) {
-			return DdlBuildUtils.generateCreateSql(current);
-		}
-		classify();
-		try (FormatterWrapper fw = new FormatterWrapper(new Formatter(new StringBuilder()))) {
-			for (DbColumn dbColumn : add) {
-				fw.formatln(dbColumn.alterAdd(current.getName()));
-			}
-			for (DbColumn dbColumn : modify) {
-				fw.formatln(dbColumn.alterModify(current.getName()));
-			}
-			for (DbColumn dbColumn : drop) {
-				fw.formatln(dbColumn.alterDrop(current.getName()));
-			}
-			return fw.toString();
-		}
-	}
+	// 
+	private List<DbColumn> add;
+	private List<DbColumn> modify;
+	private List<DbColumn> drop;
 
 	private void classify() {
+		if (add != null) {
+			return;
+		}
+		// 
+		add = Lists.newArrayList();
+		modify = Lists.newArrayList();
+		drop = Lists.newArrayList();
+		// 
 		Map<String, DbColumn> currentMap = buildMap(current);
 		Map<String, DbColumn> previousMap = buildMap(previous);
 		for (Entry<String, DbColumn> e : currentMap.entrySet()) {
@@ -49,8 +39,8 @@ public class DbTablePair {
 			if (prev == null) {
 				add.add(curr);
 			} else {
-				String oneLineCurr = curr.getDefinitionSql();
-				String oneLinePrev = prev.getDefinitionSql();
+				String oneLineCurr = genericSqlBuilder.getDefinitionSql(curr);
+				String oneLinePrev = genericSqlBuilder.getDefinitionSql(prev);
 				if (!Objects.equal(oneLineCurr, oneLinePrev)) {
 					modify.add(curr);
 				}
@@ -89,6 +79,21 @@ public class DbTablePair {
 
 	public void setPrevious(DbTable previous) {
 		this.previous = previous;
+	}
+
+	public List<DbColumn> getAdd() {
+		classify();
+		return add;
+	}
+
+	public List<DbColumn> getModify() {
+		classify();
+		return modify;
+	}
+
+	public List<DbColumn> getDrop() {
+		classify();
+		return drop;
 	}
 
 }

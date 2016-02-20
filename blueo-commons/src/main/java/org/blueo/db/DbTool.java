@@ -8,6 +8,8 @@ import org.blueo.commons.FormatterWrapper;
 import org.blueo.db.config.DbGlobalConfig;
 import org.blueo.db.java.DataLoader;
 import org.blueo.db.java.PojoBuildUtils;
+import org.blueo.db.sql.GenericSqlBuilder;
+import org.blueo.db.sql.SqlBuilder;
 import org.blueo.db.vo.DbEnum;
 import org.blueo.db.vo.DbTable;
 import org.blueo.db.vo.DbTablePair;
@@ -22,6 +24,7 @@ public class DbTool {
 	private final String excelPath;
 	private String previousExcelPath;
 	private boolean printToConsole;
+	private SqlBuilder sqlBuilder = new GenericSqlBuilder();
 	// Internal process fields
 	private DbGlobalConfig dbConfig;
 	private List<DbTablePair> dbTablePairs;
@@ -87,7 +90,7 @@ public class DbTool {
 			formatterWrapper = new FormatterWrapper(FormatterWrapper.createFormatter(filePath));
 		}
 		for (DbTablePair dbTablePair : dbTablePairs) {
-			formatterWrapper.formatln(dbTablePair.generateSql());
+			formatterWrapper.formatln(sqlBuilder.createOrAlterSql(dbTablePair));
 		}
 		formatterWrapper.close();
 	}
