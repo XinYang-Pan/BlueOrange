@@ -1,5 +1,6 @@
 package org.blueo.db;
 
+import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;
 
@@ -7,19 +8,23 @@ import org.blueo.commons.FormatterWrapper;
 import org.blueo.db.config.DbGlobalConfig;
 import org.blueo.db.java.DataLoader;
 import org.blueo.db.java.PojoBuildUtils;
-import org.blueo.db.sql.DdlBuildUtils;
 import org.blueo.db.vo.DbEnum;
 import org.blueo.db.vo.DbTable;
+import org.blueo.db.vo.DbTablePair;
 import org.blueo.pojogen.EnumGenerator;
 import org.blueo.pojogen.JavaFileGenerator;
 import org.blueo.pojogen.bo.PojoClass;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
+
 public class DbTool {
 	private final String excelPath;
+	private String previousExcelPath;
 	private boolean printToConsole;
 	// Internal process fields
 	private DbGlobalConfig dbConfig;
-	private List<DbTable> dbTables;
+	private List<DbTablePair> dbTablePairs;
 	private List<DbEnum> dbEnums;
 	
 	private DbTool(String excelPath) {
@@ -32,12 +37,45 @@ public class DbTool {
 		dbTool.init();
 		return dbTool;
 	}
+
+	public static DbTool build(String excelPath, String previousExcelPath) {
+		DbTool dbTool = new DbTool(excelPath);
+		dbTool.previousExcelPath = previousExcelPath;
+		dbTool.init();
+		return dbTool;
+	}
 	
 	private void init() {
 		DataLoader loader = DataLoader.build(excelPath);
+		DataLoader previousLoader = null;
+		if (previousExcelPath != null) {
+			previousLoader = DataLoader.build(previousExcelPath);
+		}
 		dbConfig = loader.getDbConfig();
-		dbTables = loader.getDbTables();
+		dbTablePairs = this.buildDbTablePair(loader, previousLoader);
 		dbEnums = loader.getDbEnums();
+	}
+
+	private List<DbTablePair> buildDbTablePair(DataLoader loader, DataLoader previousLoader) {
+		List<DbTable> curr = loader.getDbTables();
+		List<DbTable> prev = Collections.emptyList();
+		if (previousLoader != null) {
+			prev = previousLoader.getDbTables();
+		}
+		List<DbTablePair> dbTablePairs = Lists.newArrayList();
+		// 
+		for (DbTable c : curr) {
+			DbTablePair dbTablePair = new DbTablePair();
+			dbTablePair.setCurrent(c);
+			dbTablePairs.add(dbTablePair);
+			for (DbTable p : prev) {
+				if (Objects.equal(c.getName(), p.getName())) {
+					dbTablePair.setPrevious(p);
+					break;
+				}
+			}
+		}
+		return dbTablePairs;
 	}
 
 	public void generateCreateDdls() {
@@ -48,8 +86,8 @@ public class DbTool {
 			String filePath = String.format("%s/%s", dbConfig.getDdlDir(), dbConfig.getDdlFileName());
 			formatterWrapper = new FormatterWrapper(FormatterWrapper.createFormatter(filePath));
 		}
-		for (DbTable dbTable : dbTables) {
-			formatterWrapper.formatln(DdlBuildUtils.generateCreateSql(dbTable));
+		for (DbTablePair dbTablePair : dbTablePairs) {
+			formatterWrapper.formatln(dbTablePair.generateSql());
 		}
 		formatterWrapper.close();
 	}
@@ -72,8 +110,8 @@ public class DbTool {
 	}
 	
 	public void generatePoAndDaos() {
-		for (DbTable dbTable : dbTables) {
-			PojoClass pojoClass = PojoBuildUtils.buildEntityClass(dbTable, dbConfig);
+		for (DbTablePair dbTablePair : dbTablePairs) {
+			PojoClass pojoClass = PojoBuildUtils.buildEntityClass(dbTablePair.getCurrent(), dbConfig);
 			PojoClass daoClass = PojoBuildUtils.buildDaoClass(pojoClass, dbConfig);
 			if (printToConsole) {
 				new JavaFileGenerator(pojoClass).generateClassCode();
@@ -110,12 +148,16 @@ public class DbTool {
 		StringBuilder builder = new StringBuilder();
 		builder.append("DbTool [excelPath=");
 		builder.append(excelPath);
-		builder.append(", dbConfig=");
-		builder.append(dbConfig);
+		builder.append(", previousExcelPath=");
+		builder.append(previousExcelPath);
 		builder.append(", printToConsole=");
 		builder.append(printToConsole);
-		builder.append(", dbTables=");
-		builder.append(dbTables);
+		builder.append(", dbConfig=");
+		builder.append(dbConfig);
+		builder.append(", dbTablePair=");
+		builder.append(dbTablePairs);
+		builder.append(", dbEnums=");
+		builder.append(dbEnums);
 		builder.append("]");
 		return builder.toString();
 	}

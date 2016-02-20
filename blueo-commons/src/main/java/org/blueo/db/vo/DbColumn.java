@@ -2,6 +2,7 @@ package org.blueo.db.vo;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class DbColumn {
 	private String name;
@@ -11,6 +12,51 @@ public class DbColumn {
 	private String nullable;
 	private String comment;
 	private String enumType;
+
+	public String alterAdd(String tableName) {
+		return String.format("ALTER TABLE %s ADD %s;", tableName, getDefinitionSql());
+	}
+
+	public String alterDrop(String tableName) {
+		return String.format("ALTER TABLE %s DROP COLUMN %s;", tableName, name);
+	}
+
+	public String alterModify(String tableName) {
+		return String.format("ALTER TABLE %s MODIFY %s;", tableName, getDefinitionSql());
+	}
+	
+	public String getDefinitionSql() {
+		String nullable;
+		if (this.isPkInBool()) {
+			nullable = "NOT NULL";
+		} else {
+			nullable = this.isNullableInBool()? "NULL":"NOT NULL";
+		}
+		return String.format("%s %s %s", name, this.getTypeWithLengthStr(), nullable);
+	}
+	
+	public String oneLineOfCreateSql(boolean lastLine, boolean withComments) {
+		String lastLineStr = "";
+		if (!lastLine) {
+			lastLineStr = ",";
+		}
+		String comment = "";
+		if (withComments && this.getComment() != null) {
+			comment = String.format(" -- %s", this.getComment());
+		} 
+		return String.format("%s%s%s", getDefinitionSql(), lastLineStr, comment);
+	}
+	
+	private String getTypeWithLengthStr() {
+		String size = this.getLength();
+		if (StringUtils.isBlank(size)) {
+			return type;
+		} else {
+			return String.format("%s(%s)", type, size);
+		}
+	}
+	
+	// 
 	
 	public boolean isPkInBool() {
 		return BooleanUtils.toBoolean(ObjectUtils.firstNonNull(pk, "false"));

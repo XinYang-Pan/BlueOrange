@@ -11,7 +11,7 @@ import org.blueo.db.DbTool;
 public class DbToolExample {
 
 	public static void main(String[] args) throws BiffException, IOException {
-		URL url = DbToolExample.class.getResource("test.xls");
+		URL url = DbToolExample.class.getResource("test1.xls");
 		DbTool dbTool = DbTool.build(url.getPath());
 		//
 //		dbTool.setPrintToConsole(true);

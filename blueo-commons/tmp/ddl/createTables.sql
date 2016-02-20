@@ -8,4 +8,5 @@ CREATE TABLE TBL_PERSON (
 	CREATE_TIME date NULL, -- Auto added for Traceable Po
 	UPDATE_TIME date NULL, -- Auto added for Traceable Po
 	DEL_FLAG boolean NULL -- Auto added for Traceable Po
-);
+)
+
