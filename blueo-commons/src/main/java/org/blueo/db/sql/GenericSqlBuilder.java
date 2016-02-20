@@ -25,13 +25,21 @@ public class GenericSqlBuilder implements SqlBuilder {
 	}
 	
 	public String getDefinitionSql(DbColumn dbColumn) {
+		String pkStr = "";
+		if (dbColumn.isPkInBool()) {
+			pkStr = " PRIMARY KEY";
+		}
+		return String.format("%s %s %s%s", dbColumn.getName(), getTypeWithLengthStr(dbColumn), getNullableStr(dbColumn), pkStr);
+	}
+
+	protected String getNullableStr(DbColumn dbColumn) {
 		String nullable;
 		if (dbColumn.isPkInBool()) {
 			nullable = "NOT NULL";
 		} else {
 			nullable = dbColumn.isNullableInBool()? "NULL":"NOT NULL";
 		}
-		return String.format("%s %s %s", dbColumn.getName(), this.getTypeWithLengthStr(dbColumn), nullable);
+		return nullable;
 	}
 	
 	protected String oneLineOfCreateSql(DbColumn dbColumn, boolean lastLine, boolean withComments) {
@@ -46,7 +54,7 @@ public class GenericSqlBuilder implements SqlBuilder {
 		return String.format("%s%s%s", getDefinitionSql(dbColumn), lastLineStr, comment);
 	}
 	
-	private String getTypeWithLengthStr(DbColumn dbColumn) {
+	protected String getTypeWithLengthStr(DbColumn dbColumn) {
 		String size = dbColumn.getLength();
 		if (StringUtils.isBlank(size)) {
 			return dbColumn.getType();
@@ -69,17 +77,21 @@ public class GenericSqlBuilder implements SqlBuilder {
 				DbColumn dbColumn = (DbColumn) it.next();
 				fw.formatln(1, oneLineOfCreateSql(dbColumn, !it.hasNext(), true));
 			}
-			fw.formatln(")");
+			fw.formatln(");");
 			return fw.toString();
 		}
 	}
 
 	public String createOrAlterSql(DbTablePair dbTablePair) {
-		DbTable current = dbTablePair.getCurrent();
-		if (dbTablePair.getPrevious() == null) {
-			return createSql(current);
-		}
 		try (FormatterWrapper fw = new FormatterWrapper(new Formatter(new StringBuilder()))) {
+			DbTable current = dbTablePair.getCurrent();
+			fw.formatln("-- %s", current.getName());
+			// CREATE
+			if (dbTablePair.getPrevious() == null) {
+				fw.format(createSql(current));
+				return fw.toString();
+			}
+			// ALTER
 			for (DbColumn dbColumn : dbTablePair.getAdd()) {
 				fw.formatln(alterAdd(current.getName(), dbColumn));
 			}

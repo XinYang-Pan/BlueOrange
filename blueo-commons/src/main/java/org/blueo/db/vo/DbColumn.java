@@ -17,7 +17,7 @@ public class DbColumn {
 	}
 
 	public boolean isNullableInBool() {
-		return BooleanUtils.toBoolean(ObjectUtils.firstNonNull(pk, "true"));
+		return BooleanUtils.toBoolean(ObjectUtils.firstNonNull(nullable, "true"));
 	}
 
 	public void setPkInBool(boolean pkInBool) {

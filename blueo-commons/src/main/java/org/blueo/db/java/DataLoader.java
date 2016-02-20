@@ -230,6 +230,9 @@ public class DataLoader {
 		DbColumn dbcolumn = new DbColumn();
 		dbcolumn.setName(name);
 		dbcolumn.setType(type);
+		dbcolumn.setLength(null);
+		dbcolumn.setPkInBool(false);
+		dbcolumn.setNullableInBool(true);
 		dbcolumn.setComment("Auto added for Traceable Po");
 		return dbcolumn;
 	}

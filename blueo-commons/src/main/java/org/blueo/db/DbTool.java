@@ -142,6 +142,14 @@ public class DbTool {
 		return printToConsole;
 	}
 
+	public SqlBuilder getSqlBuilder() {
+		return sqlBuilder;
+	}
+
+	public void setSqlBuilder(SqlBuilder sqlBuilder) {
+		this.sqlBuilder = sqlBuilder;
+	}
+
 	public void setPrintToConsole(boolean printToConsole) {
 		this.printToConsole = printToConsole;
 	}
@@ -155,9 +163,11 @@ public class DbTool {
 		builder.append(previousExcelPath);
 		builder.append(", printToConsole=");
 		builder.append(printToConsole);
+		builder.append(", sqlBuilder=");
+		builder.append(sqlBuilder);
 		builder.append(", dbConfig=");
 		builder.append(dbConfig);
-		builder.append(", dbTablePair=");
+		builder.append(", dbTablePairs=");
 		builder.append(dbTablePairs);
 		builder.append(", dbEnums=");
 		builder.append(dbEnums);
