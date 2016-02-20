@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
@@ -19,8 +19,8 @@ import org.blueo.db.vo.DbTable;
 import org.blueo.pojogen.bo.PojoClass;
 import org.blueo.pojogen.bo.PojoField;
 import org.blueo.pojogen.bo.PojoField.AnnotationType;
-import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapper;
 import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapperUtils;
+import org.blueo.pojogen.bo.wrapper.annotation.buildin.EnumeratedWrapper;
 import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
@@ -120,11 +120,11 @@ public class PojoBuildUtils {
 		if (enumType == null) {
 			pojoField.setType(javaType);
 		} else {
-			String enumeratedType = "";
+			EnumType enumeratedType = null;
 			if (String.class.equals(javaType)) {
-				enumeratedType = String.format("(%s)", "javax.persistence.EnumType.STRING");
+				enumeratedType = EnumType.STRING;
 			}
-			pojoField.addAnnotationWrapper(AnnotationType.Get, new AnnotationWrapper<PojoField>(Enumerated.class, enumeratedType));
+			pojoField.addAnnotationWrapper(AnnotationType.Get, new EnumeratedWrapper(enumeratedType));
 			pojoField.setType(ClassWrapper.of(dbConfig.getEnumPackage(), enumType));
 		}
 		return pojoField;

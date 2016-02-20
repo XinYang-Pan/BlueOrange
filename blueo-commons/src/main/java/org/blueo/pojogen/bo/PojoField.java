@@ -65,7 +65,7 @@ public class PojoField extends ValueMapObject {
 		if (annotationWrapperMap != null) {
 			for (List<AnnotationWrapper<PojoField>> annotationWrappers : annotationWrapperMap.values()) {
 				for (AnnotationWrapper<PojoField> annotationWrapper : annotationWrappers) {
-					classes.add(annotationWrapper.getClassWrapper());
+					classes.addAll(annotationWrapper.getImports());
 				}
 			}
 		}

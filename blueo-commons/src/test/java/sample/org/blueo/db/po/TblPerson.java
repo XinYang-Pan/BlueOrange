@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import org.blueo.commons.persistent.core.dao.po.HasId;
 import org.blueo.commons.persistent.core.dao.po.traceable.TraceablePo;
+import javax.persistence.EnumType;
 import javax.persistence.GeneratedValue;
 import sample.org.blueo.db.enums.PersonSex;
 import java.io.Serializable;
@@ -56,7 +57,7 @@ public class TblPerson implements Serializable, TraceablePo<Long>, HasId<Long> {
 	}
 
 	@Column(name = "SEX")
-	@Enumerated(javax.persistence.EnumType.STRING)
+	@Enumerated(EnumType.STRING)
 	public PersonSex getSex() {
 		return sex;
 	}

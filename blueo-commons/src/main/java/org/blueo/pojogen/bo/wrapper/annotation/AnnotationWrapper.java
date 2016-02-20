@@ -1,6 +1,7 @@
 package org.blueo.pojogen.bo.wrapper.annotation;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 
 import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
 
@@ -58,6 +59,10 @@ public class AnnotationWrapper<T> {
 
 	public ClassWrapper getClassWrapper() {
 		return classWrapper;
+	}
+
+	public List<ClassWrapper> getImports() {
+		return classWrapper.getImports();
 	}
 
 	@Override

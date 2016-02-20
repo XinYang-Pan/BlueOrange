@@ -90,7 +90,7 @@ public class DbTool {
 			formatterWrapper = new FormatterWrapper(FormatterWrapper.createFormatter(filePath));
 		}
 		for (DbTablePair dbTablePair : dbTablePairs) {
-			formatterWrapper.formatln(sqlBuilder.createOrAlterSql(dbTablePair));
+			formatterWrapper.format(sqlBuilder.createOrAlterSql(dbTablePair));
 		}
 		formatterWrapper.close();
 	}

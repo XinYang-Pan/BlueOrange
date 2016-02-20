@@ -30,7 +30,7 @@ public class PojoClass extends ValueMapObject {
 		}
 		if (annotationWrappers != null) {
 			for (AnnotationWrapper<PojoClass> annotationWrapper : annotationWrappers) {
-				classes.addAll(annotationWrapper.getClassWrapper().getImports());
+				classes.addAll(annotationWrapper.getImports());
 			}
 		}
 		if (pojoFields != null) {
