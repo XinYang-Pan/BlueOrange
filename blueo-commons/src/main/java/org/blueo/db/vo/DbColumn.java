@@ -2,6 +2,7 @@ package org.blueo.db.vo;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class DbColumn {
 	private String name;
@@ -12,6 +13,28 @@ public class DbColumn {
 	private String comment;
 	private String enumType;
 	
+	public String getFullTypeStr() {
+		String length = this.getLength();
+		if (StringUtils.isBlank(length)) {
+			return this.getType();
+		} else {
+			return String.format("%s(%s)", this.getType(), length);
+		}
+	}
+	
+	public SqlType getSqlType() {
+		return SqlType.of(this);
+	}
+
+	public void setSqlType(SqlType sqlType) {
+		this.type = sqlType.getType();
+		this.length = sqlType.getLengthStr();
+	}
+
+	public Class<?> getJavaType() {
+		return SqlType.of(this).getJavaType();
+	}
+
 	public boolean isPkInBool() {
 		return BooleanUtils.toBoolean(ObjectUtils.firstNonNull(pk, "false"));
 	}
@@ -27,9 +50,9 @@ public class DbColumn {
 	public void setNullableInBool(boolean nullableInBool) {
 		this.nullable = Boolean.toString(nullableInBool);
 	}
-	
-	// 
-	
+
+	//
+
 	public String getName() {
 		return name;
 	}

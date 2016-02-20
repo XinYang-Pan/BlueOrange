@@ -4,7 +4,6 @@ import java.util.Formatter;
 import java.util.Iterator;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.blueo.commons.FormatterWrapper;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
@@ -29,7 +28,7 @@ public class GenericSqlBuilder implements SqlBuilder {
 		if (dbColumn.isPkInBool()) {
 			pkStr = " PRIMARY KEY";
 		}
-		return String.format("%s %s %s%s", dbColumn.getName(), getTypeWithLengthStr(dbColumn), getNullableStr(dbColumn), pkStr);
+		return String.format("%s %s %s%s", dbColumn.getName(), dbColumn.getFullTypeStr(), getNullableStr(dbColumn), pkStr);
 	}
 
 	protected String getNullableStr(DbColumn dbColumn) {
@@ -52,15 +51,6 @@ public class GenericSqlBuilder implements SqlBuilder {
 			comment = String.format(" -- %s", dbColumn.getComment());
 		} 
 		return String.format("%s%s%s", getDefinitionSql(dbColumn), lastLineStr, comment);
-	}
-	
-	protected String getTypeWithLengthStr(DbColumn dbColumn) {
-		String size = dbColumn.getLength();
-		if (StringUtils.isBlank(size)) {
-			return dbColumn.getType();
-		} else {
-			return String.format("%s(%s)", dbColumn.getType(), size);
-		}
 	}
 	
 	protected String createSql(DbTable dbTable) {

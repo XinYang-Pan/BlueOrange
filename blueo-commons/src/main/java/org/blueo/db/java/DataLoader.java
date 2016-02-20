@@ -17,6 +17,7 @@ import org.blueo.db.config.DbTableConfig;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbEnum;
 import org.blueo.db.vo.DbTable;
+import org.blueo.db.vo.SqlType;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
@@ -205,8 +206,7 @@ public class DataLoader {
 		if (dbTableConfig.isHasIdInBoolean() && dbTable.getPk() == null) {
 			DbColumn dbcolumn = new DbColumn();
 			dbcolumn.setName("ID");
-			dbcolumn.setType(dbTableConfig.getIdType());
-			dbcolumn.setLength(null);
+			dbcolumn.setSqlType(SqlType.of(dbTableConfig.getIdType()));
 			dbcolumn.setPkInBool(true);
 			dbcolumn.setNullableInBool(false);
 			dbcolumn.setComment("Auto added for HasId Po");
@@ -229,8 +229,7 @@ public class DataLoader {
 	private DbColumn buildDbColumn(String name, String type) {
 		DbColumn dbcolumn = new DbColumn();
 		dbcolumn.setName(name);
-		dbcolumn.setType(type);
-		dbcolumn.setLength(null);
+		dbcolumn.setSqlType(SqlType.of(type));
 		dbcolumn.setPkInBool(false);
 		dbcolumn.setNullableInBool(true);
 		dbcolumn.setComment("Auto added for Traceable Po");

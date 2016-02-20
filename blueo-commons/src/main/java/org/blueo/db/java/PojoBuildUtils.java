@@ -1,6 +1,5 @@
 package org.blueo.db.java;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +15,7 @@ import org.blueo.db.config.DbGlobalConfig;
 import org.blueo.db.config.DbTableConfig;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
+import org.blueo.db.vo.SqlType;
 import org.blueo.pojogen.bo.PojoClass;
 import org.blueo.pojogen.bo.PojoField;
 import org.blueo.pojogen.bo.PojoField.AnnotationType;
@@ -23,32 +23,15 @@ import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapperUtils;
 import org.blueo.pojogen.bo.wrapper.annotation.buildin.EnumeratedWrapper;
 import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.Assert;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class PojoBuildUtils {
 	private static Converter<String, String> COLUMN_NAME_TO_FIELD_NAME = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_CAMEL);
 	private static Converter<String, String> TABLE_NAME_TO_CLASS_NAME = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL);
-	private static Map<String, Class<?>> sqlTypeToJavaType = Maps.newHashMap();
-
-	static {
-		sqlTypeToJavaType.put("bigint", Long.class);
-		sqlTypeToJavaType.put("varchar", String.class);
-		sqlTypeToJavaType.put("int", Integer.class);
-		sqlTypeToJavaType.put("long", Long.class);
-		sqlTypeToJavaType.put("date", Date.class);
-		sqlTypeToJavaType.put("boolean", Boolean.class);
-	}
-
-	private static Class<?> getJavaType(String sqlType) {
-		Assert.notNull(sqlType);
-		return Preconditions.checkNotNull(sqlTypeToJavaType.get(sqlType.toLowerCase()), String.format("No java class found for %s.", sqlType));
-	}
 
 	public static PojoClass buildDaoClass(PojoClass poClass, DbGlobalConfig dbConfig) {
 		PojoClass daoClass = new PojoClass();
@@ -95,10 +78,10 @@ public class PojoBuildUtils {
 			pojoClass.addInterfaces(ClassWrapper.of(className));
 		}
 		if (dbTableConfig.isTraceableInBoolean()) {
-			pojoClass.addInterfaces(ClassWrapper.of(TraceablePo.class, getJavaType(dbTableConfig.getTraceType())));
+			pojoClass.addInterfaces(ClassWrapper.of(TraceablePo.class, SqlType.of(dbTableConfig.getTraceType()).getJavaType()));
 		}
 		if (dbTableConfig.isHasIdInBoolean()) {
-			pojoClass.addInterfaces(ClassWrapper.of(HasId.class, getJavaType(dbTableConfig.getIdType())));
+			pojoClass.addInterfaces(ClassWrapper.of(HasId.class, SqlType.of(dbTableConfig.getTraceType()).getJavaType()));
 		}
 		return pojoClass;
 	}
@@ -116,7 +99,7 @@ public class PojoBuildUtils {
 			pojoField.addAnnotation(AnnotationType.Get, GeneratedValue.class);
 		}
 		pojoField.addAnnotationWrapper(AnnotationType.Get, AnnotationWrapperUtils.COLUMN_WRAPPER);
-		Class<?> javaType = PojoBuildUtils.getJavaType(dbColumn.getType());
+		Class<?> javaType = dbColumn.getJavaType();
 		if (enumType == null) {
 			pojoField.setType(javaType);
 		} else {
