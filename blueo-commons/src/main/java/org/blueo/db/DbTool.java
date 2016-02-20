@@ -8,7 +8,9 @@ import org.blueo.db.config.DbGlobalConfig;
 import org.blueo.db.java.DataLoader;
 import org.blueo.db.java.PojoBuildUtils;
 import org.blueo.db.sql.DdlBuildUtils;
+import org.blueo.db.vo.DbEnum;
 import org.blueo.db.vo.DbTable;
+import org.blueo.pojogen.EnumGenerator;
 import org.blueo.pojogen.JavaFileGenerator;
 import org.blueo.pojogen.bo.PojoClass;
 
@@ -18,6 +20,7 @@ public class DbTool {
 	// Internal process fields
 	private DbGlobalConfig dbConfig;
 	private List<DbTable> dbTables;
+	private List<DbEnum> dbEnums;
 	
 	private DbTool(String excelPath) {
 		super();
@@ -34,6 +37,7 @@ public class DbTool {
 		DataLoader loader = DataLoader.build(excelPath);
 		dbConfig = loader.getDbConfig();
 		dbTables = loader.getDbTables();
+		dbEnums = loader.getDbEnums();
 	}
 
 	public void generateCreateDdls() {
@@ -48,6 +52,23 @@ public class DbTool {
 			formatterWrapper.formatln(DdlBuildUtils.generateCreateSql(dbTable));
 		}
 		formatterWrapper.close();
+	}
+	
+	public void generateEnums() {
+		for (DbEnum dbEnum : dbEnums) {
+			PojoClass pojoClass = new PojoClass();
+			pojoClass.setPackageName(dbConfig.getEnumPackage());
+			pojoClass.setName(dbEnum.getName());
+			// 
+			EnumGenerator enumGenerator;
+			if (printToConsole) {
+				enumGenerator = new EnumGenerator(pojoClass);
+			} else {
+				enumGenerator = new EnumGenerator(pojoClass, dbConfig.getSourceDir());
+			}
+			enumGenerator.setValues(dbEnum.getValues());
+			enumGenerator.generateClassCode();
+		}
 	}
 	
 	public void generatePoAndDaos() {

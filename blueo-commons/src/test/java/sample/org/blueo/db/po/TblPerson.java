@@ -1,18 +1,14 @@
 package sample.org.blueo.db.po;
 
 import javax.persistence.Id;
-
+import javax.persistence.Enumerated;
+import java.util.Date;
+import javax.persistence.Column;
 import org.blueo.commons.persistent.core.dao.po.HasId;
 import org.blueo.commons.persistent.core.dao.po.traceable.TraceablePo;
-
-import javax.persistence.Column;
-
-import java.util.Date;
-
 import javax.persistence.GeneratedValue;
-
+import sample.org.blueo.db.enums.PersonSex;
 import java.io.Serializable;
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -23,7 +19,7 @@ public class TblPerson implements Serializable, TraceablePo<Long>, HasId<Long> {
 	private Long id;
 	private String name;
 	private Integer age;
-	private String sex;
+	private PersonSex sex;
 	private Long createId;
 	private Long updateId;
 	private Date createTime;
@@ -60,11 +56,12 @@ public class TblPerson implements Serializable, TraceablePo<Long>, HasId<Long> {
 	}
 
 	@Column(name = "SEX")
-	public String getSex() {
+	@Enumerated(javax.persistence.EnumType.STRING)
+	public PersonSex getSex() {
 		return sex;
 	}
 
-	public void setSex(String sex) {
+	public void setSex(PersonSex sex) {
 		this.sex = sex;
 	}
 

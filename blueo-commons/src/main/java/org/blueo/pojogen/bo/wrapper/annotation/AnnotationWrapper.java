@@ -15,7 +15,16 @@ public class AnnotationWrapper<T> {
 	// ----- Constructors
 	// -----------------------------
 	public AnnotationWrapper(Class<? extends Annotation> annotationClass) {
-		this(annotationClass, null);
+		this(annotationClass, (Function<T, String>)null);
+	}
+	
+	public AnnotationWrapper(Class<? extends Annotation> annotationClass, final String displayValue) {
+		this(annotationClass, new Function<T, String>(){
+			@Override
+			public String apply(T input) {
+				return displayValue;
+			}
+		});
 	}
 
 	public AnnotationWrapper(Class<? extends Annotation> annotationClass, Function<T, String> function) {
@@ -39,7 +48,7 @@ public class AnnotationWrapper<T> {
 		if (function == null) {
 			return getAnnotationClassPart();
 		} else {
-			return String.format("%s%s", this.classWrapper, function.apply(t));
+			return String.format("@%s%s", this.classWrapper.getName(), function.apply(t));
 		}
 	}
 

@@ -1,13 +1,35 @@
 package org.blueo.db.vo;
 
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
+
 public class DbColumn {
 	private String name;
 	private String type;
 	private String length;
-	private boolean pk;
-	private boolean nullable;
+	private String pk;
+	private String nullable;
 	private String comment;
+	private String enumType;
+	
+	public boolean isPkInBool() {
+		return BooleanUtils.toBoolean(ObjectUtils.firstNonNull(pk, "false"));
+	}
 
+	public boolean isNullableInBool() {
+		return BooleanUtils.toBoolean(ObjectUtils.firstNonNull(pk, "true"));
+	}
+
+	public void setPkInBool(boolean pkInBool) {
+		this.pk = Boolean.toString(pkInBool);
+	}
+
+	public void setNullableInBool(boolean nullableInBool) {
+		this.nullable = Boolean.toString(nullableInBool);
+	}
+	
+	// 
+	
 	public String getName() {
 		return name;
 	}
@@ -28,23 +50,23 @@ public class DbColumn {
 		return length;
 	}
 
-	public void setLength(String size) {
-		this.length = size;
+	public void setLength(String length) {
+		this.length = length;
 	}
 
-	public boolean isPk() {
+	public String getPk() {
 		return pk;
 	}
 
-	public void setPk(boolean pk) {
+	public void setPk(String pk) {
 		this.pk = pk;
 	}
 
-	public boolean isNullable() {
+	public String getNullable() {
 		return nullable;
 	}
 
-	public void setNullable(boolean nullable) {
+	public void setNullable(String nullable) {
 		this.nullable = nullable;
 	}
 
@@ -54,6 +76,14 @@ public class DbColumn {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public String getEnumType() {
+		return enumType;
+	}
+
+	public void setEnumType(String enumType) {
+		this.enumType = enumType;
 	}
 
 	@Override
@@ -71,6 +101,8 @@ public class DbColumn {
 		builder.append(nullable);
 		builder.append(", comment=");
 		builder.append(comment);
+		builder.append(", enumType=");
+		builder.append(enumType);
 		builder.append("]");
 		return builder.toString();
 	}

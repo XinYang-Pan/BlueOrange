@@ -10,24 +10,27 @@ import jxl.Sheet;
 import jxl.Workbook;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.blueo.db.config.DbGlobalConfig;
 import org.blueo.db.config.DbTableConfig;
 import org.blueo.db.vo.DbColumn;
+import org.blueo.db.vo.DbEnum;
 import org.blueo.db.vo.DbTable;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class DataLoader {
-	private enum Type{Config, Table}
+	private enum Type{Config, Enum, Table}
 	//
 	private final String excelPath;
 	// Internal process fields
 	private DbGlobalConfig dbConfig;
 	private List<DbTable> dbTables = Lists.newArrayList();
+	private List<DbEnum> dbEnums = Lists.newArrayList();
 	
 	private DataLoader(String excelPath) {
 		this.excelPath = excelPath;
@@ -56,6 +59,10 @@ public class DataLoader {
 					// config
 					dbConfig = this.buildDbGlobalConfig(key2Value);
 					break;
+				case Enum:
+					// Enum
+					dbEnums = this.buildEnumConfig(sheet);
+					break;
 				case Table:
 					// tables
 					DbTable dbTable = this.buildDbTable(sheet, key2Value);
@@ -72,15 +79,24 @@ public class DataLoader {
 		}
 	}
 
-	private Type getType(Map<String, String> key2Value) {
-		String content = key2Value.get("type");
-		if (Type.Config.name().equalsIgnoreCase(content)) {
-			return Type.Config;
-		} else if (Type.Table.name().equalsIgnoreCase(content)) {
-			return Type.Table;
-		} else {
+	private List<DbEnum> buildEnumConfig(Sheet sheet) {
+		Integer rowStartIndex = findRowIndex(sheet, 0, "definition");
+		if (rowStartIndex == null) {
 			return null;
 		}
+		List<DbEnum> dbEnums = Lists.newArrayList();
+		// 
+		int rows = sheet.getRows();
+		for (int i = rowStartIndex; i < rows; i++) {
+			String enumName = getContent(sheet, 1, i);
+			String enumValues = getContent(sheet, 2, i);
+			// 
+			DbEnum dbEnum = new DbEnum();
+			dbEnum.setName(enumName);
+			dbEnum.setValues(Splitter.on(',').trimResults().splitToList(enumValues));
+			dbEnums.add(dbEnum);
+		}
+		return dbEnums;
 	}
 
 	private DbGlobalConfig buildDbGlobalConfig(Map<String, String> key2Value) throws IllegalAccessException, InvocationTargetException {
@@ -101,6 +117,11 @@ public class DataLoader {
 		return dbTableConfig;
 	}
 
+	private Type getType(Map<String, String> key2Value) {
+		String enumName = key2Value.get("type");
+		return EnumUtils.getEnum(Type.class, enumName);
+	}
+	
 	private Map<String, String> key2Value(Sheet sheet) {
 		Map<String, String> key2Value = Maps.newHashMap();
 		int rows = sheet.getRows();
@@ -124,49 +145,55 @@ public class DataLoader {
 			// TODO format exception
 			return null;
 		}
-		// 
+		// Find Table Definition start
 		DbTableConfig dbTableConfig = buildDbTableConfig(key2Value);
 		int rows = sheet.getRows();
-		Integer rowStartIndex = null;
-		for (int i = 0; i < rows; i++) {
-			String key = getContent(sheet, 0, i);
-			if ("definition".equalsIgnoreCase(key)) {
-				rowStartIndex = i;
-			}
-		}
+		Integer rowStartIndex = findRowIndex(sheet, 0, "definition");
 		if (rowStartIndex == null) {
 			// TODO format exception
 			return null;
 		}
 		// 
 		DbColumn pk = null;
+		int columnStartIdx = 1;
 		List<DbColumn> dbColumns = Lists.newArrayList();
+		// Column Name
+		Map<Integer, String> indexColumnName = Maps.newHashMap();
+		for (int i = columnStartIdx; i < sheet.getColumns(); i++) {
+			String columnName = getContent(sheet, i, rowStartIndex);
+			if (StringUtils.isNotBlank(columnName)) {
+				// upper camel case to lower camel case
+				indexColumnName.put(i, StringUtils.uncapitalize(columnName));
+			}
+		}
+		// Column Value
 		for (int i = rowStartIndex + 1; i < rows; i++) {
-			String name = getContent(sheet, 1, i);
-			if (StringUtils.isBlank(name)) {
-				break;
+			Map<String, String> valueColumnName = Maps.newHashMap();
+			for (int j = columnStartIdx; j < sheet.getColumns(); j++) {
+				String content = getContent(sheet, j, i);
+				if (StringUtils.isNotBlank(content)) {
+					String columnName = indexColumnName.get(j);
+					valueColumnName.put(columnName, content);
+				}
 			}
 			DbColumn dbcolumn = new DbColumn();
-			dbcolumn.setName(name.toUpperCase());
-			dbcolumn.setType(getContent(sheet, 2, i));
-			dbcolumn.setLength(getContent(sheet, 3, i));
-			dbcolumn.setPk("y".equalsIgnoreCase(getContent(sheet, 4, i)));
-			dbcolumn.setNullable("y".equalsIgnoreCase(ObjectUtils.firstNonNull(getContent(sheet, 5, i), "y")));
-			dbcolumn.setComment(getContent(sheet, 6, i));
+			BeanUtils.populate(dbcolumn, valueColumnName);
 			//
-			if (dbcolumn.isPk()) {
+			if (dbcolumn.getName() == null) {
+				// Ignore no name object
+			} else if (dbcolumn.isPkInBool()) {
 				pk = dbcolumn;
 			} else {
 				dbColumns.add(dbcolumn);
 			}
 		}
-		//
+		// Table
 		DbTable dbTable = new DbTable();
 		dbTable.setName(tableName);
 		dbTable.setPk(pk);
 		dbTable.setDbColumns(dbColumns);
 		dbTable.setDbTableConfig(dbTableConfig);
-		// 
+		// Traceable
 		if (dbTableConfig.isTraceableInBoolean()) {
 			dbColumns.add(buildDbColumn("CREATE_ID", dbTableConfig.getTraceType()));
 			dbColumns.add(buildDbColumn("UPDATE_ID", dbTableConfig.getTraceType()));
@@ -174,17 +201,29 @@ public class DataLoader {
 			dbColumns.add(buildDbColumn("UPDATE_TIME", dbTableConfig.getTraceTimeType()));
 			dbColumns.add(buildDbColumn("DEL_FLAG", dbTableConfig.getTraceDelFlagType()));
 		}
+		// HasId
 		if (dbTableConfig.isHasIdInBoolean() && dbTable.getPk() == null) {
 			DbColumn dbcolumn = new DbColumn();
 			dbcolumn.setName("ID");
 			dbcolumn.setType(dbTableConfig.getIdType());
 			dbcolumn.setLength(null);
-			dbcolumn.setPk(true);
-			dbcolumn.setNullable(false);
+			dbcolumn.setPkInBool(true);
+			dbcolumn.setNullableInBool(false);
 			dbcolumn.setComment("Auto added for HasId Po");
 			dbTable.setPk(dbcolumn);
 		}
 		return dbTable;
+	}
+
+	private Integer findRowIndex(Sheet sheet, int columnIdx, String content) {
+		int rows = sheet.getRows();
+		for (int i = 0; i < rows; i++) {
+			String key = getContent(sheet, columnIdx, i);
+			if (content.equalsIgnoreCase(key)) {
+				return i;
+			}
+		}
+		return null;
 	}
 
 	private DbColumn buildDbColumn(String name, String type) {
@@ -218,15 +257,21 @@ public class DataLoader {
 		return dbTables;
 	}
 
+	public List<DbEnum> getDbEnums() {
+		return dbEnums;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Loader [excelPath=");
+		builder.append("DataLoader [excelPath=");
 		builder.append(excelPath);
 		builder.append(", dbConfig=");
 		builder.append(dbConfig);
 		builder.append(", dbTables=");
 		builder.append(dbTables);
+		builder.append(", dbEnums=");
+		builder.append(dbEnums);
 		builder.append("]");
 		return builder.toString();
 	}

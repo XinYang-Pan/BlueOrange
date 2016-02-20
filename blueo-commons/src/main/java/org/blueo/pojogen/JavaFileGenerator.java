@@ -17,8 +17,8 @@ import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapper;
 import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
 
 public class JavaFileGenerator {
-	private final PojoClass pojoClass;
-	private final FormatterWrapper formatterWrapper;
+	protected final PojoClass pojoClass;
+	protected final FormatterWrapper formatterWrapper;
 	private final boolean autoClose;
 
 	public JavaFileGenerator(PojoClass pojoClass) {

@@ -52,6 +52,10 @@ public class ClassWrapper {
 		}
 	}
 
+	public static ClassWrapper of(String packageName, String className) {
+		return of(Joiner.on('.').skipNulls().join(packageName, className));
+	}
+
 	public static ClassWrapper of(String classNameWithParameterizedTypes) {
 		return ClassWrapperParser.parse(classNameWithParameterizedTypes);
 	}

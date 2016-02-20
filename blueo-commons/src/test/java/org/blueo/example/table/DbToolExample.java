@@ -14,11 +14,13 @@ public class DbToolExample {
 		URL url = DbToolExample.class.getResource("test.xls");
 		DbTool dbTool = DbTool.build(url.getPath());
 		//
-		dbTool.setPrintToConsole(true);
+//		dbTool.setPrintToConsole(true);
 		System.out.println("********************************");
 		System.out.println(ToStringUtils.wellFormat(dbTool.getDbConfig()));
 		System.out.println("********************************");
 		dbTool.generateCreateDdls();
+		System.out.println("********************************");
+		dbTool.generateEnums();
 		System.out.println("********************************");
 		dbTool.generatePoAndDaos();
 		System.out.println("********************************");

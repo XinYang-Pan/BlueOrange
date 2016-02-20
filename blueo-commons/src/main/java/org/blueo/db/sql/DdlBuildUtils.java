@@ -11,10 +11,10 @@ public class DdlBuildUtils {
 		String dataType = dbColumn.getType();
 		String size = getColumnTypeSize(dbColumn);
 		String nullable;
-		if (dbColumn.isPk()) {
+		if (dbColumn.isPkInBool()) {
 			nullable = "NOT NULL";
 		} else {
-			nullable = dbColumn.isNullable()? "NULL":"NOT NULL";
+			nullable = dbColumn.isNullableInBool()? "NULL":"NOT NULL";
 		}
 		String comment;
 		if (dbColumn.getComment() == null) {

@@ -14,6 +14,7 @@ public class DbGlobalConfig {
 	private String daoPackage;
 	private String daoSuperclass;
 	private String daoInterfaces;
+	private String enumPackage;
 	// DDL
 	private String ddlDir = "./tmp/ddl";
 	private String ddlFileName = "createTables.sql";
@@ -124,10 +125,18 @@ public class DbGlobalConfig {
 		this.dbTableConfig = dbTableConfig;
 	}
 
+	public String getEnumPackage() {
+		return enumPackage;
+	}
+
+	public void setEnumPackage(String enumPackage) {
+		this.enumPackage = enumPackage;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("DbConfig [sourceDir=");
+		builder.append("DbGlobalConfig [sourceDir=");
 		builder.append(sourceDir);
 		builder.append(", poPackage=");
 		builder.append(poPackage);
@@ -141,16 +150,14 @@ public class DbGlobalConfig {
 		builder.append(daoSuperclass);
 		builder.append(", daoInterfaces=");
 		builder.append(daoInterfaces);
+		builder.append(", enumPackage=");
+		builder.append(enumPackage);
 		builder.append(", ddlDir=");
 		builder.append(ddlDir);
 		builder.append(", ddlFileName=");
 		builder.append(ddlFileName);
 		builder.append(", dbTableConfig=");
 		builder.append(dbTableConfig);
-		builder.append(", getPoInterfacesInList()=");
-		builder.append(getPoInterfacesInList());
-		builder.append(", getDaoInterfacesInList()=");
-		builder.append(getDaoInterfacesInList());
 		builder.append("]");
 		return builder.toString();
 	}
