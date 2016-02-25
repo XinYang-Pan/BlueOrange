@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
 import org.blueo.commons.persistent.core.CommonDao;
-import org.blueo.commons.persistent.core.dao.po.id.HasId;
 import org.blueo.commons.persistent.jdbc.impl.JdbcDao;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -14,15 +13,16 @@ import org.springframework.util.CollectionUtils;
 import com.google.common.collect.Maps;
 
 public class MixedCommonDao implements CommonDao {
-
+	// DI
 	private HibernateTemplate hibernateTemplate;
 	private JdbcTemplate jdbcTemplate;
-	private ConcurrentMap<Class<?>, JdbcDao<?, ?>> map = Maps.newConcurrentMap();
-	
+	// Internal Process
+	private ConcurrentMap<Class<?>, JdbcDao<?, ?>> daoMap = Maps.newConcurrentMap();
+
 	// -----------------------------
 	// ----- Single
 	// -----------------------------
-	
+
 	@Override
 	public <T> T getById(Class<T> entityClass, Serializable id) {
 		return getHibernateTemplate().get(entityClass, id);
@@ -61,53 +61,53 @@ public class MixedCommonDao implements CommonDao {
 	// -----------------------------
 	// ----- Batch
 	// -----------------------------
-	
+
 	@Override
-	public <T extends HasId<K>, K> void saveAll(List<T> list) {
+	public <T> void saveAll(List<T> list) {
 		if (CollectionUtils.isEmpty(list)) {
 			return;
 		}
-		JdbcDao<T, K> jdbcDao = getJdbcDao(list);
+		JdbcDao<T, ?> jdbcDao = getJdbcDao(list);
 		jdbcDao.saveAll(list);
 	}
 
 	@Override
-	public <T extends HasId<K>, K> void updateAll(List<T> list) {
+	public <T> void updateAll(List<T> list) {
 		if (CollectionUtils.isEmpty(list)) {
 			return;
 		}
-		JdbcDao<T, K> jdbcDao = getJdbcDao(list);
+		JdbcDao<T, ?> jdbcDao = getJdbcDao(list);
 		jdbcDao.updateAll(list);
 	}
 
 	@Override
-	public <T extends HasId<K>, K> void deleteAll(List<T> list) {
+	public <T> void deleteAll(List<T> list) {
 		if (CollectionUtils.isEmpty(list)) {
 			return;
 		}
-		JdbcDao<T, K> jdbcDao = getJdbcDao(list);
+		JdbcDao<T, ?> jdbcDao = getJdbcDao(list);
 		jdbcDao.deleteAll(list);
 	}
 
 	@SuppressWarnings("unchecked")
-	private <K, T extends HasId<K>> JdbcDao<T, K> getJdbcDao(List<T> list) {
+	private <T> JdbcDao<T, ?> getJdbcDao(List<T> list) {
 		Class<T> entityClass = (Class<T>) list.get(0).getClass();
-		JdbcDao<T, K> jdbcDao = (JdbcDao<T, K>) map.get(entityClass);
+		JdbcDao<T, ?> jdbcDao = (JdbcDao<T, ?>) daoMap.get(entityClass);
 		if (jdbcDao != null) {
 			return jdbcDao;
 		}
-		jdbcDao = new JdbcDao<T, K>();
+		jdbcDao = new JdbcDao<>();
 		jdbcDao.setParameterizedClass(entityClass);
 		jdbcDao.setJdbcTemplate(jdbcTemplate);
 		jdbcDao.init();
-		map.putIfAbsent(entityClass, jdbcDao);
-		return (JdbcDao<T, K>) map.get(entityClass);
+		daoMap.putIfAbsent(entityClass, jdbcDao);
+		return (JdbcDao<T, ?>) daoMap.get(entityClass);
 	}
-	
+
 	// -----------------------------
 	// ----- Search
 	// -----------------------------
-	
+
 	@Override
 	public <T> List<T> findByExample(T t) {
 		return getHibernateTemplate().findByExample(t);
@@ -116,7 +116,7 @@ public class MixedCommonDao implements CommonDao {
 	// -----------------------------
 	// ----- Getter Setter
 	// -----------------------------
-	
+
 	public JdbcTemplate getJdbcTemplate() {
 		return jdbcTemplate;
 	}
@@ -132,7 +132,5 @@ public class MixedCommonDao implements CommonDao {
 	public void setHibernateTemplate(HibernateTemplate hibernateTemplate) {
 		this.hibernateTemplate = hibernateTemplate;
 	}
-	
-	
-	
+
 }

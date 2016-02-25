@@ -6,11 +6,10 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.blueo.commons.persistent.core.dao.AbstractDao;
-import org.blueo.commons.persistent.core.dao.po.id.HasId;
-import org.blueo.commons.persistent.jdbc.util.BoTable;
+import org.blueo.commons.persistent.entity.BoTable;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-public class JdbcDao<T extends HasId<K>, K> extends AbstractDao<T, K> {
+public class JdbcDao<T, K> extends AbstractDao<T, K> {
 	// DI
 	private JdbcTemplate jdbcTemplate;
 	// 
@@ -33,6 +32,7 @@ public class JdbcDao<T extends HasId<K>, K> extends AbstractDao<T, K> {
 		boTable = BoTable.annotationBased(parameterizedClass);
 		for (JdbcOperation<T, K> jdbcOperation : Arrays.asList(jdbcSelect, jdbcInsert, jdbcUpdate, jdbcDelete)) {
 			jdbcOperation.setBoTable(boTable);
+			jdbcOperation.setIdWrapper(idWrapper);
 			jdbcOperation.setJdbcTemplate(jdbcTemplate);
 		}
 	}

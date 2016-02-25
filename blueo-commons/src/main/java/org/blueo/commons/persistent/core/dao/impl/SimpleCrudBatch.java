@@ -4,10 +4,9 @@ import java.util.List;
 
 import org.blueo.commons.persistent.core.Crud;
 import org.blueo.commons.persistent.core.CrudBatch;
-import org.blueo.commons.persistent.core.dao.po.id.HasId;
 import org.springframework.util.CollectionUtils;
 
-public class SimpleCrudBatch<T extends HasId<K>, K> implements CrudBatch<T, K> {
+public class SimpleCrudBatch<T, K> implements CrudBatch<T, K> {
 	private Crud<T, K> crud;
 
 	public SimpleCrudBatch(Crud<T, K> crud) {

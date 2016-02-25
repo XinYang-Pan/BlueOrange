@@ -6,10 +6,9 @@ import javax.annotation.PostConstruct;
 
 import org.blueo.commons.persistent.core.dao.AssemblableDao;
 import org.blueo.commons.persistent.core.dao.impl.SimpleCrudBatch;
-import org.blueo.commons.persistent.core.dao.po.id.HasId;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class HibernateDao<T extends HasId<K>, K extends Serializable> extends AssemblableDao<T, K> {
+public class HibernateDao<T, K extends Serializable> extends AssemblableDao<T, K> {
 	//
 	protected HibernateTemplate hibernateTemplate;
 

@@ -3,10 +3,9 @@ package org.blueo.commons.persistent.hibernate.impl;
 import java.io.Serializable;
 
 import org.blueo.commons.persistent.core.dao.impl.AbstractCrud;
-import org.blueo.commons.persistent.core.dao.po.id.HasId;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
-public class HibernateCrud<T extends HasId<K>, K extends Serializable> extends AbstractCrud<T, K> {
+public class HibernateCrud<T, K extends Serializable> extends AbstractCrud<T, K> {
 	//
 	protected HibernateTemplate hibernateTemplate;
 

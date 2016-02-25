@@ -1,4 +1,4 @@
-package org.blueo.commons.persistent.jdbc.util;
+package org.blueo.commons.persistent.entity;
 
 import java.beans.PropertyDescriptor;
 

@@ -5,13 +5,12 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.blueo.commons.persistent.core.dao.po.id.HasId;
+import org.blueo.commons.persistent.entity.BoTable;
 import org.blueo.commons.persistent.jdbc.BlueoJdbcs;
-import org.blueo.commons.persistent.jdbc.util.BoTable;
 import org.blueo.commons.persistent.jdbc.util.ColumnPpss;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
 
-public class JdbcUpdate<T extends HasId<K>, K> extends JdbcOperation<T, K> {
+public class JdbcUpdate<T, K> extends JdbcOperation<T, K> {
 	//
 	private String updateSql;
 	private ParameterizedPreparedStatementSetter<T> updatePss;

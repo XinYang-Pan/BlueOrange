@@ -3,8 +3,6 @@ package org.blueo.commons.persistent.core;
 import java.io.Serializable;
 import java.util.List;
 
-import org.blueo.commons.persistent.core.dao.po.id.HasId;
-
 public interface CommonDao {
 
 	// -----------------------------
@@ -25,11 +23,11 @@ public interface CommonDao {
 	// ----- Batch
 	// -----------------------------
 	
-	<T extends HasId<K>, K> void saveAll(List<T> list);
+	<T> void saveAll(List<T> list);
 
-	<T extends HasId<K>, K> void updateAll(List<T> list);
+	<T> void updateAll(List<T> list);
 
-	<T extends HasId<K>, K> void deleteAll(List<T> list);
+	<T> void deleteAll(List<T> list);
 
 	// -----------------------------
 	// ----- Search

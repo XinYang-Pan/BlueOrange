@@ -10,6 +10,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 import org.blueo.commons.BlueoUtils;
+import org.blueo.commons.persistent.entity.BoColumn;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.jdbc.core.ArgumentTypePreparedStatementSetter;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;

@@ -5,13 +5,12 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.blueo.commons.persistent.core.dao.po.id.HasId;
+import org.blueo.commons.persistent.entity.BoTable;
 import org.blueo.commons.persistent.jdbc.BlueoJdbcs;
-import org.blueo.commons.persistent.jdbc.util.BoTable;
 import org.blueo.commons.persistent.jdbc.util.ColumnPpss;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
 
-public class JdbcInsert<T extends HasId<K>, K> extends JdbcOperation<T, K> {
+public class JdbcInsert<T, K> extends JdbcOperation<T, K> {
 	//
 	private String insertSql;
 	private ParameterizedPreparedStatementSetter<T> insertPss;
@@ -25,7 +24,7 @@ public class JdbcInsert<T extends HasId<K>, K> extends JdbcOperation<T, K> {
 	public K insert(T t) {
 		if (!boTable.getIdCol().isGeneratedValue()) {
 			this.insert(Collections.singletonList(t));
-			return t.getId();
+			return idWrapper.getId(t);
 		}
 		this.insert(Collections.singletonList(t));
 		return null;

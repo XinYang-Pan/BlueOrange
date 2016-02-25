@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.blueo.commons.persistent.entity.BoColumn;
+import org.blueo.commons.persistent.entity.BoTable;
 import org.springframework.beans.BeanUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.JdbcUtils;

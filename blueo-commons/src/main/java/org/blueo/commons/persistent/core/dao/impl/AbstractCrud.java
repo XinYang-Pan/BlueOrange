@@ -4,11 +4,10 @@ import java.io.Serializable;
 
 import org.blueo.commons.BlueoUtils;
 import org.blueo.commons.persistent.core.Crud;
-import org.blueo.commons.persistent.core.dao.po.id.HasId;
 
 import com.google.common.reflect.TypeToken;
 
-public abstract class AbstractCrud<T extends HasId<K>, K extends Serializable> implements Crud<T, K> {
+public abstract class AbstractCrud<T, K extends Serializable> implements Crud<T, K> {
 	@SuppressWarnings("serial")
 	protected final Class<T> parameterizedClass = BlueoUtils.getParameterizedClass(new TypeToken<T>(this.getClass()) {});
 

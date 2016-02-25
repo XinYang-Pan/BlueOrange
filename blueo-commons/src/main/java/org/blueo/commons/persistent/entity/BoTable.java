@@ -1,12 +1,11 @@
-package org.blueo.commons.persistent.jdbc.util;
+package org.blueo.commons.persistent.entity;
 
-import java.lang.reflect.Method;
+import java.beans.PropertyDescriptor;
 import java.util.List;
 
-import org.blueo.commons.persistent.core.dao.po.id.IdWrapper;
 import org.springframework.util.Assert;
-import org.springframework.util.ReflectionUtils;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 public abstract class BoTable<T> {
@@ -17,6 +16,8 @@ public abstract class BoTable<T> {
 	protected List<BoColumn> noneIdCols = Lists.newArrayList();
 
 	public static <T> BoTable<T> annotationBased(Class<T> clazz) {
+		Preconditions.checkNotNull(clazz);
+		// 
 		BoTable<T> boTable = new AnnotationBased<T>();
 		boTable.doInit(clazz);
 		//
@@ -24,25 +25,6 @@ public abstract class BoTable<T> {
 		Assert.hasText(boTable.getTableName());
 		Assert.notEmpty(boTable.getNoneIdCols());
 		return boTable;
-	}
-	
-	public static <T, K> IdWrapper<T, K> IdGetter(BoTable<T> boTable) {
-		final BoColumn idCol = boTable.getIdCol();
-		return new IdWrapper<T, K>() {
-
-			@Override
-			@SuppressWarnings("unchecked")
-			public K getId(T t) {
-				Method readMethod = idCol.getPropertyDescriptor().getReadMethod();
-				return (K) ReflectionUtils.invokeMethod(readMethod, t);
-			}
-
-			@Override
-			public void setId(T t, K k) {
-				Method writeMethod = idCol.getPropertyDescriptor().getWriteMethod();
-				ReflectionUtils.invokeMethod(writeMethod, t, k);
-			}
-		};
 	}
 
 	public static List<String> getColumnNames(List<BoColumn> boColumns) {
@@ -69,7 +51,9 @@ public abstract class BoTable<T> {
 	}
 
 	protected abstract void doInit(Class<T> clazz);
-
+	
+	protected abstract PropertyDescriptor getIdPd(Class<T> clazz);
+	
 	// -----------------------------
 	// ----- Get Set ToString HashCode Equals
 	// -----------------------------

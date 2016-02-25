@@ -1,4 +1,4 @@
-package org.blueo.commons.persistent.jdbc.util;
+package org.blueo.commons.persistent.entity;
 
 import java.beans.PropertyDescriptor;
 
@@ -24,18 +24,36 @@ public class AnnotationBased<T> extends BoTable<T> {
 		tableName = table.name();
 		PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(clazz);
 		for (PropertyDescriptor pd : pds) {
-			// method has Column, but not GeneratedValue.
+			// method has Column
 			if (BlueoJdbcs.isColumn(pd)) {
 				Preconditions.checkArgument(!pd.getPropertyType().isPrimitive(), "Primitive field is not supported, and it should never be used in Entity.");
 				BoColumn boColumn = this.build(pd);
 				if (BlueoJdbcs.isId(pd)) {
 					idCol = boColumn;
 				} else {
-					Preconditions.checkArgument(!boColumn.isGeneratedValue(), "Not support none id column to be GeneratedValue!");
+					Preconditions.checkArgument(boColumn.isGeneratedValue(), "Not support none id column to be GeneratedValue!");
 					noneIdCols.add(boColumn);
 				}
 			}
 		}
+	}
+	
+	protected PropertyDescriptor getIdPd(Class<T> clazz) {
+		this.parameterizedClass = clazz;
+		// Is a entity
+		Assert.notNull(AnnotationUtils.findAnnotation(clazz, Entity.class));
+		// Is a table
+		Table table = AnnotationUtils.findAnnotation(clazz, Table.class);
+		Assert.notNull(table);
+		tableName = table.name();
+		PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(clazz);
+		for (PropertyDescriptor pd : pds) {
+			// method has Column
+			if (BlueoJdbcs.isColumn(pd) && BlueoJdbcs.isId(pd)) {
+				return pd;
+			}
+		}
+		throw new IllegalArgumentException("No ID is found.");
 	}
 
 	private BoColumn build(PropertyDescriptor pd) {

@@ -5,13 +5,12 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.blueo.commons.persistent.core.dao.po.id.HasId;
 import org.blueo.commons.persistent.jdbc.BlueoJdbcs;
 import org.blueo.commons.persistent.jdbc.util.ColumnPpss;
 import org.springframework.beans.BeanUtils;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
 
-public class JdbcDelete<T extends HasId<K>, K> extends JdbcOperation<T, K> {
+public class JdbcDelete<T, K> extends JdbcOperation<T, K> {
 	//
 	private String deleteSql;
 	private ParameterizedPreparedStatementSetter<T> deletePss;
@@ -29,7 +28,7 @@ public class JdbcDelete<T extends HasId<K>, K> extends JdbcOperation<T, K> {
 
 	public void deleteById(K id) {
 		T t = BeanUtils.instantiate(boTable.getParameterizedClass());
-		t.setId(id);
+		idWrapper.setId(t, id);
 		this.delete(t);
 	}
 
