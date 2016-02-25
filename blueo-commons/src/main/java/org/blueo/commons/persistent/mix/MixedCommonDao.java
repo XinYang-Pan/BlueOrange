@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
 import org.blueo.commons.persistent.core.CommonDao;
-import org.blueo.commons.persistent.core.dao.po.HasId;
+import org.blueo.commons.persistent.core.dao.po.id.HasId;
 import org.blueo.commons.persistent.jdbc.impl.JdbcDao;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.hibernate3.HibernateTemplate;

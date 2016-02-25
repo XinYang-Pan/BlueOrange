@@ -3,7 +3,7 @@ package org.blueo.commons.persistent.core.dao;
 import java.util.List;
 
 import org.blueo.commons.persistent.core.EntityDao;
-import org.blueo.commons.persistent.core.dao.po.HasId;
+import org.blueo.commons.persistent.core.dao.po.id.HasId;
 import org.blueo.commons.persistent.core.dao.po.traceable.DelFlagType;
 import org.blueo.commons.persistent.core.dao.po.traceable.TraceablePo;
 import org.blueo.commons.persistent.core.dao.po.traceable.TraceablePoOverwriter;

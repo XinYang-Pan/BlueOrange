@@ -6,7 +6,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.blueo.commons.persistent.core.dao.AbstractDao;
-import org.blueo.commons.persistent.core.dao.po.HasId;
+import org.blueo.commons.persistent.core.dao.po.id.HasId;
 import org.blueo.commons.persistent.jdbc.util.BoTable;
 import org.springframework.jdbc.core.JdbcTemplate;
 

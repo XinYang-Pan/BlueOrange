@@ -7,7 +7,7 @@ import java.util.Objects;
 import javax.annotation.PostConstruct;
 
 import org.blueo.commons.BlueoUtils;
-import org.blueo.commons.persistent.core.dao.po.HasId;
+import org.blueo.commons.persistent.core.dao.po.id.HasId;
 import org.blueo.commons.persistent.jdbc.util.BoColumn;
 import org.blueo.commons.persistent.jdbc.util.ColumnRowMapper;
 import org.springframework.util.ReflectionUtils;

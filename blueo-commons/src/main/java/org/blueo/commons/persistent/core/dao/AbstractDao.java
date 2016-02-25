@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.blueo.commons.BlueoUtils;
 import org.blueo.commons.persistent.core.EntityDao;
-import org.blueo.commons.persistent.core.dao.po.HasId;
+import org.blueo.commons.persistent.core.dao.po.id.HasId;
 
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.blueo.commons.BlueoUtils;
 import org.blueo.commons.persistent.core.Crud;
-import org.blueo.commons.persistent.core.dao.po.HasId;
+import org.blueo.commons.persistent.core.dao.po.id.HasId;
 
 import com.google.common.reflect.TypeToken;
 

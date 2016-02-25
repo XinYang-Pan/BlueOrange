@@ -3,7 +3,7 @@ package org.blueo.commons.persistent.core;
 import java.io.Serializable;
 import java.util.List;
 
-import org.blueo.commons.persistent.core.dao.po.HasId;
+import org.blueo.commons.persistent.core.dao.po.id.HasId;
 
 public interface CommonDao {
 

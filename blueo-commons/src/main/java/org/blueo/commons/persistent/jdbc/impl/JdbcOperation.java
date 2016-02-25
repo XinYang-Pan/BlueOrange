@@ -1,6 +1,6 @@
 package org.blueo.commons.persistent.jdbc.impl;
 
-import org.blueo.commons.persistent.core.dao.po.HasId;
+import org.blueo.commons.persistent.core.dao.po.id.HasId;
 import org.blueo.commons.persistent.jdbc.util.BoTable;
 import org.springframework.jdbc.core.JdbcTemplate;
 
