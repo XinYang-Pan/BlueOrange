@@ -2,7 +2,7 @@ package org.blueo.commons.persistent.hibernate.impl;
 
 import java.util.List;
 
-import org.blueo.commons.persistent.core.Search;
+import org.blueo.commons.persistent.dao.Search;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class HibernateSearch<T> implements Search<T> {

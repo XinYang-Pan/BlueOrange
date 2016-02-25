@@ -7,8 +7,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 
-import org.blueo.commons.persistent.core.dao.po.id.HasId;
-import org.blueo.commons.persistent.core.dao.po.traceable.TraceablePo;
+import org.blueo.commons.persistent.dao.po.id.HasId;
+import org.blueo.commons.persistent.dao.po.traceable.TraceablePo;
 
 import javax.persistence.EnumType;
 import javax.persistence.GeneratedValue;

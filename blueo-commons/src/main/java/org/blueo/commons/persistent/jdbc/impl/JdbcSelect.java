@@ -7,7 +7,7 @@ import java.util.Objects;
 import javax.annotation.PostConstruct;
 
 import org.blueo.commons.BlueoUtils;
-import org.blueo.commons.persistent.entity.BoColumn;
+import org.blueo.commons.persistent.entity.EntityColumn;
 import org.blueo.commons.persistent.jdbc.util.ColumnRowMapper;
 import org.springframework.util.ReflectionUtils;
 
@@ -20,12 +20,12 @@ public class JdbcSelect<T, K> extends JdbcOperation<T, K> {
 
 	@PostConstruct
 	public void init() {
-		rowMapper = new ColumnRowMapper<>(boTable);
+		rowMapper = new ColumnRowMapper<>(entityTable);
 	}
 
 	public T getById(K id) {
 		String selectSqlBeforeWhere = rowMapper.getSelectSqlBeforeWhere();
-		String idColumnName = boTable.getIdCol().getColumnName();
+		String idColumnName = entityTable.getIdCol().getColumnName();
 		String sql = String.format("%s WHERE % = ?", selectSqlBeforeWhere, idColumnName);
 		return BlueoUtils.oneOrNull(jdbcTemplate.query(sql, new Object[] { id }, rowMapper));
 	}
@@ -35,11 +35,11 @@ public class JdbcSelect<T, K> extends JdbcOperation<T, K> {
 		List<String> whereSqlPieces = Lists.newArrayList();
 		List<Object> whereSqlValues = Lists.newArrayList();
 		//
-		for (BoColumn boColumn : boTable.getAllCols()) {
-			PropertyDescriptor pd = boColumn.getPropertyDescriptor();
+		for (EntityColumn entityColumn : entityTable.getAllCols()) {
+			PropertyDescriptor pd = entityColumn.getPropertyDescriptor();
 			Object value = ReflectionUtils.invokeMethod(pd.getReadMethod(), example);
 			if (value != null) {
-				whereSqlPieces.add(String.format("%s = ?", boColumn.getColumnName()));
+				whereSqlPieces.add(String.format("%s = ?", entityColumn.getColumnName()));
 				whereSqlValues.add(value);
 			}
 		}

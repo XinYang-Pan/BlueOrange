@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 
@@ -26,12 +27,9 @@ public abstract class BlueoUtils {
 	public static <T> Class<T> getParameterizedClass(TypeToken<T> typeToken) {
 		Type type = typeToken.getType();
 		//
-		if (type instanceof Class<?>) {
-			Class<T> clazz = (Class<T>) type;
-			return clazz;
-		} else {
-			return null;
-		}
+		Preconditions.checkArgument(type instanceof Class<?>);
+		Class<T> clazz = (Class<T>) type;
+		return clazz;
 	}
 	
 	@Deprecated // NOT TESTED

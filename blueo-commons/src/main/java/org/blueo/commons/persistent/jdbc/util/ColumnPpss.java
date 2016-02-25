@@ -10,7 +10,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 import org.blueo.commons.BlueoUtils;
-import org.blueo.commons.persistent.entity.BoColumn;
+import org.blueo.commons.persistent.entity.EntityColumn;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.jdbc.core.ArgumentTypePreparedStatementSetter;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
@@ -18,9 +18,9 @@ import org.springframework.jdbc.core.StatementCreatorUtils;
 import org.springframework.util.ReflectionUtils;
 
 public class ColumnPpss<T> implements ParameterizedPreparedStatementSetter<T> {
-	private final List<BoColumn> columnPds;
+	private final List<EntityColumn> columnPds;
 
-	public ColumnPpss(List<BoColumn> columnPds) {
+	public ColumnPpss(List<EntityColumn> columnPds) {
 		this.columnPds = columnPds;
 	}
 

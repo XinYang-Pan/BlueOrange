@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
-import org.blueo.commons.persistent.core.CommonDao;
+import org.blueo.commons.persistent.dao.CommonDao;
+import org.blueo.commons.persistent.dao.EntityDao;
 import org.blueo.commons.persistent.jdbc.impl.JdbcDao;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -17,7 +18,7 @@ public class MixedCommonDao implements CommonDao {
 	private HibernateTemplate hibernateTemplate;
 	private JdbcTemplate jdbcTemplate;
 	// Internal Process
-	private ConcurrentMap<Class<?>, JdbcDao<?, ?>> daoMap = Maps.newConcurrentMap();
+	private ConcurrentMap<Class<?>, EntityDao<?, ?>> daoMap = Maps.newConcurrentMap();
 
 	// -----------------------------
 	// ----- Single
@@ -67,8 +68,7 @@ public class MixedCommonDao implements CommonDao {
 		if (CollectionUtils.isEmpty(list)) {
 			return;
 		}
-		JdbcDao<T, ?> jdbcDao = getJdbcDao(list);
-		jdbcDao.saveAll(list);
+		getEntityDao(list).saveAll(list);
 	}
 
 	@Override
@@ -76,8 +76,7 @@ public class MixedCommonDao implements CommonDao {
 		if (CollectionUtils.isEmpty(list)) {
 			return;
 		}
-		JdbcDao<T, ?> jdbcDao = getJdbcDao(list);
-		jdbcDao.updateAll(list);
+		getEntityDao(list).updateAll(list);
 	}
 
 	@Override
@@ -85,23 +84,28 @@ public class MixedCommonDao implements CommonDao {
 		if (CollectionUtils.isEmpty(list)) {
 			return;
 		}
-		JdbcDao<T, ?> jdbcDao = getJdbcDao(list);
-		jdbcDao.deleteAll(list);
+		getEntityDao(list).deleteAll(list);
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> JdbcDao<T, ?> getJdbcDao(List<T> list) {
+	private <T> EntityDao<T, ?> getEntityDao(List<T> list) {
 		Class<T> entityClass = (Class<T>) list.get(0).getClass();
-		JdbcDao<T, ?> jdbcDao = (JdbcDao<T, ?>) daoMap.get(entityClass);
-		if (jdbcDao != null) {
-			return jdbcDao;
+		EntityDao<T, ?> entityDao = (EntityDao<T, ?>) daoMap.get(entityClass);
+		if (entityDao != null) {
+			return entityDao;
 		}
+		entityDao = doGetEntityDao(entityClass);
+		daoMap.putIfAbsent(entityClass, entityDao);
+		return (JdbcDao<T, ?>) daoMap.get(entityClass);
+	}
+
+	protected <T> EntityDao<T, ?> doGetEntityDao(Class<T> entityClass) {
+		JdbcDao<T, ?> jdbcDao;
 		jdbcDao = new JdbcDao<>();
 		jdbcDao.setParameterizedClass(entityClass);
 		jdbcDao.setJdbcTemplate(jdbcTemplate);
 		jdbcDao.init();
-		daoMap.putIfAbsent(entityClass, jdbcDao);
-		return (JdbcDao<T, ?>) daoMap.get(entityClass);
+		return jdbcDao;
 	}
 
 	// -----------------------------

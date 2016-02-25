@@ -1,4 +1,4 @@
-package org.blueo.commons.persistent.core;
+package org.blueo.commons.persistent.dao;
 
 
 // T is entity, K is key

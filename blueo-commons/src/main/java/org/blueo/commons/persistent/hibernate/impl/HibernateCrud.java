@@ -2,7 +2,7 @@ package org.blueo.commons.persistent.hibernate.impl;
 
 import java.io.Serializable;
 
-import org.blueo.commons.persistent.core.dao.impl.AbstractCrud;
+import org.blueo.commons.persistent.dao.impl.AbstractCrud;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 public class HibernateCrud<T, K extends Serializable> extends AbstractCrud<T, K> {

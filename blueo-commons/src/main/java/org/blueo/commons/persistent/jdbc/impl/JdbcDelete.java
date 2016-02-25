@@ -18,8 +18,8 @@ public class JdbcDelete<T, K> extends JdbcOperation<T, K> {
 	@PostConstruct
 	public void init() {
 		// delete
-		deleteSql = BlueoJdbcs.buildDeleteSql(boTable.getTableName(), boTable.getIdCol().getColumnName());
-		deletePss = new ColumnPpss<T>(Collections.singletonList(boTable.getIdCol()));
+		deleteSql = BlueoJdbcs.buildDeleteSql(entityTable.getTableName(), entityTable.getIdCol().getColumnName());
+		deletePss = new ColumnPpss<T>(Collections.singletonList(entityTable.getIdCol()));
 	}
 
 	public void delete(T t) {
@@ -27,13 +27,13 @@ public class JdbcDelete<T, K> extends JdbcOperation<T, K> {
 	}
 
 	public void deleteById(K id) {
-		T t = BeanUtils.instantiate(boTable.getParameterizedClass());
-		idWrapper.setId(t, id);
+		T t = BeanUtils.instantiate(entityTable.getParameterizedClass());
+		getIdHandler().setId(t, id);
 		this.delete(t);
 	}
 
 	public void delete(List<T> entities) {
-		jdbcTemplate.batchUpdate(deleteSql, entities, BATCH_SIZE, deletePss);
+		jdbcTemplate.batchUpdate(deleteSql, entities, this.batchSize(), deletePss);
 	}
 
 }

@@ -1,9 +1,9 @@
-package org.blueo.commons.persistent.core.dao.impl;
+package org.blueo.commons.persistent.dao.impl;
 
 import java.io.Serializable;
 
 import org.blueo.commons.BlueoUtils;
-import org.blueo.commons.persistent.core.Crud;
+import org.blueo.commons.persistent.dao.Crud;
 
 import com.google.common.reflect.TypeToken;
 

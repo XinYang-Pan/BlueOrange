@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.blueo.commons.persistent.entity.BoTable;
+import org.blueo.commons.persistent.entity.EntityTable;
 import org.blueo.commons.persistent.jdbc.BlueoJdbcs;
 import org.blueo.commons.persistent.jdbc.util.ColumnPpss;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
@@ -18,8 +18,8 @@ public class JdbcUpdate<T, K> extends JdbcOperation<T, K> {
 	@PostConstruct
 	public void init() {
 		// update
-		updateSql = BlueoJdbcs.buildUpdateSql(boTable.getTableName(), BoTable.getColumnNames(boTable.getNoneIdCols()), boTable.getIdCol().getColumnName());
-		updatePss = new ColumnPpss<T>(boTable.getAllCols());
+		updateSql = BlueoJdbcs.buildUpdateSql(entityTable.getTableName(), EntityTable.getColumnNames(entityTable.getNoneIdCols()), entityTable.getIdCol().getColumnName());
+		updatePss = new ColumnPpss<T>(entityTable.getAllCols());
 	}
 
 	public void update(T t) {
@@ -27,7 +27,7 @@ public class JdbcUpdate<T, K> extends JdbcOperation<T, K> {
 	}
 
 	public void update(List<T> entities) {
-		jdbcTemplate.batchUpdate(updateSql, entities, BATCH_SIZE, updatePss);
+		jdbcTemplate.batchUpdate(updateSql, entities, this.batchSize(), updatePss);
 	}
 
 }
