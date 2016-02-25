@@ -5,26 +5,29 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.blueo.commons.BlueoUtils;
 import org.blueo.commons.persistent.core.dao.AbstractDao;
 import org.blueo.commons.persistent.core.dao.po.HasId;
 import org.blueo.commons.persistent.jdbc.util.BoTable;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.google.common.reflect.TypeToken;
-
 public class JdbcDao<T extends HasId<K>, K> extends AbstractDao<T, K> {
 	// DI
 	private JdbcTemplate jdbcTemplate;
 	// 
-	@SuppressWarnings("serial")
-	private final Class<T> parameterizedClass = BlueoUtils.getParameterizedClass(new TypeToken<T>(this.getClass()) {});
 	private BoTable<T> boTable;
 	private JdbcSelect<T, K> jdbcSelect;
 	private JdbcInsert<T, K> jdbcInsert;
 	private JdbcUpdate<T, K> jdbcUpdate;
 	private JdbcDelete<T, K> jdbcDelete;
 	
+	public JdbcDao() {
+		super();
+	}
+
+	public JdbcDao(Class<T> parameterizedClass) {
+		super(parameterizedClass);
+	}
+
 	@PostConstruct
 	public void init() {
 		boTable = BoTable.annotationBased(parameterizedClass);
