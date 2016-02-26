@@ -49,7 +49,7 @@ public class SetGetDeclaredFieldBased extends SetGetGenerator {
 			} else {
 				value = String.format("%s.%s()", getParamName, getPd.getReadMethod().getName());
 			}
-			formatterWrapper.formatln(1, "%s.%s(%s);", setParamName, field.getName(), value);
+			formatterWrapper.formatln(1, "%s.%s(%s);", setParamName, setPd.getWriteMethod().getName(), value);
 		}
 		formatterWrapper.formatln(1, "return %s;", setParamName);
 		//

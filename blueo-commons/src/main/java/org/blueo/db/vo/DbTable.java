@@ -10,6 +10,21 @@ public class DbTable {
 	private List<DbColumn> dbColumns;
 	private DbTableConfig dbTableConfig;
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("DbTable [name=");
+		builder.append(name);
+		builder.append(", pk=");
+		builder.append(pk);
+		builder.append(", dbColumns=");
+		builder.append(dbColumns);
+		builder.append(", dbTableConfig=");
+		builder.append(dbTableConfig);
+		builder.append("]");
+		return builder.toString();
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -40,21 +55,6 @@ public class DbTable {
 
 	public void setDbTableConfig(DbTableConfig dbTableConfig) {
 		this.dbTableConfig = dbTableConfig;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("DbTable [name=");
-		builder.append(name);
-		builder.append(", pk=");
-		builder.append(pk);
-		builder.append(", dbColumns=");
-		builder.append(dbColumns);
-		builder.append(", dbTableConfig=");
-		builder.append(dbTableConfig);
-		builder.append("]");
-		return builder.toString();
 	}
 
 }

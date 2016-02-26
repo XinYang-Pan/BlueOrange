@@ -4,12 +4,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
+import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
 import org.springframework.util.Assert;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
-class TypeToJavaTypeMapping {
+public class TypeToJavaTypeMapping {
 
 	private static Map<String, Class<?>> typeStrToJavaType = Maps.newHashMap();
 
@@ -24,9 +25,16 @@ class TypeToJavaTypeMapping {
 
 	}
 
-	static Class<?> getJavaType(DbType dbType) {
+	public static Class<?> getJavaType(String rawType) {
+		Assert.notNull(rawType);
+		return Preconditions.checkNotNull(typeStrToJavaType.get(rawType), String.format("No java class found for %s.", rawType));
+	}
+
+	public static void populateJavaType(DbType dbType) {
 		Assert.notNull(dbType);
-		return Preconditions.checkNotNull(typeStrToJavaType.get(dbType.getType()), String.format("No java class found for %s.", dbType));
+		Class<?> javaType = typeStrToJavaType.get(dbType.getRawType());
+		Preconditions.checkNotNull(javaType, String.format("No java class found for %s.", dbType));
+		dbType.setJavaType(ClassWrapper.of(javaType));
 	}
 
 }

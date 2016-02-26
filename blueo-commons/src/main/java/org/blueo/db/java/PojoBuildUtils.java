@@ -11,8 +11,8 @@ import javax.persistence.Id;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.blueo.commons.persistent.dao.po.id.HasId;
 import org.blueo.commons.persistent.dao.po.traceable.TraceablePo;
-import org.blueo.db.config.DbGlobalConfig;
 import org.blueo.db.config.DbTableConfig;
+import org.blueo.db.config.raw.DbGlobalConfigRawData;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
 import org.blueo.db.vo.DbType;
@@ -33,7 +33,7 @@ public class PojoBuildUtils {
 	private static Converter<String, String> COLUMN_NAME_TO_FIELD_NAME = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_CAMEL);
 	private static Converter<String, String> TABLE_NAME_TO_CLASS_NAME = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL);
 
-	public static PojoClass buildDaoClass(PojoClass poClass, DbGlobalConfig dbConfig) {
+	public static PojoClass buildDaoClass(PojoClass poClass, DbGlobalConfigRawData dbConfig) {
 		PojoClass daoClass = new PojoClass();
 		daoClass.setPackageName(dbConfig.getDaoPackage());
 		daoClass.setName(String.format("%sDao", poClass.getName()));
@@ -47,7 +47,7 @@ public class PojoBuildUtils {
 		return daoClass;
 	}
 
-	public static PojoClass buildEntityClass(DbTable dbTable, DbGlobalConfig dbConfig) {
+	public static PojoClass buildEntityClass(DbTable dbTable, DbGlobalConfigRawData dbConfig) {
 		if (dbTable == null) {
 			return null;
 		}
@@ -77,16 +77,16 @@ public class PojoBuildUtils {
 		for (String className : poInterfacesInList) {
 			pojoClass.addInterfaces(ClassWrapper.of(className));
 		}
-		if (dbTableConfig.isTraceableInBoolean()) {
-			pojoClass.addInterfaces(ClassWrapper.of(TraceablePo.class, DbType.of(dbTableConfig.getTraceType()).getJavaType()));
+		if (dbTableConfig.isTraceable()) {
+			pojoClass.addInterfaces(ClassWrapper.of(TraceablePo.class, dbTableConfig.getTraceType().getJavaType().getFullName()));
 		}
-		if (dbTableConfig.isHasIdInBoolean()) {
-			pojoClass.addInterfaces(ClassWrapper.of(HasId.class, DbType.of(dbTableConfig.getTraceType()).getJavaType()));
+		if (dbTableConfig.isHasId()) {
+			pojoClass.addInterfaces(ClassWrapper.of(HasId.class, dbTableConfig.getIdType().getJavaType().getFullName()));
 		}
 		return pojoClass;
 	}
 
-	private static PojoField buildEntityField(DbColumn dbColumn, DbGlobalConfig dbConfig, boolean isPk) {
+	private static PojoField buildEntityField(DbColumn dbColumn, DbGlobalConfigRawData dbConfig, boolean isPk) {
 		if (dbColumn == null) {
 			return null;
 		}
@@ -98,16 +98,17 @@ public class PojoBuildUtils {
 			pojoField.addAnnotation(AnnotationType.Get, GeneratedValue.class);
 		}
 		pojoField.addAnnotationWrapper(AnnotationType.Get, AnnotationWrapperUtils.COLUMN_WRAPPER);
-		Class<?> javaType = dbColumn.getJavaType();
-		if (dbColumn.isEnumTypeInBool()) {
-			pojoField.setType(javaType);
-		} else {
+		DbType dbType = dbColumn.getDbType();
+		ClassWrapper javaType = dbType.getJavaType();
+		if (dbColumn.isEnumType()) {
 			EnumType enumeratedType = null;
-			if (String.class.equals(javaType)) {
+			if ("varchar".equalsIgnoreCase(dbType.getSqlType())) {
 				enumeratedType = EnumType.STRING;
 			}
 			pojoField.addAnnotationWrapper(AnnotationType.Get, new EnumeratedWrapper(enumeratedType));
-			pojoField.setType(ClassWrapper.of(dbConfig.getEnumPackage(), dbColumn.getType()));
+			pojoField.setType(javaType);
+		} else {
+			pojoField.setType(javaType);
 		}
 		return pojoField;
 	}

@@ -25,18 +25,18 @@ public class GenericSqlBuilder implements SqlBuilder {
 	
 	public String getDefinitionSql(DbColumn dbColumn) {
 		String pkStr = "";
-		if (dbColumn.isPkInBool()) {
+		if (dbColumn.isPk()) {
 			pkStr = " PRIMARY KEY";
 		}
-		return String.format("%s %s %s%s", dbColumn.getName(), dbColumn.getFullTypeStr(), getNullableStr(dbColumn), pkStr);
+		return String.format("%s %s %s%s", dbColumn.getName(), dbColumn.getDbType().getFullTypeStr(), getNullableStr(dbColumn), pkStr);
 	}
 
 	protected String getNullableStr(DbColumn dbColumn) {
 		String nullable;
-		if (dbColumn.isPkInBool()) {
+		if (dbColumn.isPk()) {
 			nullable = "NOT NULL";
 		} else {
-			nullable = dbColumn.isNullableInBool()? "NULL":"NOT NULL";
+			nullable = dbColumn.isNullable()? "NULL":"NOT NULL";
 		}
 		return nullable;
 	}

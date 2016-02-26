@@ -5,7 +5,7 @@ import java.util.Formatter;
 import java.util.List;
 
 import org.blueo.commons.FormatterWrapper;
-import org.blueo.db.config.DbGlobalConfig;
+import org.blueo.db.config.raw.DbGlobalConfigRawData;
 import org.blueo.db.java.DataLoader;
 import org.blueo.db.java.PojoBuildUtils;
 import org.blueo.db.sql.GenericSqlBuilder;
@@ -26,7 +26,7 @@ public class DbTool {
 	private boolean printToConsole;
 	private SqlBuilder sqlBuilder = new GenericSqlBuilder();
 	// Internal process fields
-	private DbGlobalConfig dbConfig;
+	private DbGlobalConfigRawData dbConfig;
 	private List<DbTablePair> dbTablePairs;
 	private List<DbEnum> dbEnums;
 	
@@ -98,7 +98,7 @@ public class DbTool {
 	public void generateEnums() {
 		for (DbEnum dbEnum : dbEnums) {
 			PojoClass pojoClass = new PojoClass();
-			pojoClass.setPackageName(dbConfig.getEnumPackage());
+			pojoClass.setPackageName(dbEnum.getPackageName());
 			pojoClass.setName(dbEnum.getName());
 			// 
 			EnumGenerator enumGenerator;
@@ -134,7 +134,7 @@ public class DbTool {
 		return excelPath;
 	}
 
-	public DbGlobalConfig getDbConfig() {
+	public DbGlobalConfigRawData getDbConfig() {
 		return dbConfig;
 	}
 

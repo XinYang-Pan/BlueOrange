@@ -2,7 +2,10 @@ package org.blueo.db.vo;
 
 import java.util.Iterator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.blueo.commons.text.BlueoStrs;
+import org.blueo.db.vo.raw.DbColumnRawData;
+import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
 import org.javatuples.Triplet;
 
 import com.google.common.base.Joiner;
@@ -10,12 +13,16 @@ import com.google.common.base.Splitter;
 import com.google.common.primitives.Ints;
 
 public class DbType {
-	private String type;
+	private String rawType;
+	private String sqlType;
 	private Integer length;
 	private Integer length2;
+	private ClassWrapper javaType;
 
-	public static DbType of(DbColumn dbColumn) {
-		return of(dbColumn.getType(), dbColumn.getLength());
+	public static DbType of(DbColumnRawData dbColumnRawData) {
+		DbType dbType = DbType.of(dbColumnRawData.getType(), dbColumnRawData.getLength());
+		dbType.setSqlType(dbColumnRawData.getSqlType());
+		return dbType;
 	}
 
 	public static DbType of(String fullTypeName) {
@@ -26,16 +33,22 @@ public class DbType {
 			return new DbType(typeName);
 		}
 		return of(typeName, parameterizedTypeStr);
-
 	}
 
-	public static DbType of(String typeName, String length) {
-		if (length == null) {
-			return new DbType(typeName);
+	/**
+	 * @param rawType
+	 *            String
+	 * @param lengthStr
+	 *            (9, 0)
+	 * @return
+	 */
+	public static DbType of(String rawType, String lengthStr) {
+		if (lengthStr == null) {
+			return new DbType(rawType);
 		}
-		Iterable<String> split = Splitter.on(',').omitEmptyStrings().trimResults().split(length);
+		Iterable<String> split = Splitter.on(',').omitEmptyStrings().trimResults().split(lengthStr);
 		//
-		DbType dbType = new DbType(typeName);
+		DbType dbType = new DbType(rawType);
 		Iterator<String> iterator = split.iterator();
 		if (iterator.hasNext()) {
 			dbType.length = Ints.tryParse(iterator.next());
@@ -45,16 +58,19 @@ public class DbType {
 		}
 		return dbType;
 	}
-	
-	public Class<?> getJavaType() {
-		return TypeToJavaTypeMapping.getJavaType(this);
+
+	// varchar(9, 9)
+	public String getFullTypeStr() {
+		String length = this.getLengthStr();
+		if (StringUtils.isBlank(length)) {
+			return sqlType;
+		} else {
+			return String.format("%s(%s)", sqlType, length);
+		}
 	}
-	
-	public SqlType getSqlType() {
-		return TypeToDbTypeMapping.getJavaType(this);
-	}
-	
-	public String getLengthStr() {
+
+	// (9, 8)
+	private String getLengthStr() {
 		if (length != null) {
 			if (length2 != null) {
 				return Joiner.on(',').join(length, length2);
@@ -69,14 +85,31 @@ public class DbType {
 			}
 		}
 	}
-	
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("DbType [rawType=");
+		builder.append(rawType);
+		builder.append(", sqlType=");
+		builder.append(sqlType);
+		builder.append(", length=");
+		builder.append(length);
+		builder.append(", length2=");
+		builder.append(length2);
+		builder.append(", javaType=");
+		builder.append(javaType);
+		builder.append("]");
+		return builder.toString();
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((length == null) ? 0 : length.hashCode());
 		result = prime * result + ((length2 == null) ? 0 : length2.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((rawType == null) ? 0 : rawType.hashCode());
 		return result;
 	}
 
@@ -99,38 +132,38 @@ public class DbType {
 				return false;
 		} else if (!length2.equals(other.length2))
 			return false;
-		if (type == null) {
-			if (other.type != null)
+		if (rawType == null) {
+			if (other.rawType != null)
 				return false;
-		} else if (!type.equals(other.type))
+		} else if (!rawType.equals(other.rawType))
 			return false;
 		return true;
 	}
 
 	public DbType(String type) {
 		super();
-		this.type = type;
+		this.rawType = type;
 	}
 
 	public DbType(String type, Integer length) {
 		super();
-		this.type = type;
+		this.rawType = type;
 		this.length = length;
 	}
 
 	public DbType(String type, Integer length, Integer length2) {
 		super();
-		this.type = type;
+		this.rawType = type;
 		this.length = length;
 		this.length2 = length2;
 	}
 
-	public String getType() {
-		return type;
+	public String getRawType() {
+		return rawType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setRawType(String type) {
+		this.rawType = type;
 	}
 
 	public Integer getLength() {
@@ -149,17 +182,20 @@ public class DbType {
 		this.length2 = length2;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("DbType [type=");
-		builder.append(type);
-		builder.append(", length=");
-		builder.append(length);
-		builder.append(", length2=");
-		builder.append(length2);
-		builder.append("]");
-		return builder.toString();
+	public String getSqlType() {
+		return this.sqlType;
+	}
+
+	public void setSqlType(String sqlType) {
+		this.sqlType = sqlType;
+	}
+
+	public ClassWrapper getJavaType() {
+		return javaType;
+	}
+
+	public void setJavaType(ClassWrapper javaType) {
+		this.javaType = javaType;
 	}
 
 }

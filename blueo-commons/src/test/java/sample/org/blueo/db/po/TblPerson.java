@@ -2,21 +2,14 @@ package sample.org.blueo.db.po;
 
 import javax.persistence.Id;
 import javax.persistence.Enumerated;
-
 import java.util.Date;
-
 import javax.persistence.Column;
-
 import org.blueo.commons.persistent.dao.po.id.HasId;
-import org.blueo.commons.persistent.dao.po.traceable.TraceablePo;
-
 import javax.persistence.EnumType;
+import org.blueo.commons.persistent.dao.po.traceable.TraceablePo;
 import javax.persistence.GeneratedValue;
-
 import sample.org.blueo.db.enums.PersonSex;
-
 import java.io.Serializable;
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
 

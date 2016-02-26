@@ -4,7 +4,21 @@ import java.util.List;
 
 public class DbEnum {
 	private String name;
+	private String packageName;
 	private List<String> values;
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("DbEnum [name=");
+		builder.append(name);
+		builder.append(", packageName=");
+		builder.append(packageName);
+		builder.append(", values=");
+		builder.append(values);
+		builder.append("]");
+		return builder.toString();
+	}
 
 	public String getName() {
 		return name;
@@ -22,15 +36,12 @@ public class DbEnum {
 		this.values = values;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("DbEnum [name=");
-		builder.append(name);
-		builder.append(", values=");
-		builder.append(values);
-		builder.append("]");
-		return builder.toString();
+	public String getPackageName() {
+		return packageName;
+	}
+
+	public void setPackageName(String packageName) {
+		this.packageName = packageName;
 	}
 
 }

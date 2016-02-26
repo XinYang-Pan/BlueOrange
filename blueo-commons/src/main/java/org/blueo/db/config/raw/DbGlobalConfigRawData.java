@@ -1,11 +1,11 @@
-package org.blueo.db.config;
+package org.blueo.db.config.raw;
 
 import java.util.List;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
-public class DbGlobalConfig {
+public class DbGlobalConfigRawData {
 	// Java
 	private String sourceDir = "./tmp/src";
 	private String poPackage = "org.blueo.db.po";
@@ -14,12 +14,9 @@ public class DbGlobalConfig {
 	private String daoPackage;
 	private String daoSuperclass;
 	private String daoInterfaces;
-	private String enumPackage;
 	// DDL
 	private String ddlDir = "./tmp/ddl";
 	private String ddlFileName = "createTables.sql";
-	// table default
-	private DbTableConfig dbTableConfig;
 	
 	// -----------------------------
 	// ----- Non-Static Methods
@@ -117,22 +114,6 @@ public class DbGlobalConfig {
 		this.ddlFileName = ddlFileName;
 	}
 
-	public DbTableConfig getDbTableConfig() {
-		return dbTableConfig;
-	}
-
-	public void setDbTableConfig(DbTableConfig dbTableConfig) {
-		this.dbTableConfig = dbTableConfig;
-	}
-
-	public String getEnumPackage() {
-		return enumPackage;
-	}
-
-	public void setEnumPackage(String enumPackage) {
-		this.enumPackage = enumPackage;
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -150,14 +131,10 @@ public class DbGlobalConfig {
 		builder.append(daoSuperclass);
 		builder.append(", daoInterfaces=");
 		builder.append(daoInterfaces);
-		builder.append(", enumPackage=");
-		builder.append(enumPackage);
 		builder.append(", ddlDir=");
 		builder.append(ddlDir);
 		builder.append(", ddlFileName=");
 		builder.append(ddlFileName);
-		builder.append(", dbTableConfig=");
-		builder.append(dbTableConfig);
 		builder.append("]");
 		return builder.toString();
 	}
