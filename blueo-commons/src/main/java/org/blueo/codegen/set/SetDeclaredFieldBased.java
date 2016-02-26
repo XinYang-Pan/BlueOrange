@@ -29,7 +29,9 @@ public class SetDeclaredFieldBased extends SetGenerator {
 		Field[] fields = targetClass.getDeclaredFields();
 		for (Field field : fields) {
 			PropertyDescriptor pd = BeanUtils.getPropertyDescriptor(targetClass, field.getName());
-			formatterWrapper.formatln(1, "%s.%s(%s);", paramName, pd.getWriteMethod().getName(), Defaults.defaultValue(pd.getPropertyType()));
+			if (pd != null) {
+				formatterWrapper.formatln(1, "%s.%s(%s);", paramName, pd.getWriteMethod().getName(), Defaults.defaultValue(pd.getPropertyType()));
+			}
 		}
 		formatterWrapper.formatln(1, "return %s;", paramName);
 		// 

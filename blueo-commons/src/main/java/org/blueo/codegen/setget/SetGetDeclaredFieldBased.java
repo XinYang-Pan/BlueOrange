@@ -42,6 +42,9 @@ public class SetGetDeclaredFieldBased extends SetGetGenerator {
 		Field[] fields = setClass.getDeclaredFields();
 		for (Field field : fields) {
 			PropertyDescriptor setPd = BeanUtils.getPropertyDescriptor(setClass, field.getName());
+			if (setPd == null) {
+				continue;
+			}
 			PropertyDescriptor getPd = BeanUtils.getPropertyDescriptor(getClass, field.getName());
 			Object value;
 			if (getPd == null) {
