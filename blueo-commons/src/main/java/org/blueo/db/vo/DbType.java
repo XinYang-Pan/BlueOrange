@@ -1,22 +1,57 @@
 package org.blueo.db.vo;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.Iterator;
+
+import org.blueo.commons.text.BlueoStrs;
+import org.javatuples.Triplet;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.primitives.Ints;
 
-
-public class SqlType {
+public class DbType {
 	private String type;
 	private Integer length;
 	private Integer length2;
-	
-	public String getFullTypeStr() {
-		String length = this.getLengthStr();
-		if (StringUtils.isBlank(length)) {
-			return this.getType();
-		} else {
-			return String.format("%s(%s)", this.getType(), length);
+
+	public static DbType of(DbColumn dbColumn) {
+		return of(dbColumn.getType(), dbColumn.getLength());
+	}
+
+	public static DbType of(String fullTypeName) {
+		Triplet<String, String, String> texts = BlueoStrs.parse(fullTypeName, '(', ')');
+		String parameterizedTypeStr = texts.getValue0();
+		String typeName = texts.getValue1();
+		if (parameterizedTypeStr == null) {
+			return new DbType(typeName);
 		}
+		return of(typeName, parameterizedTypeStr);
+
+	}
+
+	public static DbType of(String typeName, String length) {
+		if (length == null) {
+			return new DbType(typeName);
+		}
+		Iterable<String> split = Splitter.on(',').omitEmptyStrings().trimResults().split(length);
+		//
+		DbType dbType = new DbType(typeName);
+		Iterator<String> iterator = split.iterator();
+		if (iterator.hasNext()) {
+			dbType.length = Ints.tryParse(iterator.next());
+		}
+		if (iterator.hasNext()) {
+			dbType.length2 = Ints.tryParse(iterator.next());
+		}
+		return dbType;
+	}
+	
+	public Class<?> getJavaType() {
+		return TypeToJavaTypeMapping.getJavaType(this);
+	}
+	
+	public SqlType getSqlType() {
+		return TypeToDbTypeMapping.getJavaType(this);
 	}
 	
 	public String getLengthStr() {
@@ -53,7 +88,7 @@ public class SqlType {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SqlType other = (SqlType) obj;
+		DbType other = (DbType) obj;
 		if (length == null) {
 			if (other.length != null)
 				return false;
@@ -72,18 +107,18 @@ public class SqlType {
 		return true;
 	}
 
-	public SqlType(String type) {
+	public DbType(String type) {
 		super();
 		this.type = type;
 	}
 
-	public SqlType(String type, Integer length) {
+	public DbType(String type, Integer length) {
 		super();
 		this.type = type;
 		this.length = length;
 	}
 
-	public SqlType(String type, Integer length, Integer length2) {
+	public DbType(String type, Integer length, Integer length2) {
 		super();
 		this.type = type;
 		this.length = length;
@@ -117,7 +152,7 @@ public class SqlType {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("SqlType [type=");
+		builder.append("DbType [type=");
 		builder.append(type);
 		builder.append(", length=");
 		builder.append(length);

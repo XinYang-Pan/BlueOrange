@@ -12,7 +12,7 @@ import org.blueo.db.sql.PostgresSqlBuilder;
 public class DbToolExample {
 
 	public static void main(String[] args) throws BiffException, IOException {
-		URL url = DbToolExample.class.getResource("test0.xls");
+		URL url = DbToolExample.class.getResource("test1.xls");
 		DbTool dbTool = DbTool.build(url.getPath());
 		//
 		dbTool.setSqlBuilder(new PostgresSqlBuilder());

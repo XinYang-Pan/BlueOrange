@@ -17,7 +17,7 @@ import org.blueo.db.config.DbTableConfig;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbEnum;
 import org.blueo.db.vo.DbTable;
-import org.blueo.db.vo.SqlType;
+import org.blueo.db.vo.DbType;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
@@ -25,13 +25,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class DataLoader {
-	private enum Type{Config, Enum, Table}
+	private enum Type{Config, Enum, TypeMapping, Table}
 	//
 	private final String excelPath;
 	// Internal process fields
 	private DbGlobalConfig dbConfig;
 	private List<DbTable> dbTables = Lists.newArrayList();
-	private List<DbEnum> dbEnums = Lists.newArrayList();
+	private List<DbEnum> dbEnums;
+	private Map<String, String> typeMapping = Maps.newHashMap();
 	
 	private DataLoader(String excelPath) {
 		this.excelPath = excelPath;
@@ -42,7 +43,7 @@ public class DataLoader {
 		loader.load();
 		return loader;
 	}
-	
+
 	private void load() {
 		try {
 			Workbook workbook = Workbook.getWorkbook(new File(excelPath));
@@ -59,6 +60,11 @@ public class DataLoader {
 				case Config:
 					// config
 					dbConfig = this.buildDbGlobalConfig(key2Value);
+					break;
+				case TypeMapping:
+					// TypeMapping
+					typeMapping.putAll(key2Value);
+					typeMapping.remove("type");
 					break;
 				case Enum:
 					// Enum
@@ -206,7 +212,7 @@ public class DataLoader {
 		if (dbTableConfig.isHasIdInBoolean() && dbTable.getPk() == null) {
 			DbColumn dbcolumn = new DbColumn();
 			dbcolumn.setName("ID");
-			dbcolumn.setSqlType(SqlType.of(dbTableConfig.getIdType()));
+			dbcolumn.setDbType(DbType.of(dbTableConfig.getIdType()));
 			dbcolumn.setPkInBool(true);
 			dbcolumn.setNullableInBool(false);
 			dbcolumn.setComment("Auto added for HasId Po");
@@ -229,7 +235,7 @@ public class DataLoader {
 	private DbColumn buildDbColumn(String name, String type) {
 		DbColumn dbcolumn = new DbColumn();
 		dbcolumn.setName(name);
-		dbcolumn.setSqlType(SqlType.of(type));
+		dbcolumn.setDbType(DbType.of(type));
 		dbcolumn.setPkInBool(false);
 		dbcolumn.setNullableInBool(true);
 		dbcolumn.setComment("Auto added for Traceable Po");

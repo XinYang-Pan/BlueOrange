@@ -15,7 +15,7 @@ import org.blueo.db.config.DbGlobalConfig;
 import org.blueo.db.config.DbTableConfig;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
-import org.blueo.db.vo.SqlType;
+import org.blueo.db.vo.DbType;
 import org.blueo.pojogen.bo.PojoClass;
 import org.blueo.pojogen.bo.PojoField;
 import org.blueo.pojogen.bo.PojoField.AnnotationType;
@@ -78,10 +78,10 @@ public class PojoBuildUtils {
 			pojoClass.addInterfaces(ClassWrapper.of(className));
 		}
 		if (dbTableConfig.isTraceableInBoolean()) {
-			pojoClass.addInterfaces(ClassWrapper.of(TraceablePo.class, SqlType.of(dbTableConfig.getTraceType()).getJavaType()));
+			pojoClass.addInterfaces(ClassWrapper.of(TraceablePo.class, DbType.of(dbTableConfig.getTraceType()).getJavaType()));
 		}
 		if (dbTableConfig.isHasIdInBoolean()) {
-			pojoClass.addInterfaces(ClassWrapper.of(HasId.class, SqlType.of(dbTableConfig.getTraceType()).getJavaType()));
+			pojoClass.addInterfaces(ClassWrapper.of(HasId.class, DbType.of(dbTableConfig.getTraceType()).getJavaType()));
 		}
 		return pojoClass;
 	}
@@ -92,7 +92,6 @@ public class PojoBuildUtils {
 		}
 		PojoField pojoField = new PojoField();
 		pojoField.setName(COLUMN_NAME_TO_FIELD_NAME.convert(dbColumn.getName()));
-		String enumType = dbColumn.getEnumType();
 		pojoField.getValueMap().put("columnName", dbColumn.getName());
 		if (isPk) {
 			pojoField.addAnnotation(AnnotationType.Get, Id.class);
@@ -100,7 +99,7 @@ public class PojoBuildUtils {
 		}
 		pojoField.addAnnotationWrapper(AnnotationType.Get, AnnotationWrapperUtils.COLUMN_WRAPPER);
 		Class<?> javaType = dbColumn.getJavaType();
-		if (enumType == null) {
+		if (dbColumn.isEnumTypeInBool()) {
 			pojoField.setType(javaType);
 		} else {
 			EnumType enumeratedType = null;
@@ -108,7 +107,7 @@ public class PojoBuildUtils {
 				enumeratedType = EnumType.STRING;
 			}
 			pojoField.addAnnotationWrapper(AnnotationType.Get, new EnumeratedWrapper(enumeratedType));
-			pojoField.setType(ClassWrapper.of(dbConfig.getEnumPackage(), enumType));
+			pojoField.setType(ClassWrapper.of(dbConfig.getEnumPackage(), dbColumn.getType()));
 		}
 		return pojoField;
 	}

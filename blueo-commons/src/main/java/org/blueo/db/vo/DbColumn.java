@@ -2,9 +2,9 @@ package org.blueo.db.vo;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 
 public class DbColumn {
+	// From Excel
 	private String name;
 	private String type;
 	private String length;
@@ -14,29 +14,32 @@ public class DbColumn {
 	private String enumType;
 	
 	public String getFullTypeStr() {
-		String length = this.getLength();
-		if (StringUtils.isBlank(length)) {
-			return this.getType();
-		} else {
-			return String.format("%s(%s)", this.getType(), length);
-		}
+		return this.getSqlType().getFullTypeStr();
 	}
 	
-	public SqlType getSqlType() {
-		return SqlType.of(this);
+	public DbType getDbType() {
+		return DbType.of(this);
 	}
 
-	public void setSqlType(SqlType sqlType) {
-		this.type = sqlType.getType();
-		this.length = sqlType.getLengthStr();
+	public void setDbType(DbType dbType) {
+		this.type = dbType.getType();
+		this.length = dbType.getLengthStr();
 	}
 
 	public Class<?> getJavaType() {
-		return SqlType.of(this).getJavaType();
+		return DbType.of(this).getJavaType();
+	}
+
+	public SqlType getSqlType() {
+		return DbType.of(this).getSqlType();
 	}
 
 	public boolean isPkInBool() {
 		return BooleanUtils.toBoolean(ObjectUtils.firstNonNull(pk, "false"));
+	}
+	
+	public boolean isEnumTypeInBool() {
+		return BooleanUtils.toBoolean(ObjectUtils.firstNonNull(enumType, "false"));
 	}
 
 	public boolean isNullableInBool() {

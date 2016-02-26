@@ -6,10 +6,9 @@ import java.util.Map;
 
 import org.springframework.util.Assert;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
-class SqlTypeToJavaTypeMapping {
+class TypeToDbTypeMapping {
 
 	private static Map<String, Class<?>> sqlTypeStrToJavaType = Maps.newHashMap();
 	private static Map<DbType, Class<?>> sqlTypeToJavaType = Maps.newHashMap();
@@ -28,18 +27,13 @@ class SqlTypeToJavaTypeMapping {
 		sqlTypeStrToJavaType.put("number", BigDecimal.class);
 	}
 
-	static Class<?> getJavaType(String sqlType) {
-		Assert.notNull(sqlType);
-		return Preconditions.checkNotNull(sqlTypeStrToJavaType.get(sqlType.toLowerCase()), String.format("No java class found for %s.", sqlType));
-	}
-
-	static Class<?> getJavaType(DbType dbType) {
+	static SqlType getJavaType(DbType dbType) {
 		Assert.notNull(dbType);
 		Class<?> javaType = sqlTypeToJavaType.get(dbType);
 		if (javaType == null) {
-			javaType = getJavaType(dbType.getType());
+//			javaType = getJavaType(dbType.getType());
 		}
-		return Preconditions.checkNotNull(javaType, String.format("No java class found for %s.", dbType));
+		return null;
 	}
 	
 }
