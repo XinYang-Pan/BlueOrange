@@ -1,6 +1,6 @@
 package org.blueo.example.pojogen;
 
-import org.blueo.commons.persistent.core.dao.AssemblableDao;
+import org.blueo.commons.persistent.dao.impl.AssemblableDao;
 import org.blueo.pojogen.JavaFileGenerator;
 import org.blueo.pojogen.bo.PojoClass;
 import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;

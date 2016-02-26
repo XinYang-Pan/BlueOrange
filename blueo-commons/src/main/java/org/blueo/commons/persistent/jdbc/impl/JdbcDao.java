@@ -5,31 +5,34 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.blueo.commons.BlueoUtils;
-import org.blueo.commons.persistent.core.dao.AbstractDao;
-import org.blueo.commons.persistent.core.dao.po.HasId;
-import org.blueo.commons.persistent.jdbc.util.BoTable;
+import org.blueo.commons.persistent.dao.impl.AbstractEntityDao;
+import org.blueo.commons.persistent.entity.EntityTable;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.google.common.reflect.TypeToken;
-
-public class JdbcDao<T extends HasId<K>, K> extends AbstractDao<T, K> {
+public class JdbcDao<T, K> extends AbstractEntityDao<T, K> {
 	// DI
 	private JdbcTemplate jdbcTemplate;
 	// 
-	@SuppressWarnings("serial")
-	private final Class<T> parameterizedClass = BlueoUtils.getParameterizedClass(new TypeToken<T>(this.getClass()) {});
-	private BoTable<T> boTable;
+	private EntityTable<T> entityTable;
 	private JdbcSelect<T, K> jdbcSelect;
 	private JdbcInsert<T, K> jdbcInsert;
 	private JdbcUpdate<T, K> jdbcUpdate;
 	private JdbcDelete<T, K> jdbcDelete;
 	
+	public JdbcDao() {
+		super();
+	}
+
+	public JdbcDao(Class<T> parameterizedClass) {
+		super(parameterizedClass);
+	}
+
 	@PostConstruct
 	public void init() {
-		boTable = BoTable.annotationBased(parameterizedClass);
+		entityTable = EntityTable.annotationBased(parameterizedClass);
 		for (JdbcOperation<T, K> jdbcOperation : Arrays.asList(jdbcSelect, jdbcInsert, jdbcUpdate, jdbcDelete)) {
-			jdbcOperation.setBoTable(boTable);
+			jdbcOperation.setBoTable(entityTable);
+			jdbcOperation.setIdHandler(idHandler);
 			jdbcOperation.setJdbcTemplate(jdbcTemplate);
 		}
 	}
@@ -89,27 +92,6 @@ public class JdbcDao<T extends HasId<K>, K> extends AbstractDao<T, K> {
 
 	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("JdbcDao [jdbcTemplate=");
-		builder.append(jdbcTemplate);
-		builder.append(", parameterizedClass=");
-		builder.append(parameterizedClass);
-		builder.append(", boTable=");
-		builder.append(boTable);
-		builder.append(", jdbcSelect=");
-		builder.append(jdbcSelect);
-		builder.append(", jdbcInsert=");
-		builder.append(jdbcInsert);
-		builder.append(", jdbcUpdate=");
-		builder.append(jdbcUpdate);
-		builder.append(", jdbcDelete=");
-		builder.append(jdbcDelete);
-		builder.append("]");
-		return builder.toString();
 	}
 
 }

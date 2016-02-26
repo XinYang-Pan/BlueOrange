@@ -9,8 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
-import org.blueo.commons.persistent.core.dao.po.HasId;
-import org.blueo.commons.persistent.core.dao.po.traceable.TraceablePo;
+import org.blueo.commons.persistent.dao.po.id.HasId;
+import org.blueo.commons.persistent.dao.po.traceable.TraceablePo;
 import org.blueo.db.config.DbGlobalConfig;
 import org.blueo.db.config.DbTableConfig;
 import org.blueo.db.vo.DbColumn;

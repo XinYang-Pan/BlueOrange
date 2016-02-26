@@ -5,13 +5,12 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.blueo.commons.persistent.core.dao.po.HasId;
 import org.blueo.commons.persistent.jdbc.BlueoJdbcs;
 import org.blueo.commons.persistent.jdbc.util.ColumnPpss;
 import org.springframework.beans.BeanUtils;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
 
-public class JdbcDelete<T extends HasId<K>, K> extends JdbcOperation<T, K> {
+public class JdbcDelete<T, K> extends JdbcOperation<T, K> {
 	//
 	private String deleteSql;
 	private ParameterizedPreparedStatementSetter<T> deletePss;
@@ -19,8 +18,8 @@ public class JdbcDelete<T extends HasId<K>, K> extends JdbcOperation<T, K> {
 	@PostConstruct
 	public void init() {
 		// delete
-		deleteSql = BlueoJdbcs.buildDeleteSql(boTable.getTableName(), boTable.getIdCol().getColumnName());
-		deletePss = new ColumnPpss<T>(Collections.singletonList(boTable.getIdCol()));
+		deleteSql = BlueoJdbcs.buildDeleteSql(entityTable.getTableName(), entityTable.getIdCol().getColumnName());
+		deletePss = new ColumnPpss<T>(Collections.singletonList(entityTable.getIdCol()));
 	}
 
 	public void delete(T t) {
@@ -28,13 +27,13 @@ public class JdbcDelete<T extends HasId<K>, K> extends JdbcOperation<T, K> {
 	}
 
 	public void deleteById(K id) {
-		T t = BeanUtils.instantiate(boTable.getParameterizedClass());
-		t.setId(id);
+		T t = BeanUtils.instantiate(entityTable.getParameterizedClass());
+		getIdHandler().setId(t, id);
 		this.delete(t);
 	}
 
 	public void delete(List<T> entities) {
-		jdbcTemplate.batchUpdate(deleteSql, entities, BATCH_SIZE, deletePss);
+		jdbcTemplate.batchUpdate(deleteSql, entities, this.batchSize(), deletePss);
 	}
 
 }

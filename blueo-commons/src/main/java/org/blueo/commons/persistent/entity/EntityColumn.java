@@ -1,22 +1,22 @@
-package org.blueo.commons.persistent.jdbc.util;
+package org.blueo.commons.persistent.entity;
 
 import java.beans.PropertyDescriptor;
 
-public class BoColumn {
+public class EntityColumn {
 	private String columnName;
 	private PropertyDescriptor propertyDescriptor;
 	private boolean generatedValue;
 
-	public BoColumn() {
+	public EntityColumn() {
 	}
 
-	public BoColumn(String columnName, PropertyDescriptor propertyDescriptor) {
+	public EntityColumn(String columnName, PropertyDescriptor propertyDescriptor) {
 		super();
 		this.columnName = columnName;
 		this.propertyDescriptor = propertyDescriptor;
 	}
 
-	public BoColumn(String columnName, PropertyDescriptor propertyDescriptor, boolean generatedValue) {
+	public EntityColumn(String columnName, PropertyDescriptor propertyDescriptor, boolean generatedValue) {
 		super();
 		this.columnName = columnName;
 		this.propertyDescriptor = propertyDescriptor;

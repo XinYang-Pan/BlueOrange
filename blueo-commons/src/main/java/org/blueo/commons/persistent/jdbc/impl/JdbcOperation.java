@@ -1,15 +1,26 @@
 package org.blueo.commons.persistent.jdbc.impl;
 
-import org.blueo.commons.persistent.core.dao.po.HasId;
-import org.blueo.commons.persistent.jdbc.util.BoTable;
+import org.apache.commons.lang3.ObjectUtils;
+import org.blueo.commons.persistent.dao.po.id.IdHandler;
+import org.blueo.commons.persistent.entity.EntityTable;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-public class JdbcOperation<T extends HasId<K>, K> {
-	protected static final int BATCH_SIZE = 1000;
+public class JdbcOperation<T, K> {
+	private static final int DEFAULT_BATCH_SIZE = 5000;
 	// DI
 	protected JdbcTemplate jdbcTemplate;
-	protected BoTable<T> boTable;
-
+	protected EntityTable<T> entityTable;
+	private IdHandler<T, K> idHandler;
+	private Integer batchSize;
+	
+	protected int batchSize() {
+		return ObjectUtils.defaultIfNull(batchSize, DEFAULT_BATCH_SIZE);
+	}
+	
+	// -----------------------------
+	// ----- Get Set ToString HashCode Equals
+	// -----------------------------
+	
 	public JdbcTemplate getJdbcTemplate() {
 		return jdbcTemplate;
 	}
@@ -18,12 +29,28 @@ public class JdbcOperation<T extends HasId<K>, K> {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
-	public BoTable<T> getBoTable() {
-		return boTable;
+	public EntityTable<T> getBoTable() {
+		return entityTable;
 	}
 
-	public void setBoTable(BoTable<T> boTable) {
-		this.boTable = boTable;
+	public void setBoTable(EntityTable<T> boTable) {
+		this.entityTable = boTable;
+	}
+
+	public IdHandler<T, K> getIdHandler() {
+		return idHandler;
+	}
+
+	public void setIdHandler(IdHandler<T, K> idHandler) {
+		this.idHandler = idHandler;
+	}
+
+	public Integer getDefaultBatchSize() {
+		return batchSize;
+	}
+
+	public void setBatchSize(Integer batchSize) {
+		this.batchSize = batchSize;
 	}
 
 }

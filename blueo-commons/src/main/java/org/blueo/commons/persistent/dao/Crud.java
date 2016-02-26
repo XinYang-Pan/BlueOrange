@@ -1,9 +1,8 @@
-package org.blueo.commons.persistent.core;
+package org.blueo.commons.persistent.dao;
 
-import org.blueo.commons.persistent.core.dao.po.HasId;
 
 // T is entity, K is key
-public interface Crud<T extends HasId<K>, K> {
+public interface Crud<T, K> {
 
 	// -----------------------------
 	// ----- Read

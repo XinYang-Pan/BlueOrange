@@ -1,15 +1,14 @@
-package org.blueo.commons.persistent.core.dao;
+package org.blueo.commons.persistent.dao.impl;
 
 import java.util.List;
 
 import org.blueo.commons.BlueoUtils;
-import org.blueo.commons.persistent.core.Crud;
-import org.blueo.commons.persistent.core.CrudBatch;
-import org.blueo.commons.persistent.core.Search;
-import org.blueo.commons.persistent.core.dao.po.HasId;
+import org.blueo.commons.persistent.dao.Crud;
+import org.blueo.commons.persistent.dao.CrudBatch;
+import org.blueo.commons.persistent.dao.Search;
 import org.springframework.beans.BeanUtils;
 
-public class AssemblableDao<T extends HasId<K>, K> extends AbstractDao<T, K> {
+public class AssemblableDao<T, K> extends AbstractEntityDao<T, K> {
 	private Crud<T, K> crud;
 	private CrudBatch<T, K> crudBatch;
 	private Search<T> search;

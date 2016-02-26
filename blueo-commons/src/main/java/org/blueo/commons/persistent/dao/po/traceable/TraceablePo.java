@@ -1,4 +1,4 @@
-package org.blueo.commons.persistent.core.dao.po.traceable;
+package org.blueo.commons.persistent.dao.po.traceable;
 
 import java.util.Date;
 

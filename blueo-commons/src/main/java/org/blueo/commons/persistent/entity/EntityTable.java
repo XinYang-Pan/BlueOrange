@@ -1,37 +1,48 @@
-package org.blueo.commons.persistent.jdbc.util;
+package org.blueo.commons.persistent.entity;
 
 import java.util.List;
 
 import org.springframework.util.Assert;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-public abstract class BoTable<T> {
+public abstract class EntityTable<T> {
 
 	protected String tableName;
 	protected Class<T> parameterizedClass;
-	protected BoColumn idCol = null;
-	protected List<BoColumn> noneIdCols = Lists.newArrayList();
-
-	public static <T> BoTable<T> annotationBased(Class<T> clazz) {
-		BoTable<T> boTable = new AnnotationBased<T>();
-		boTable.doInit(clazz);
-		//
-		Assert.notNull(boTable.getIdCol());
-		Assert.hasText(boTable.getTableName());
-		Assert.notEmpty(boTable.getNoneIdCols());
-		return boTable;
+	protected EntityColumn idCol = null;
+	protected List<EntityColumn> noneIdCols = Lists.newArrayList();
+	
+	protected EntityTable() {
+	}
+	
+	public static <T> EntityTable<T> annotationBased(Class<T> clazz) {
+		Preconditions.checkNotNull(clazz);
+		// 
+		EntityTable<T> entityTable = new AnnotationBased<T>();
+		entityTable.doInit(clazz);
+		entityTable.validateAfterInit();
+		return entityTable;
 	}
 
-	public static List<String> getColumnNames(List<BoColumn> boColumns) {
+	public static List<String> getColumnNames(List<EntityColumn> entityColumns) {
 		List<String> columnNames = Lists.newArrayList();
-		for (BoColumn pd : boColumns) {
+		for (EntityColumn pd : entityColumns) {
 			columnNames.add(pd.getColumnName());
 		}
 		return columnNames;
 	}
 
-	public List<BoColumn> getNoneGenValueCols() {
+	private void validateAfterInit() {
+		//
+		Assert.notNull(this.getParameterizedClass());
+		Assert.notNull(this.getIdCol());
+		Assert.hasText(this.getTableName());
+		Assert.notEmpty(this.getNoneIdCols());
+	}
+	
+	public List<EntityColumn> getNoneGenValueCols() {
 		if (idCol.isGeneratedValue()) {
 			return this.getAllCols();
 		} else {
@@ -39,15 +50,15 @@ public abstract class BoTable<T> {
 		}
 	}
 
-	public List<BoColumn> getAllCols() {
-		List<BoColumn> allCols = Lists.newArrayList();
+	public List<EntityColumn> getAllCols() {
+		List<EntityColumn> allCols = Lists.newArrayList();
 		allCols.add(idCol);
 		allCols.addAll(noneIdCols);
 		return allCols;
 	}
 
 	protected abstract void doInit(Class<T> clazz);
-
+	
 	// -----------------------------
 	// ----- Get Set ToString HashCode Equals
 	// -----------------------------
@@ -56,32 +67,16 @@ public abstract class BoTable<T> {
 		return tableName;
 	}
 
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
-
-	public BoColumn getIdCol() {
+	public EntityColumn getIdCol() {
 		return idCol;
 	}
 
-	public void setIdCol(BoColumn idCol) {
-		this.idCol = idCol;
-	}
-
-	public List<BoColumn> getNoneIdCols() {
+	public List<EntityColumn> getNoneIdCols() {
 		return noneIdCols;
-	}
-
-	public void setNoneIdCols(List<BoColumn> noneIdCols) {
-		this.noneIdCols = noneIdCols;
 	}
 
 	public Class<T> getParameterizedClass() {
 		return parameterizedClass;
-	}
-
-	public void setParameterizedClass(Class<T> parameterizedClass) {
-		this.parameterizedClass = parameterizedClass;
 	}
 
 	@Override
