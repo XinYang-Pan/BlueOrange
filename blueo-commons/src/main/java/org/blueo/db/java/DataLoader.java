@@ -12,12 +12,14 @@ import jxl.Workbook;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.blueo.db.config.DbGlobalConfig;
 import org.blueo.db.config.DbTableConfig;
+import org.blueo.db.config.raw.DbGlobalConfigRawData;
+import org.blueo.db.config.raw.DbTableConfigRawData;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbEnum;
 import org.blueo.db.vo.DbTable;
-import org.blueo.db.vo.SqlType;
+import org.blueo.db.vo.DbType;
+import org.blueo.db.vo.raw.DbColumnRawData;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
@@ -25,13 +27,16 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class DataLoader {
-	private enum Type{Config, Enum, Table}
+	private enum Type{Config, Enum, TypeMapping, Table}
 	//
 	private final String excelPath;
 	// Internal process fields
-	private DbGlobalConfig dbConfig;
+	private DbGlobalConfigRawData dbConfig;
 	private List<DbTable> dbTables = Lists.newArrayList();
-	private List<DbEnum> dbEnums = Lists.newArrayList();
+	private List<DbEnum> dbEnums = Lists.newArrayList();;
+	private Map<String, DbEnum> name2dbEnumsMap = Maps.newHashMap();
+	private Map<String, String> rawType2SqlType = Maps.newHashMap();
+	private DbTableConfigRawData defaultDbTableConfigRawData;
 	
 	private DataLoader(String excelPath) {
 		this.excelPath = excelPath;
@@ -42,7 +47,7 @@ public class DataLoader {
 		loader.load();
 		return loader;
 	}
-	
+
 	private void load() {
 		try {
 			Workbook workbook = Workbook.getWorkbook(new File(excelPath));
@@ -59,10 +64,16 @@ public class DataLoader {
 				case Config:
 					// config
 					dbConfig = this.buildDbGlobalConfig(key2Value);
+					defaultDbTableConfigRawData = this.buildDefaultDbTableConfigRawData(key2Value);
+					break;
+				case TypeMapping:
+					// TypeMapping
+					rawType2SqlType.putAll(key2Value);
+					rawType2SqlType.remove("type");
 					break;
 				case Enum:
 					// Enum
-					dbEnums = this.buildEnumConfig(sheet);
+					this.buildEnumConfig(sheet, key2Value);
 					break;
 				case Table:
 					// tables
@@ -80,42 +91,48 @@ public class DataLoader {
 		}
 	}
 
-	private List<DbEnum> buildEnumConfig(Sheet sheet) {
+	private void buildEnumConfig(Sheet sheet, Map<String, String> key2Value) {
 		Integer rowStartIndex = findRowIndex(sheet, 0, "definition");
 		if (rowStartIndex == null) {
-			return null;
+			return;
 		}
-		List<DbEnum> dbEnums = Lists.newArrayList();
 		// 
+		String packageName = key2Value.get("package");
 		int rows = sheet.getRows();
 		for (int i = rowStartIndex; i < rows; i++) {
 			String enumName = getContent(sheet, 1, i);
 			String enumValues = getContent(sheet, 2, i);
 			// 
 			DbEnum dbEnum = new DbEnum();
+			dbEnum.setPackageName(packageName);
 			dbEnum.setName(enumName);
 			dbEnum.setValues(Splitter.on(',').trimResults().splitToList(enumValues));
+			// 
 			dbEnums.add(dbEnum);
+			name2dbEnumsMap.put(dbEnum.getName(), dbEnum);
 		}
-		return dbEnums;
 	}
 
-	private DbGlobalConfig buildDbGlobalConfig(Map<String, String> key2Value) throws IllegalAccessException, InvocationTargetException {
+	private DbGlobalConfigRawData buildDbGlobalConfig(Map<String, String> key2Value) throws IllegalAccessException, InvocationTargetException {
 		// 
-		DbGlobalConfig dbGlobalConfig = new DbGlobalConfig();
-		BeanUtils.populate(dbGlobalConfig, key2Value);
-		dbGlobalConfig.setDbTableConfig(this.buildDbTableConfig(key2Value));
-		return dbGlobalConfig;
+		DbGlobalConfigRawData dbGlobalConfigRawData = new DbGlobalConfigRawData();
+		BeanUtils.populate(dbGlobalConfigRawData, key2Value);
+		return dbGlobalConfigRawData;
+	}
+
+	private DbTableConfigRawData buildDefaultDbTableConfigRawData(Map<String, String> key2Value) throws IllegalAccessException, InvocationTargetException {
+		// 
+		DbTableConfigRawData defaultDbTableConfigRawData = new DbTableConfigRawData();
+		BeanUtils.populate(defaultDbTableConfigRawData, key2Value);
+		return defaultDbTableConfigRawData;
 	}
 
 	private DbTableConfig buildDbTableConfig(Map<String, String> key2Value) throws IllegalAccessException, InvocationTargetException {
 		// 
-		DbTableConfig dbTableConfig = new DbTableConfig();
-		if (dbConfig != null) {
-			BeanUtils.copyProperties(dbTableConfig, dbConfig.getDbTableConfig());
-		}
-		BeanUtils.populate(dbTableConfig, key2Value);
-		return dbTableConfig;
+		DbTableConfigRawData dbTableConfigRawData = new DbTableConfigRawData();
+		BeanUtils.copyProperties(dbTableConfigRawData, defaultDbTableConfigRawData);
+		BeanUtils.populate(dbTableConfigRawData, key2Value);
+		return DataLoaderUtils.buildDbTableConfig(dbTableConfigRawData, rawType2SqlType);
 	}
 
 	private Type getType(Map<String, String> key2Value) {
@@ -177,12 +194,15 @@ public class DataLoader {
 					valueColumnName.put(columnName, content);
 				}
 			}
-			DbColumn dbcolumn = new DbColumn();
-			BeanUtils.populate(dbcolumn, valueColumnName);
-			//
-			if (dbcolumn.getName() == null) {
+			DbColumnRawData dbColumnRawData = DataLoaderUtils.buildDbColumnRawData(valueColumnName);
+			if (dbColumnRawData.getName() == null) {
 				// Ignore no name object
-			} else if (dbcolumn.isPkInBool()) {
+				continue;
+			}
+			DataLoaderUtils.overwriteSqlSqlFromDefault(dbColumnRawData, rawType2SqlType);
+			DbColumn dbcolumn = DataLoaderUtils.buildDbColumn(dbColumnRawData, name2dbEnumsMap);
+			// 
+			if (dbcolumn.isPk()) {
 				pk = dbcolumn;
 			} else {
 				dbColumns.add(dbcolumn);
@@ -195,7 +215,7 @@ public class DataLoader {
 		dbTable.setDbColumns(dbColumns);
 		dbTable.setDbTableConfig(dbTableConfig);
 		// Traceable
-		if (dbTableConfig.isTraceableInBoolean()) {
+		if (dbTableConfig.isTraceable()) {
 			dbColumns.add(buildDbColumn("CREATE_ID", dbTableConfig.getTraceType()));
 			dbColumns.add(buildDbColumn("UPDATE_ID", dbTableConfig.getTraceType()));
 			dbColumns.add(buildDbColumn("CREATE_TIME", dbTableConfig.getTraceTimeType()));
@@ -203,12 +223,12 @@ public class DataLoader {
 			dbColumns.add(buildDbColumn("DEL_FLAG", dbTableConfig.getTraceDelFlagType()));
 		}
 		// HasId
-		if (dbTableConfig.isHasIdInBoolean() && dbTable.getPk() == null) {
+		if (dbTableConfig.isHasId() && dbTable.getPk() == null) {
 			DbColumn dbcolumn = new DbColumn();
 			dbcolumn.setName("ID");
-			dbcolumn.setSqlType(SqlType.of(dbTableConfig.getIdType()));
-			dbcolumn.setPkInBool(true);
-			dbcolumn.setNullableInBool(false);
+			dbcolumn.setDbType(dbTableConfig.getIdType());
+			dbcolumn.setPk(true);
+			dbcolumn.setNullable(false);
 			dbcolumn.setComment("Auto added for HasId Po");
 			dbTable.setPk(dbcolumn);
 		}
@@ -226,12 +246,12 @@ public class DataLoader {
 		return null;
 	}
 
-	private DbColumn buildDbColumn(String name, String type) {
+	private DbColumn buildDbColumn(String name, DbType type) {
 		DbColumn dbcolumn = new DbColumn();
 		dbcolumn.setName(name);
-		dbcolumn.setSqlType(SqlType.of(type));
-		dbcolumn.setPkInBool(false);
-		dbcolumn.setNullableInBool(true);
+		dbcolumn.setDbType(type);
+		dbcolumn.setPk(false);
+		dbcolumn.setNullable(true);
 		dbcolumn.setComment("Auto added for Traceable Po");
 		return dbcolumn;
 	}
@@ -251,7 +271,7 @@ public class DataLoader {
 		}
 	}
 
-	public DbGlobalConfig getDbConfig() {
+	public DbGlobalConfigRawData getDbConfig() {
 		return dbConfig;
 	}
 

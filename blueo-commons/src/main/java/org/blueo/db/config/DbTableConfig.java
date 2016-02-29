@@ -1,74 +1,14 @@
 package org.blueo.db.config;
 
-import org.apache.commons.lang3.BooleanUtils;
+import org.blueo.db.vo.DbType;
 
 public class DbTableConfig {
-	private String traceable;
-	private String traceType;
-	private String hasId;
-	private String idType;
-	private String traceTimeType;
-	private String traceDelFlagType;
-
-	public boolean isTraceableInBoolean() {
-		return BooleanUtils.isTrue(BooleanUtils.toBooleanObject(traceable));
-	}
-
-	public boolean isHasIdInBoolean() {
-		return BooleanUtils.isTrue(BooleanUtils.toBooleanObject(hasId));
-	}
-
-	// -----------------------------
-	// ----- Get Set ToString HashCode Equals
-	// -----------------------------
-
-	public String getTraceable() {
-		return traceable;
-	}
-
-	public void setTraceable(String traceable) {
-		this.traceable = traceable;
-	}
-
-	public String getTraceType() {
-		return traceType;
-	}
-
-	public void setTraceType(String traceType) {
-		this.traceType = traceType;
-	}
-
-	public String getHasId() {
-		return hasId;
-	}
-
-	public void setHasId(String hasId) {
-		this.hasId = hasId;
-	}
-
-	public String getIdType() {
-		return idType;
-	}
-
-	public void setIdType(String idType) {
-		this.idType = idType;
-	}
-
-	public String getTraceTimeType() {
-		return traceTimeType;
-	}
-
-	public void setTraceTimeType(String traceTimeType) {
-		this.traceTimeType = traceTimeType;
-	}
-
-	public String getTraceDelFlagType() {
-		return traceDelFlagType;
-	}
-
-	public void setTraceDelFlagType(String traceDelFlagType) {
-		this.traceDelFlagType = traceDelFlagType;
-	}
+	private boolean traceable;
+	private DbType traceType;
+	private boolean hasId;
+	private DbType idType;
+	private DbType traceTimeType;
+	private DbType traceDelFlagType;
 
 	@Override
 	public String toString() {
@@ -88,5 +28,53 @@ public class DbTableConfig {
 		builder.append("]");
 		return builder.toString();
 	}
-	
+
+	public boolean isTraceable() {
+		return traceable;
+	}
+
+	public void setTraceable(boolean traceable) {
+		this.traceable = traceable;
+	}
+
+	public DbType getTraceType() {
+		return traceType;
+	}
+
+	public void setTraceType(DbType traceType) {
+		this.traceType = traceType;
+	}
+
+	public boolean isHasId() {
+		return hasId;
+	}
+
+	public void setHasId(boolean hasId) {
+		this.hasId = hasId;
+	}
+
+	public DbType getIdType() {
+		return idType;
+	}
+
+	public void setIdType(DbType idType) {
+		this.idType = idType;
+	}
+
+	public DbType getTraceTimeType() {
+		return traceTimeType;
+	}
+
+	public void setTraceTimeType(DbType traceTimeType) {
+		this.traceTimeType = traceTimeType;
+	}
+
+	public DbType getTraceDelFlagType() {
+		return traceDelFlagType;
+	}
+
+	public void setTraceDelFlagType(DbType traceDelFlagType) {
+		this.traceDelFlagType = traceDelFlagType;
+	}
+
 }

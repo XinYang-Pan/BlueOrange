@@ -1,8 +1,12 @@
 -- TBL_PERSON
-ALTER TABLE TBL_PERSON ADD SEX varchar(6) NULL;
-ALTER TABLE TBL_PERSON ALTER NAME TYPE varchar(255);
-ALTER TABLE TBL_PERSON ALTER NAME DROP NOT NULL;
-ALTER TABLE TBL_PERSON ALTER UPDATE_ID TYPE numeric(8);
-ALTER TABLE TBL_PERSON ALTER UPDATE_ID DROP NOT NULL;
-ALTER TABLE TBL_PERSON ALTER CREATE_ID TYPE numeric(8);
-ALTER TABLE TBL_PERSON ALTER CREATE_ID DROP NOT NULL;
+CREATE TABLE TBL_PERSON (
+	ID bigint NOT NULL PRIMARY KEY, -- Auto added for HasId Po
+	NAME varchar(255) NULL,
+	AGE int NOT NULL,
+	SEX varchar(6) NULL, -- gender
+	CREATE_ID bigint NULL, -- Auto added for Traceable Po
+	UPDATE_ID bigint NULL, -- Auto added for Traceable Po
+	CREATE_TIME date NULL, -- Auto added for Traceable Po
+	UPDATE_TIME date NULL, -- Auto added for Traceable Po
+	DEL_FLAG boolean NULL -- Auto added for Traceable Po
+);
