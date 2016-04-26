@@ -25,7 +25,7 @@ public abstract class AbstractEntityDao<T, K> implements EntityDao<T, K> {
 		idHandler = EntityUtils.idGetter(parameterizedClass);
 	}
 
-	public final void saveOrUpdate(T t) {
+	public void saveOrUpdate(T t) {
 		if (t == null) {
 			return;
 		}
@@ -36,7 +36,7 @@ public abstract class AbstractEntityDao<T, K> implements EntityDao<T, K> {
 		}
 	}
 
-	public final void saveOrUpdateAll(List<T> list) {
+	public void saveOrUpdateAll(List<T> list) {
 		if (list == null) {
 			return;
 		}
@@ -61,5 +61,5 @@ public abstract class AbstractEntityDao<T, K> implements EntityDao<T, K> {
 	public Class<T> getParameterizedClass() {
 		return parameterizedClass;
 	}
-	
+
 }

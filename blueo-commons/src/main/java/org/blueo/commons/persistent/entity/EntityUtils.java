@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 import org.blueo.commons.persistent.dao.po.id.HasId;
 import org.blueo.commons.persistent.dao.po.id.HasIdHandler;
@@ -44,6 +45,15 @@ public class EntityUtils {
 	public static String getColumnName(PropertyDescriptor pd) {
 		Column column = getAnnotation(pd, Column.class);
 		return column.name();
+	}
+
+	public static String getSequenceName(PropertyDescriptor pd) {
+		SequenceGenerator sequenceGenerator = getAnnotation(pd, SequenceGenerator.class);
+		if (sequenceGenerator != null) {
+			return sequenceGenerator.sequenceName();
+		} else {
+			return null;
+		}
 	}
 
 	public static boolean isColumn(PropertyDescriptor pd) {

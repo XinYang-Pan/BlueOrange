@@ -33,7 +33,9 @@ public class EnumeratedWrapper extends FieldAnnotationWrapper {
 	public List<ClassWrapper> getImports() {
 		List<ClassWrapper> classWrappers = Lists.newArrayList();
 		classWrappers.addAll(super.getImports());
-		classWrappers.add(ClassWrapper.of(EnumType.class));
+		if (enumType != null) {
+			classWrappers.add(ClassWrapper.of(EnumType.class));
+		}
 		return classWrappers;
 	}
 	

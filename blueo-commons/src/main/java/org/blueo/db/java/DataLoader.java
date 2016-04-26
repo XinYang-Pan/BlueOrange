@@ -163,6 +163,7 @@ public class DataLoader {
 			// TODO format exception
 			return null;
 		}
+		String seq = key2Value.get("seq");
 		// Find Table Definition start
 		DbTableConfig dbTableConfig = buildDbTableConfig(key2Value);
 		int rows = sheet.getRows();
@@ -211,6 +212,9 @@ public class DataLoader {
 		// Table
 		DbTable dbTable = new DbTable();
 		dbTable.setName(tableName);
+		if (StringUtils.isNotBlank(seq)) {
+			dbTable.setSeq(seq);
+		}
 		dbTable.setPk(pk);
 		dbTable.setDbColumns(dbColumns);
 		dbTable.setDbTableConfig(dbTableConfig);

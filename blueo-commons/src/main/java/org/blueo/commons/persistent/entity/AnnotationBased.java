@@ -29,8 +29,9 @@ public class AnnotationBased<T> extends EntityTable<T> {
 				EntityColumn entityColumn = this.build(pd);
 				if (EntityUtils.isId(pd)) {
 					idCol = entityColumn;
+					seqName = EntityUtils.getSequenceName(pd);
 				} else {
-					Preconditions.checkArgument(entityColumn.isGeneratedValue(), "Not support none id column to be GeneratedValue!");
+					Preconditions.checkArgument(!entityColumn.isGeneratedValue(), "Not support none id column to be GeneratedValue! ref="+pd);
 					noneIdCols.add(entityColumn);
 				}
 			}

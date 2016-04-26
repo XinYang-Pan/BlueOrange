@@ -2,6 +2,7 @@ package org.blueo.commons.persistent.entity;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import com.google.common.base.Preconditions;
@@ -10,6 +11,7 @@ import com.google.common.collect.Lists;
 public abstract class EntityTable<T> {
 
 	protected String tableName;
+	protected String seqName;
 	protected Class<T> parameterizedClass;
 	protected EntityColumn idCol = null;
 	protected List<EntityColumn> noneIdCols = Lists.newArrayList();
@@ -43,7 +45,7 @@ public abstract class EntityTable<T> {
 	}
 	
 	public List<EntityColumn> getNoneGenValueCols() {
-		if (idCol.isGeneratedValue()) {
+		if (idCol.isGeneratedValue() && !this.isSequenceGenerated()) {
 			return this.getAllCols();
 		} else {
 			return this.getNoneIdCols();
@@ -57,6 +59,10 @@ public abstract class EntityTable<T> {
 		return allCols;
 	}
 
+	public boolean isSequenceGenerated() {
+		return StringUtils.isNotBlank(seqName);
+	}
+
 	protected abstract void doInit(Class<T> clazz);
 	
 	// -----------------------------
@@ -65,6 +71,10 @@ public abstract class EntityTable<T> {
 
 	public String getTableName() {
 		return tableName;
+	}
+
+	public String getSeqName() {
+		return seqName;
 	}
 
 	public EntityColumn getIdCol() {

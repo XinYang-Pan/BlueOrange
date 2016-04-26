@@ -6,8 +6,10 @@ import java.util.Map;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.blueo.commons.persistent.dao.po.id.HasId;
 import org.blueo.commons.persistent.dao.po.traceable.TraceablePo;
@@ -21,6 +23,8 @@ import org.blueo.pojogen.bo.PojoField;
 import org.blueo.pojogen.bo.PojoField.AnnotationType;
 import org.blueo.pojogen.bo.wrapper.annotation.AnnotationWrapperUtils;
 import org.blueo.pojogen.bo.wrapper.annotation.buildin.EnumeratedWrapper;
+import org.blueo.pojogen.bo.wrapper.annotation.buildin.GeneratedValueWrapper;
+import org.blueo.pojogen.bo.wrapper.annotation.buildin.SequenceGeneratorWrapper;
 import org.blueo.pojogen.bo.wrapper.clazz.ClassWrapper;
 import org.springframework.stereotype.Repository;
 
@@ -54,12 +58,12 @@ public class PojoBuildUtils {
 		DbTableConfig dbTableConfig = dbTable.getDbTableConfig();
 		//
 		List<PojoField> pojoFields = Lists.newArrayList();
-		PojoField pk = buildEntityField(dbTable.getPk(), dbConfig, true);
+		PojoField pk = buildEntityField(dbTable, dbTable.getPk(), dbConfig, true);
 		if (pk != null) {
 			pojoFields.add(pk);
 		}
 		for (DbColumn dbColumn : dbTable.getDbColumns()) {
-			pojoFields.add(buildEntityField(dbColumn, dbConfig, false));
+			pojoFields.add(buildEntityField(dbTable, dbColumn, dbConfig, false));
 		}
 		//
 		PojoClass pojoClass = new PojoClass();
@@ -86,7 +90,7 @@ public class PojoBuildUtils {
 		return pojoClass;
 	}
 
-	private static PojoField buildEntityField(DbColumn dbColumn, DbGlobalConfigRawData dbConfig, boolean isPk) {
+	private static PojoField buildEntityField(DbTable dbTable, DbColumn dbColumn, DbGlobalConfigRawData dbConfig, boolean isPk) {
 		if (dbColumn == null) {
 			return null;
 		}
@@ -95,14 +99,21 @@ public class PojoBuildUtils {
 		pojoField.getValueMap().put("columnName", dbColumn.getName());
 		if (isPk) {
 			pojoField.addAnnotation(AnnotationType.Get, Id.class);
-			pojoField.addAnnotation(AnnotationType.Get, GeneratedValue.class);
+			String seq = dbTable.getSeq();
+			if (StringUtils.isEmpty(seq)) {
+				pojoField.addAnnotation(AnnotationType.Get, GeneratedValue.class);
+			} else {
+				pojoField.addAnnotationWrapper(AnnotationType.Get, new SequenceGeneratorWrapper(seq, seq));
+				pojoField.addAnnotationWrapper(AnnotationType.Get, new GeneratedValueWrapper(GenerationType.SEQUENCE, seq));
+			}
 		}
 		pojoField.addAnnotationWrapper(AnnotationType.Get, AnnotationWrapperUtils.COLUMN_WRAPPER);
 		DbType dbType = dbColumn.getDbType();
 		ClassWrapper javaType = dbType.getJavaType();
 		if (dbColumn.isEnumType()) {
 			EnumType enumeratedType = null;
-			if ("varchar".equalsIgnoreCase(dbType.getSqlType())) {
+			if ("varchar".equalsIgnoreCase(dbType.getSqlType())
+					||"varchar2".equalsIgnoreCase(dbType.getSqlType())) {
 				enumeratedType = EnumType.STRING;
 			}
 			pojoField.addAnnotationWrapper(AnnotationType.Get, new EnumeratedWrapper(enumeratedType));

@@ -4,6 +4,7 @@ import java.util.Formatter;
 import java.util.Iterator;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.blueo.commons.FormatterWrapper;
 import org.blueo.db.vo.DbColumn;
 import org.blueo.db.vo.DbTable;
@@ -55,6 +56,12 @@ public class GenericSqlBuilder implements SqlBuilder {
 	
 	protected String createSql(DbTable dbTable) {
 		try (FormatterWrapper fw = new FormatterWrapper(new Formatter(new StringBuilder()))) {
+			String seq = dbTable.getSeq();
+			if (StringUtils.isNotEmpty(seq)) {
+				fw.formatln("DROP SEQUENCE %s;", seq);
+				fw.formatln("CREATE SEQUENCE %s;", seq);
+			}
+			fw.formatln("DROP TABLE %s;", dbTable.getName());
 			fw.formatln("CREATE TABLE %s (", dbTable.getName());
 			// pk
 			DbColumn pk = dbTable.getPk();

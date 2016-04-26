@@ -6,6 +6,7 @@ import org.blueo.db.config.DbTableConfig;
 
 public class DbTable {
 	private String name;
+	private String seq;
 	private DbColumn pk;
 	private List<DbColumn> dbColumns;
 	private DbTableConfig dbTableConfig;
@@ -15,6 +16,8 @@ public class DbTable {
 		StringBuilder builder = new StringBuilder();
 		builder.append("DbTable [name=");
 		builder.append(name);
+		builder.append(", seq=");
+		builder.append(seq);
 		builder.append(", pk=");
 		builder.append(pk);
 		builder.append(", dbColumns=");
@@ -55,6 +58,14 @@ public class DbTable {
 
 	public void setDbTableConfig(DbTableConfig dbTableConfig) {
 		this.dbTableConfig = dbTableConfig;
+	}
+
+	public String getSeq() {
+		return seq;
+	}
+
+	public void setSeq(String seq) {
+		this.seq = seq;
 	}
 
 }

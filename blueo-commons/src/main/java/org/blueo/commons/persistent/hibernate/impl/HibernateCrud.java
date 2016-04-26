@@ -9,6 +9,14 @@ public class HibernateCrud<T, K extends Serializable> extends AbstractCrud<T, K>
 	//
 	protected HibernateTemplate hibernateTemplate;
 
+	public HibernateCrud() {
+		super();
+	}
+
+	public HibernateCrud(Class<T> parameterizedClass) {
+		super(parameterizedClass);
+	}
+
 	@Override
 	public T getById(K id) {
 		return hibernateTemplate.get(parameterizedClass, id);

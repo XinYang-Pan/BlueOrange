@@ -16,10 +16,18 @@ public class MixedEntityDao<T, K extends Serializable> extends AssemblableDao<T,
 	private HibernateTemplate hibernateTemplate;
 	private JdbcTemplate jdbcTemplate;
 
+	public MixedEntityDao() {
+		super();
+	}
+
+	public MixedEntityDao(Class<T> parameterizedClass) {
+		super(parameterizedClass);
+	}
+
 	@PostConstruct
 	public void init() {
 		//
-		HibernateCrud<T, K> hibernateCrud = new HibernateCrud<>();
+		HibernateCrud<T, K> hibernateCrud = new HibernateCrud<>(this.getParameterizedClass());
 		hibernateCrud.setHibernateTemplate(hibernateTemplate);
 		this.setCrud(hibernateCrud);
 		//
@@ -27,9 +35,9 @@ public class MixedEntityDao<T, K extends Serializable> extends AssemblableDao<T,
 		hibernateSearch.setHibernateTemplate(hibernateTemplate);
 		this.setSearch(hibernateSearch);
 		//
-		JdbcDao<T, K> jdbcDao = new JdbcDao<T, K>();
+		JdbcDao<T, K> jdbcDao = new JdbcDao<T, K>(this.getParameterizedClass());
 		jdbcDao.setJdbcTemplate(jdbcTemplate);
-		jdbcDao.setParameterizedClass(parameterizedClass);
+		jdbcDao.init();
 		this.setCrudBatch(jdbcDao);
 	}
 

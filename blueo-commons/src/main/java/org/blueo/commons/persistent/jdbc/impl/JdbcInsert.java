@@ -17,7 +17,15 @@ public class JdbcInsert<T, K> extends JdbcOperation<T, K> {
 
 	@PostConstruct
 	public void init() {
-		insertSql = BlueoJdbcs.buildInsertSql(entityTable.getTableName(), EntityTable.getColumnNames(entityTable.getNoneGenValueCols()));
+		String tableName = entityTable.getTableName();
+		List<String> columnNames = EntityTable.getColumnNames(entityTable.getNoneGenValueCols());
+		if (entityTable.isSequenceGenerated()) {
+			String seqName = entityTable.getSeqName();
+			String columnName = entityTable.getIdCol().getColumnName();
+			insertSql = BlueoJdbcs.buildSeqInsertSql(tableName, seqName, columnName, columnNames);
+		} else {
+			insertSql = BlueoJdbcs.buildInsertSql(tableName, columnNames);
+		}
 		insertPss = new ColumnPpss<T>(entityTable.getNoneGenValueCols());
 	}
 

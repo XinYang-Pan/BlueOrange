@@ -1,5 +1,7 @@
 package org.blueo.commons.persistent.jdbc.impl;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.blueo.commons.persistent.dao.po.id.IdHandler;
 import org.blueo.commons.persistent.entity.EntityTable;
@@ -12,6 +14,11 @@ public class JdbcOperation<T, K> {
 	protected EntityTable<T> entityTable;
 	private IdHandler<T, K> idHandler;
 	private Integer batchSize;
+	
+	@PostConstruct
+	public void init() {
+		
+	}
 	
 	protected int batchSize() {
 		return ObjectUtils.defaultIfNull(batchSize, DEFAULT_BATCH_SIZE);

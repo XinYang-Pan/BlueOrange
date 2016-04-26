@@ -14,10 +14,10 @@ public class JdbcDao<T, K> extends AbstractEntityDao<T, K> {
 	private JdbcTemplate jdbcTemplate;
 	// 
 	private EntityTable<T> entityTable;
-	private JdbcSelect<T, K> jdbcSelect;
-	private JdbcInsert<T, K> jdbcInsert;
-	private JdbcUpdate<T, K> jdbcUpdate;
-	private JdbcDelete<T, K> jdbcDelete;
+	private JdbcSelect<T, K> jdbcSelect = new JdbcSelect<>();
+	private JdbcInsert<T, K> jdbcInsert = new JdbcInsert<>();
+	private JdbcUpdate<T, K> jdbcUpdate = new JdbcUpdate<>();
+	private JdbcDelete<T, K> jdbcDelete = new JdbcDelete<>();
 	
 	public JdbcDao() {
 		super();
@@ -34,6 +34,7 @@ public class JdbcDao<T, K> extends AbstractEntityDao<T, K> {
 			jdbcOperation.setBoTable(entityTable);
 			jdbcOperation.setIdHandler(idHandler);
 			jdbcOperation.setJdbcTemplate(jdbcTemplate);
+			jdbcOperation.init();
 		}
 	}
 

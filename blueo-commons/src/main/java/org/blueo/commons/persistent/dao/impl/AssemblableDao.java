@@ -13,6 +13,14 @@ public class AssemblableDao<T, K> extends AbstractEntityDao<T, K> {
 	private CrudBatch<T, K> crudBatch;
 	private Search<T> search;
 
+	public AssemblableDao() {
+		super();
+	}
+
+	public AssemblableDao(Class<T> parameterizedClass) {
+		super(parameterizedClass);
+	}
+	
 	// -----------------------------
 	// ----- CRUD
 	// -----------------------------
