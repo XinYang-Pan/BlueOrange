@@ -52,11 +52,6 @@ public abstract class AbstractEntityDao<T, K> implements EntityDao<T, K> {
 		this.saveAll(saves);
 		this.updateAll(updates);
 	}
-	
-	public void setParameterizedClass(Class<T> parameterizedClass) {
-		this.parameterizedClass = parameterizedClass;
-		idHandler = EntityUtils.idGetter(parameterizedClass);
-	}
 
 	public Class<T> getParameterizedClass() {
 		return parameterizedClass;

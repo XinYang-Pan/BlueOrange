@@ -101,8 +101,7 @@ public class MixedCommonDao implements CommonDao {
 
 	protected <T> EntityDao<T, ?> doGetEntityDao(Class<T> entityClass) {
 		JdbcDao<T, ?> jdbcDao;
-		jdbcDao = new JdbcDao<>();
-		jdbcDao.setParameterizedClass(entityClass);
+		jdbcDao = new JdbcDao<>(entityClass);
 		jdbcDao.setJdbcTemplate(jdbcTemplate);
 		jdbcDao.init();
 		return jdbcDao;
