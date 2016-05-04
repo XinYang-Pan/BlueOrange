@@ -10,7 +10,15 @@ import org.blueo.commons.persistent.dao.po.traceable.TraceablePoOverwriter;
 public class TraceableDao<T extends TraceablePo<U>, K, U> extends AbstractEntityDao<T, K> {
 	private TraceablePoOverwriter<T, U> traceablePoOverwriter;
 	private EntityDao<T, K> entityDao;
+	
+	public TraceableDao() {
+		super();
+	}
 
+	public TraceableDao(Class<T> parameterizedClass) {
+		super(parameterizedClass);
+	}
+	
 	// -----------------------------
 	// ----- CRUD
 	// -----------------------------

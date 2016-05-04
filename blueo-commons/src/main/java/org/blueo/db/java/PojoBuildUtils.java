@@ -103,8 +103,12 @@ public class PojoBuildUtils {
 			if (StringUtils.isEmpty(seq)) {
 				pojoField.addAnnotation(AnnotationType.Get, GeneratedValue.class);
 			} else {
-				pojoField.addAnnotationWrapper(AnnotationType.Get, new SequenceGeneratorWrapper(seq, seq));
-				pojoField.addAnnotationWrapper(AnnotationType.Get, new GeneratedValueWrapper(GenerationType.SEQUENCE, seq));
+				// 
+				Converter<String, String> converter = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_CAMEL);
+				String seqGenName = converter.convert(seq);
+				// 
+				pojoField.addAnnotationWrapper(AnnotationType.Get, new SequenceGeneratorWrapper(seqGenName, seq));
+				pojoField.addAnnotationWrapper(AnnotationType.Get, new GeneratedValueWrapper(GenerationType.SEQUENCE, seqGenName));
 			}
 		}
 		pojoField.addAnnotationWrapper(AnnotationType.Get, AnnotationWrapperUtils.COLUMN_WRAPPER);

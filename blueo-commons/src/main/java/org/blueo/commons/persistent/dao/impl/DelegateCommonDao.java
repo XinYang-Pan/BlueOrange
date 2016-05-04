@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.PostConstruct;
 
@@ -13,31 +14,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.google.common.collect.Maps;
 
 public class DelegateCommonDao implements CommonDao {
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
+	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
-	private ApplicationContext applicationContext;
+	protected ApplicationContext applicationContext;
 	// 
-	private Map<Class<?>, EntityDao<?, ?>> map = Maps.newHashMap();
+	protected ConcurrentMap<Class<?>, EntityDao<?, ?>> map = Maps.newConcurrentMap();
 	
+	@SuppressWarnings("rawtypes")
 	@PostConstruct
 	public void init() {
-		Map<String, Object> entityDaoMap = applicationContext.getBeansWithAnnotation(Repository.class);
+		Map<String, EntityDao> entityDaoMap = applicationContext.getBeansOfType(EntityDao.class);
 		if (entityDaoMap != null) {
-			for (Object object : entityDaoMap.values()) {
-				if (object instanceof EntityDao) {
-					EntityDao<?, ?> entityDao = (EntityDao<?, ?>)object;
-					Class<?> enityClass = entityDao.getParameterizedClass();
-					map.put(enityClass, entityDao);
-					log.debug("Register entity dao - enityClass={}, entityDao={}.", enityClass.getClass().getSimpleName(), entityDao.getClass().getSimpleName());
-				}
+			for (EntityDao entityDao : entityDaoMap.values()) {
+				Class<?> enityClass = entityDao.getParameterizedClass();
+				map.put(enityClass, entityDao);
+				log.debug("Register entity dao - enityClass={}, entityDao={}.", enityClass.getClass().getSimpleName(), entityDao.getClass().getSimpleName());
 			}
 		}
 	}
@@ -119,20 +117,20 @@ public class DelegateCommonDao implements CommonDao {
 
 
 	@SuppressWarnings("unchecked")
-	private <T> EntityDao<T, ?> getEntityDao(List<T> list) {
+	protected <T> EntityDao<T, ?> getEntityDao(List<T> list) {
 		Assert.notEmpty(list);
 		Class<T> entityClass = (Class<T>) list.get(0).getClass();
 		return getEntityDao(entityClass);
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> EntityDao<T, ?> getEntityDao(T t) {
+	protected <T> EntityDao<T, ?> getEntityDao(T t) {
 		Objects.requireNonNull(t);
 		return (EntityDao<T, ?>) getEntityDao(t.getClass());
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> EntityDao<T, ?> getEntityDao(Class<T> entityClass) {
+	protected <T> EntityDao<T, ?> getEntityDao(Class<T> entityClass) {
 		return (EntityDao<T, ?>) Objects.requireNonNull(map.get(entityClass));
 	}
 
