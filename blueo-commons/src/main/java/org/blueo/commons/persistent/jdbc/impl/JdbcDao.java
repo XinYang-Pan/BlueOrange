@@ -38,6 +38,10 @@ public class JdbcDao<T, K> extends AbstractEntityDao<T, K> {
 		}
 	}
 
+	public List<T> getAll() {
+		return jdbcSelect.getAll();
+	}
+
 	@Override
 	public T getById(K id) {
 		return jdbcSelect.getById(id);

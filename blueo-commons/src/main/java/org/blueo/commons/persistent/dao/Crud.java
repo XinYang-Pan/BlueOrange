@@ -1,5 +1,7 @@
 package org.blueo.commons.persistent.dao;
 
+import java.util.List;
+
 
 // T is entity, K is key
 public interface Crud<T, K> {
@@ -9,6 +11,8 @@ public interface Crud<T, K> {
 	// -----------------------------
 
 	public T getById(K id);
+	
+	public List<T> getAll();
 
 	// -----------------------------
 	// ----- Create

@@ -31,6 +31,11 @@ public class AssemblableDao<T, K> extends AbstractEntityDao<T, K> {
 	}
 
 	@Override
+	public List<T> getAll() {
+		return crud.getAll();
+	}
+
+	@Override
 	public K save(T t) {
 		return crud.save(t);
 	}

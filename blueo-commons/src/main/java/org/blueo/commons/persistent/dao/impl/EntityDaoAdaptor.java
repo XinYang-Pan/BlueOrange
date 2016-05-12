@@ -23,6 +23,11 @@ public class EntityDaoAdaptor<T, K> extends AbstractEntityDao<T, K> {
 		return entityDao.getById(id);
 	}
 
+	@Override
+	public List<T> getAll() {
+		return entityDao.getAll();
+	}
+
 	public void saveAll(List<T> list) {
 		entityDao.saveAll(list);
 	}

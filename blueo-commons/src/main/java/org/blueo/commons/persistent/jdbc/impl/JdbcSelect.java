@@ -30,6 +30,10 @@ public class JdbcSelect<T, K> extends JdbcOperation<T, K> {
 		return BlueoUtils.oneOrNull(jdbcTemplate.query(sql, new Object[] { id }, rowMapper));
 	}
 
+	public List<T> getAll() {
+		return jdbcTemplate.query(rowMapper.getSelectSqlBeforeWhere(), rowMapper);
+	}
+
 	public List<T> findByExample(T example) {
 		Objects.requireNonNull(example);
 		List<String> whereSqlPieces = Lists.newArrayList();
