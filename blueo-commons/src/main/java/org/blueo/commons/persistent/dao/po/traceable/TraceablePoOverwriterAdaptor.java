@@ -114,7 +114,7 @@ public abstract class TraceablePoOverwriterAdaptor<T extends TraceablePo<U>, U> 
 	@Override
 	public void findByExampleOverwrite(T t) {
 		if (t.getDelFlag() == null) {
-			t.setDelFlag(true);
+			t.setDelFlag(false);
 		}
 	}
 

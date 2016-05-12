@@ -9,6 +9,7 @@ public class DbTable {
 	private String seq;
 	private DbColumn pk;
 	private List<DbColumn> dbColumns;
+	private List<DbIndex> dbIndexs;
 	private DbTableConfig dbTableConfig;
 
 	@Override
@@ -22,6 +23,8 @@ public class DbTable {
 		builder.append(pk);
 		builder.append(", dbColumns=");
 		builder.append(dbColumns);
+		builder.append(", dbIndexs=");
+		builder.append(dbIndexs);
 		builder.append(", dbTableConfig=");
 		builder.append(dbTableConfig);
 		builder.append("]");
@@ -66,6 +69,14 @@ public class DbTable {
 
 	public void setSeq(String seq) {
 		this.seq = seq;
+	}
+
+	public List<DbIndex> getDbIndexs() {
+		return dbIndexs;
+	}
+
+	public void setDbIndexs(List<DbIndex> dbIndexs) {
+		this.dbIndexs = dbIndexs;
 	}
 
 }

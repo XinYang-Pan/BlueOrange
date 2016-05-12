@@ -19,6 +19,24 @@ public class DbType {
 	private Integer length2;
 	private ClassWrapper javaType;
 
+	public DbType(String type) {
+		super();
+		this.rawType = type;
+	}
+
+	public DbType(String type, Integer length) {
+		super();
+		this.rawType = type;
+		this.length = length;
+	}
+
+	public DbType(String type, Integer length, Integer length2) {
+		super();
+		this.rawType = type;
+		this.length = length;
+		this.length2 = length2;
+	}
+	
 	public static DbType of(DbColumnRawData dbColumnRawData) {
 		DbType dbType = DbType.of(dbColumnRawData.getType(), dbColumnRawData.getLength());
 		dbType.setSqlType(dbColumnRawData.getSqlType());
@@ -107,55 +125,62 @@ public class DbType {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((javaType == null) ? 0 : javaType.hashCode());
 		result = prime * result + ((length == null) ? 0 : length.hashCode());
 		result = prime * result + ((length2 == null) ? 0 : length2.hashCode());
 		result = prime * result + ((rawType == null) ? 0 : rawType.hashCode());
+		result = prime * result + ((sqlType == null) ? 0 : sqlType.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		DbType other = (DbType) obj;
+		if (javaType == null) {
+			if (other.javaType != null) {
+				return false;
+			}
+		} else if (!javaType.equals(other.javaType)) {
+			return false;
+		}
 		if (length == null) {
-			if (other.length != null)
+			if (other.length != null) {
 				return false;
-		} else if (!length.equals(other.length))
+			}
+		} else if (!length.equals(other.length)) {
 			return false;
+		}
 		if (length2 == null) {
-			if (other.length2 != null)
+			if (other.length2 != null) {
 				return false;
-		} else if (!length2.equals(other.length2))
+			}
+		} else if (!length2.equals(other.length2)) {
 			return false;
+		}
 		if (rawType == null) {
-			if (other.rawType != null)
+			if (other.rawType != null) {
 				return false;
-		} else if (!rawType.equals(other.rawType))
+			}
+		} else if (!rawType.equals(other.rawType)) {
 			return false;
+		}
+		if (sqlType == null) {
+			if (other.sqlType != null) {
+				return false;
+			}
+		} else if (!sqlType.equals(other.sqlType)) {
+			return false;
+		}
 		return true;
-	}
-
-	public DbType(String type) {
-		super();
-		this.rawType = type;
-	}
-
-	public DbType(String type, Integer length) {
-		super();
-		this.rawType = type;
-		this.length = length;
-	}
-
-	public DbType(String type, Integer length, Integer length2) {
-		super();
-		this.rawType = type;
-		this.length = length;
-		this.length2 = length2;
 	}
 
 	public String getRawType() {

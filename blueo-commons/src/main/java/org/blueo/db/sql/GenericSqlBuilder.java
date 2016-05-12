@@ -2,13 +2,16 @@ package org.blueo.db.sql;
 
 import java.util.Formatter;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.blueo.commons.FormatterWrapper;
 import org.blueo.db.vo.DbColumn;
+import org.blueo.db.vo.DbIndex;
 import org.blueo.db.vo.DbTable;
 import org.blueo.db.vo.DbTablePair;
+import org.springframework.util.Assert;
 
 public class GenericSqlBuilder implements SqlBuilder {
 
@@ -101,5 +104,27 @@ public class GenericSqlBuilder implements SqlBuilder {
 			return fw.toString();
 		}
 	}
-	
+
+	public String createIndexSql(DbIndex dbIndex) {
+		try (FormatterWrapper fw = new FormatterWrapper(new Formatter(new StringBuilder()))) {
+			String uniqueStr = dbIndex.isUnique()?"UNIQUE ":"";
+			String columnsStr = StringUtils.join(dbIndex.getColumnNames(), ",");
+			fw.format("CREATE %sINDEX %s ON %s (%s);", uniqueStr, dbIndex.getIndexName(), dbIndex.getTableName(), columnsStr);
+			return fw.toString();
+		}
+	}
+
+	public String createIndexSql(DbTable dbTable) {
+		Assert.notNull(dbTable);
+		List<DbIndex> dbIndexs = dbTable.getDbIndexs();
+		if (CollectionUtils.isEmpty(dbIndexs)) {
+			return null;
+		}
+		try (FormatterWrapper fw = new FormatterWrapper(new Formatter(new StringBuilder()))) {
+			for (DbIndex dbIndex : dbIndexs) {
+				fw.formatln(createIndexSql(dbIndex));
+			}
+			return fw.toString();
+		}
+	}
 }

@@ -102,14 +102,16 @@ public class DataLoader {
 		for (int i = rowStartIndex; i < rows; i++) {
 			String enumName = getContent(sheet, 1, i);
 			String enumValues = getContent(sheet, 2, i);
-			// 
-			DbEnum dbEnum = new DbEnum();
-			dbEnum.setPackageName(packageName);
-			dbEnum.setName(enumName);
-			dbEnum.setValues(Splitter.on(',').trimResults().splitToList(enumValues));
-			// 
-			dbEnums.add(dbEnum);
-			name2dbEnumsMap.put(dbEnum.getName(), dbEnum);
+			if (StringUtils.isNotBlank(enumValues)) {
+				// 
+				DbEnum dbEnum = new DbEnum();
+				dbEnum.setPackageName(packageName);
+				dbEnum.setName(enumName);
+				dbEnum.setValues(Splitter.on(',').trimResults().splitToList(enumValues));
+				// 
+				dbEnums.add(dbEnum);
+				name2dbEnumsMap.put(dbEnum.getName(), dbEnum);
+			}
 		}
 	}
 
