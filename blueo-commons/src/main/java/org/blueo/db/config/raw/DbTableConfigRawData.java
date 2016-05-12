@@ -1,6 +1,5 @@
 package org.blueo.db.config.raw;
 
-import org.apache.commons.lang3.BooleanUtils;
 
 public class DbTableConfigRawData {
 	private String traceable;
@@ -8,20 +7,34 @@ public class DbTableConfigRawData {
 	private String hasId;
 	private String idType;
 	private String traceTimeType;
-	private String traceDelFlagType;
-
-	public boolean isTraceableInBoolean() {
-		return BooleanUtils.isTrue(BooleanUtils.toBooleanObject(traceable));
-	}
-
-	public boolean isHasIdInBoolean() {
-		return BooleanUtils.isTrue(BooleanUtils.toBooleanObject(hasId));
-	}
+	private String activeable;
+	private String activeableType;
 
 	// -----------------------------
 	// ----- Get Set ToString HashCode Equals
 	// -----------------------------
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("DbTableConfigRawData [traceable=");
+		builder.append(traceable);
+		builder.append(", traceType=");
+		builder.append(traceType);
+		builder.append(", hasId=");
+		builder.append(hasId);
+		builder.append(", idType=");
+		builder.append(idType);
+		builder.append(", traceTimeType=");
+		builder.append(traceTimeType);
+		builder.append(", activeable=");
+		builder.append(activeable);
+		builder.append(", activeableType=");
+		builder.append(activeableType);
+		builder.append("]");
+		return builder.toString();
+	}
+	
 	public String getTraceable() {
 		return traceable;
 	}
@@ -62,31 +75,21 @@ public class DbTableConfigRawData {
 		this.traceTimeType = traceTimeType;
 	}
 
-	public String getTraceDelFlagType() {
-		return traceDelFlagType;
+	public String getActiveable() {
+		return activeable;
 	}
 
-	public void setTraceDelFlagType(String traceDelFlagType) {
-		this.traceDelFlagType = traceDelFlagType;
+	public void setActiveable(String activeable) {
+		this.activeable = activeable;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("DbTableConfig [traceable=");
-		builder.append(traceable);
-		builder.append(", traceType=");
-		builder.append(traceType);
-		builder.append(", hasId=");
-		builder.append(hasId);
-		builder.append(", idType=");
-		builder.append(idType);
-		builder.append(", traceTimeType=");
-		builder.append(traceTimeType);
-		builder.append(", traceDelFlagType=");
-		builder.append(traceDelFlagType);
-		builder.append("]");
-		return builder.toString();
+	public String getActiveableType() {
+		return activeableType;
 	}
+
+	public void setActiveableType(String activeableType) {
+		this.activeableType = activeableType;
+	}
+
 	
 }

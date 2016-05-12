@@ -16,8 +16,5 @@ public interface TraceablePo<U> {
 
     public Date getUpdateTime() ;
     public void setUpdateTime(Date updateTime) ;
-
-    public Boolean getDelFlag() ;
-    public void setDelFlag(Boolean delFlag) ;
     
 }

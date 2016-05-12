@@ -27,7 +27,8 @@ public class DataLoaderUtils {
 		dbTableConfig.setHasId(BooleanUtils.isTrue(BooleanUtils.toBooleanObject(dbTableConfigRawData.getHasId())));
 		dbTableConfig.setIdType(buildDbType(dbTableConfigRawData.getIdType(), rawType2SqlType));
 		dbTableConfig.setTraceTimeType(buildDbType(dbTableConfigRawData.getTraceTimeType(), rawType2SqlType));
-		dbTableConfig.setTraceDelFlagType(buildDbType(dbTableConfigRawData.getTraceDelFlagType(), rawType2SqlType));
+		dbTableConfig.setActiveable(BooleanUtils.isTrue(BooleanUtils.toBooleanObject(dbTableConfigRawData.getActiveable())));
+		dbTableConfig.setActiveableType(buildDbType(dbTableConfigRawData.getActiveableType(), rawType2SqlType));
 		return dbTableConfig;
 	}
 

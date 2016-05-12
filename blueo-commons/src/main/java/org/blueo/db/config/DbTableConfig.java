@@ -8,7 +8,8 @@ public class DbTableConfig {
 	private boolean hasId;
 	private DbType idType;
 	private DbType traceTimeType;
-	private DbType traceDelFlagType;
+	private boolean activeable;
+	private DbType activeableType;
 
 	@Override
 	public String toString() {
@@ -23,8 +24,10 @@ public class DbTableConfig {
 		builder.append(idType);
 		builder.append(", traceTimeType=");
 		builder.append(traceTimeType);
-		builder.append(", traceDelFlagType=");
-		builder.append(traceDelFlagType);
+		builder.append(", activeable=");
+		builder.append(activeable);
+		builder.append(", activeableType=");
+		builder.append(activeableType);
 		builder.append("]");
 		return builder.toString();
 	}
@@ -69,12 +72,20 @@ public class DbTableConfig {
 		this.traceTimeType = traceTimeType;
 	}
 
-	public DbType getTraceDelFlagType() {
-		return traceDelFlagType;
+	public boolean isActiveable() {
+		return activeable;
 	}
 
-	public void setTraceDelFlagType(DbType traceDelFlagType) {
-		this.traceDelFlagType = traceDelFlagType;
+	public void setActiveable(boolean activeable) {
+		this.activeable = activeable;
+	}
+
+	public DbType getActiveableType() {
+		return activeableType;
+	}
+
+	public void setActiveableType(DbType activeableType) {
+		this.activeableType = activeableType;
 	}
 
 }

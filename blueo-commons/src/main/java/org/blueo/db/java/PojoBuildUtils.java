@@ -11,6 +11,7 @@ import javax.persistence.Id;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
+import org.blueo.commons.persistent.dao.po.activeable.ActiveablePo;
 import org.blueo.commons.persistent.dao.po.id.HasId;
 import org.blueo.commons.persistent.dao.po.traceable.TraceablePo;
 import org.blueo.db.config.DbTableConfig;
@@ -83,6 +84,9 @@ public class PojoBuildUtils {
 		}
 		if (dbTableConfig.isTraceable()) {
 			pojoClass.addInterfaces(ClassWrapper.of(TraceablePo.class, dbTableConfig.getTraceType().getJavaType().getFullName()));
+		}
+		if (dbTableConfig.isActiveable()) {
+			pojoClass.addInterfaces(ClassWrapper.of(ActiveablePo.class));
 		}
 		if (dbTableConfig.isHasId()) {
 			pojoClass.addInterfaces(ClassWrapper.of(HasId.class, dbTableConfig.getIdType().getJavaType().getFullName()));

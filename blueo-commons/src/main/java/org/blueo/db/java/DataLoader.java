@@ -226,7 +226,9 @@ public class DataLoader {
 			dbColumns.add(buildDbColumn("UPDATE_ID", dbTableConfig.getTraceType()));
 			dbColumns.add(buildDbColumn("CREATE_TIME", dbTableConfig.getTraceTimeType()));
 			dbColumns.add(buildDbColumn("UPDATE_TIME", dbTableConfig.getTraceTimeType()));
-			dbColumns.add(buildDbColumn("DEL_FLAG", dbTableConfig.getTraceDelFlagType()));
+		}
+		if (dbTableConfig.isActiveable()) {
+			dbColumns.add(buildDbColumn("ACTIVE_FLAG", dbTableConfig.getActiveableType()));
 		}
 		// HasId
 		if (dbTableConfig.isHasId() && dbTable.getPk() == null) {

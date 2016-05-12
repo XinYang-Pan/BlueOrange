@@ -4,8 +4,9 @@ import javax.persistence.Id;
 import javax.persistence.Enumerated;
 import java.util.Date;
 import javax.persistence.Column;
-import org.blueo.commons.persistent.dao.po.id.HasId;
+import org.blueo.commons.persistent.dao.po.activeable.ActiveablePo;
 import javax.persistence.EnumType;
+import org.blueo.commons.persistent.dao.po.id.HasId;
 import org.blueo.commons.persistent.dao.po.traceable.TraceablePo;
 import javax.persistence.GeneratedValue;
 import sample.org.blueo.db.enums.PersonSex;
@@ -16,7 +17,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "TBL_PERSON")
 @SuppressWarnings("serial")
-public class TblPerson implements Serializable, TraceablePo<Long>, HasId<Long> {
+public class TblPerson implements Serializable, TraceablePo<Long>, ActiveablePo, HasId<Long> {
 	private Long id;
 	private String name;
 	private Integer age;
@@ -25,7 +26,7 @@ public class TblPerson implements Serializable, TraceablePo<Long>, HasId<Long> {
 	private Long updateId;
 	private Date createTime;
 	private Date updateTime;
-	private Boolean delFlag;
+	private Boolean activeFlag;
 
 	@Id
 	@GeneratedValue
@@ -102,13 +103,13 @@ public class TblPerson implements Serializable, TraceablePo<Long>, HasId<Long> {
 		this.updateTime = updateTime;
 	}
 
-	@Column(name = "DEL_FLAG")
-	public Boolean getDelFlag() {
-		return delFlag;
+	@Column(name = "ACTIVE_FLAG")
+	public Boolean getActiveFlag() {
+		return activeFlag;
 	}
 
-	public void setDelFlag(Boolean delFlag) {
-		this.delFlag = delFlag;
+	public void setActiveFlag(Boolean activeFlag) {
+		this.activeFlag = activeFlag;
 	}
 
 	@Override
@@ -130,8 +131,8 @@ public class TblPerson implements Serializable, TraceablePo<Long>, HasId<Long> {
 		builder.append(createTime);
 		builder.append(", updateTime=");
 		builder.append(updateTime);
-		builder.append(", delFlag=");
-		builder.append(delFlag);
+		builder.append(", activeFlag=");
+		builder.append(activeFlag);
 		builder.append("]");
 		return builder.toString();
 	}

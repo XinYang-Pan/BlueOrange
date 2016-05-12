@@ -1,7 +1,9 @@
 package org.blueo.commons.persistent.dao.po.traceable;
 
+import java.util.Date;
 
-public class ThreadLocalGetter<T extends TraceablePo<U>, U> extends TraceablePoOverwriterAdaptor<T, U> {
+
+public class ThreadLocalGetter<U> implements UserIdAndTimeGetter<U> {
 
 	private ThreadLocal<U> createUpdateIdGetter = new ThreadLocal<>();
 
@@ -12,6 +14,11 @@ public class ThreadLocalGetter<T extends TraceablePo<U>, U> extends TraceablePoO
 
 	public void setUserId(U userId) {
 		createUpdateIdGetter.set(userId);
+	}
+
+	@Override
+	public Date currentTime() {
+		return new Date();
 	}
 
 }
