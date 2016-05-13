@@ -53,7 +53,7 @@ public abstract class AbstractEntityDao<T, K> implements EntityDao<T, K> {
 		this.updateAll(updates);
 	}
 
-	public Class<T> getParameterizedClass() {
+	public Class<T> getEntityClass() {
 		return parameterizedClass;
 	}
 

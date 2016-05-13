@@ -33,7 +33,7 @@ public class DelegateCommonDao implements CommonDao {
 		Map<String, EntityDao> entityDaoMap = applicationContext.getBeansOfType(EntityDao.class);
 		if (entityDaoMap != null) {
 			for (EntityDao entityDao : entityDaoMap.values()) {
-				Class<?> enityClass = entityDao.getParameterizedClass();
+				Class<?> enityClass = entityDao.getEntityClass();
 				map.put(enityClass, entityDao);
 				log.debug("Register entity dao - enityClass={}, entityDao={}.", enityClass.getClass().getSimpleName(), entityDao.getClass().getSimpleName());
 			}

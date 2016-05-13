@@ -8,6 +8,6 @@ public interface EntityDao<T, K> extends Crud<T, K>, CrudBatch<T, K>, Search<T> 
 
 	void saveOrUpdateAll(List<T> list);
 	
-	Class<T> getParameterizedClass();
+	Class<T> getEntityClass();
 
 }
