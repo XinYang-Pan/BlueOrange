@@ -1,0 +1,71 @@
+#!/bin/bash
+#ident  "%W%"
+
+BASEDIR=`dirname $0`
+ACTION=$1
+ARGS=${@:2}
+
+# status
+	if [ "${ACTION}" == "status" ] || [ "${ACTION}" == "s" ];then
+		${BASEDIR}/status.sh ${ARGS}
+# startApp
+	elif [ "${ACTION}" == "startApp" ] || [ "${ACTION}" == "ra" ];then
+		${BASEDIR}/startApp.sh ${ARGS}
+# startAppTail
+	elif [ "${ACTION}" == "startAppTail" ] || [ "${ACTION}" == "rat" ];then
+		${BASEDIR}/startAppTail.sh ${ARGS}
+# startAppAll
+	elif [ "${ACTION}" == "startAppAll" ] || [ "${ACTION}" == "raa" ];then
+		${BASEDIR}/startAppAll.sh ${ARGS}
+# stopApp
+	elif [ "${ACTION}" == "stopApp" ] || [ "${ACTION}" == "sa" ];then
+		${BASEDIR}/stopApp.sh ${ARGS}
+# stopAppAll
+	elif [ "${ACTION}" == "stopAppAll" ] || [ "${ACTION}" == "saa" ];then
+		${BASEDIR}/status.sh ${ARGS}
+		${BASEDIR}/stopAppAll.sh ${ARGS}
+# log
+	elif [ "${ACTION}" == "log" ] || [ "${ACTION}" == "l" ];then
+		${BASEDIR}/log.sh ${ARGS}
+# preInstallCheck
+	elif [ "${ACTION}" == "preInstallCheck" ] || [ "${ACTION}" == "pic" ];then
+		${BASEDIR}/preInstallCheck.bash ${ARGS}
+# checkAppVersion
+	elif [ "${ACTION}" == "checkAppVersion" ] || [ "${ACTION}" == "cav" ];then
+		${BASEDIR}/checkAppVersion.sh ${ARGS}
+# none matched
+	else
+		echo "This command[${ACTION}] is not supported!"
+		echo "Supported Command List!"
+		echo "	deployAll {skipTest}, da" -- when skipTest=no, test will run. Otherwise, skip test
+		echo "	deployAllSds {skipTest}, das" -- when skipTest=no, test will run. Otherwise, skip test
+		echo "	startApp [appName] {appEnv}, ra"
+		echo "	startAppAll {appEnv}, raa"
+		echo "	stopApp [appName], sa"
+		echo "	stopAppAll, saa"
+		echo "	installApp [appName], i"
+		echo "	uninstallApp [appName], d"
+		echo "	updateAndInstallApp [appName] {skipTest}, ui" -- when skipTest=no, test will run. Otherwise, skip test
+		echo "	updateAndInstallJar [appName] {skipTest}, jar" -- when skipTest=no, test will run. Otherwise, skip test
+		echo "	updateAppFolder, u"
+		echo "	status, s"
+		echo "	log [appName], l"
+		echo "	copyScripts [soeId] {serverName} {remoteAppDir}, cs"
+		echo "	copyApp [appName] [soeId] {serverName} {remoteAppDir}, ca"
+		echo "	copyAppAll [soeId] {serverName} {remoteAppDir}, caa"
+		echo "	xenv, x"
+		echo "	rpm, p [appName] -- when [appName] is all, package all app's rpm"
+		echo "	svn [svn command]"
+		echo "	copyRpms [soeId] {serverName} {remoteAppDir}, cr"
+		echo "	checkAppVersion, cav"
+		echo "appName List!"
+		echo "	autobooking"
+		echo "	optimizer"
+		echo "	optimizerview"
+		echo "	execution"
+		echo "	static-data-service"
+		echo " -- jar only ones"
+		echo "	ttl-commons"
+		echo "	CommonService"
+	fi
+

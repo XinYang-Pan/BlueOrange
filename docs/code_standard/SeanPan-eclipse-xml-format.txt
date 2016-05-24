@@ -1,0 +1,4 @@
+Window -> Preferences -> XML -> Xml Files -> Editor
+
+line width -> 999
+format comments -> unchecked

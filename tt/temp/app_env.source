@@ -1,0 +1,70 @@
+#!/bin/bash
+#ident  "%W%"
+
+. /opt/efp/services/GlobalProperties/global/script/162878_Global_Profile.bash
+
+# APP_NAME
+export APP_NAME=#{appName}
+
+# MAIN_CLASS
+export MAIN_CLASS=#{className}
+
+# VARS - Java Program Arguments
+export VARS=
+
+# JAVA_OPTS - Java vm Arguments
+export JAVA_OPTS="-Xms2G -Xmx3G -DappDataFilePath=/data/scalar/efp/logs/${APP_NAME}"
+
+# LOG_DIR
+export APP_LOG_DIR=/data/scalar/efp/logs/${APP_NAME}
+
+# jre 7
+PATH=/opt/jdk/1.7.0_21/bin:${PATH}
+
+#resolve environment based on m/c
+if [[ "$HOSTNAME" = *1lnd* ]]; then
+
+    echo "Identified LINUX box, ENV is dev"
+    export ENV=dev
+
+elif [[ "$HOSTNAME" = *2lnd* ]]; then
+
+    echo "Identified LINUX box, ENV is dev"
+    export ENV=dev
+
+elif [[ "$HOSTNAME" = "eqscap1lnu" ]]; then
+
+    echo "Identified LINUX box, ENV is test"
+    export ENV=test
+
+elif [[ "$HOSTNAME" = "eqscap2lnu" ]]; then
+
+    echo "Identified LINUX box, ENV is test"
+    export ENV=test
+
+elif [[ "$HOSTNAME" = "eqscap3lnu"  ]]; then
+
+    echo "Identified LINUX box, ENV is test"
+    export ENV=test
+
+elif [[ "$HOSTNAME" = "eqscap4lnu" ]]; then
+
+    echo "Identified LINUX box, ENV is test"
+    export ENV=test
+
+elif [[ "$HOSTNAME" = eqscap1lnp ]]; then
+
+    echo "Identified LINUX box, ENV is prod"
+    export ENV=prod
+
+elif [[ "$HOSTNAME" = eqscap2lnp ]]; then
+
+    echo "Identified LINUX box, ENV is prod"
+    export ENV=prod
+
+else
+
+    echo "ERROR!!! $HOSTNAME is an unknown machine: could not determine which environment we are deploying to."
+    exit 3
+
+fi

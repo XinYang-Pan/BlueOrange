@@ -1,0 +1,56 @@
+####################
+# BUILD SERVER
+####################
+
+# switch user
+pbrun rtictl
+
+# variables
+TT_HOME=/var/tmp/tradingtools
+APP_DATA_DIR=/var/tmp/tradingtools/appdata
+
+# Remove old
+rm –rf ${TT_HOME}
+# create home dir
+mkdir -p ${TT_HOME}
+cd ${TT_HOME}
+# svn check out scripts
+# /xenv/svn-c/X/1.5.2l_64/bin/svn
+/xenv/svn-c/X/1.5.2l_64/bin/svn co https://teamforge.nam.nsroot.net/svn/repos/efp/trunk/TTL-Commons/tt .
+chmod 755 ${TT_HOME}/bin/*
+alias tt=${TT_HOME}/bin/tt
+
+# mk dir for app data, make sure running user have permission to write
+mkdir -p ${APP_DATA_DIR}
+chmod 777 ${APP_DATA_DIR}
+
+####################
+# RUN ONLY SERVER
+####################
+
+# switch user
+pbrun rtictl
+
+# variables
+TT_HOME=/var/tmp/tradingtools
+APP_DATA_DIR=/var/tmp/tradingtools/appdata 
+REMOTE_TT_HOME=/var/tmp/tradingtools
+REMOTE_USER=xp09499
+REMOTE_SERVER=eqscap1lnd
+
+
+# Remove old
+rm –rf ${TT_HOME}
+
+# create home dir 
+mkdir -p ${TT_HOME}
+cd ${TT_HOME}
+
+# copy tt scripts from remote server
+scp -r ${REMOTE_USER}@${REMOTE_SERVER}:${REMOTE_TT_HOME}/{bin,conf} ${TT_HOME}/
+alias tt=${TT_HOME}/bin/tt
+
+# mk dir for app data, make sure running user have permission to write
+mkdir -p ${APP_DATA_DIR}
+chmod 777 ${APP_DATA_DIR}
+
