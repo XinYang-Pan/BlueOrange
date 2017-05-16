@@ -16,7 +16,7 @@ public class DbToolExample {
 		DbTool dbTool = DbTool.build(url.getPath());
 		//
 		dbTool.setSqlBuilder(new PostgresSqlBuilder());
-//		dbTool.setPrintToConsole(true);
+		dbTool.setPrintToConsole(true);
 		System.out.println("********************************");
 		System.out.println(ToStringUtils.wellFormat(dbTool.getDbConfig()));
 		System.out.println("********************************");

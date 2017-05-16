@@ -9,7 +9,7 @@ public class BlueoTest {
 	public static void main(String[] args) throws Exception {
 		System.out.println(Object.class.isAssignableFrom(String.class));
 
-		System.out.println(Iterables.getOnlyElement(Lists.newArrayList(), null));
+		System.out.println((Object)Iterables.getOnlyElement(Lists.newArrayList(), null));
 	}
 
 }
